@@ -1,0 +1,23 @@
+{
+  "name": "NPEngine",
+  "version": "0.0.0",
+  "description": "This file was created by JetBrains WebStorm 6.0.2 for binding GitHub repository",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reaperes/PhysicsEngine.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/reaperes/PhysicsEngine/issues"
+  },
+  "homepage": "https://github.com/reaperes/PhysicsEngine",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-concat": "~0.3.0"
+  }
+}
