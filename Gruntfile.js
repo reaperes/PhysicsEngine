@@ -1,16 +1,24 @@
-module.exports = function(grunt) {
-  grunt.initConfig({
-    pkg : grunt.file.readJSON('package.json'),
-    
-    concat : {
-      dist : {
-        src : ['src/npengine/renderer/*.js'],
-	dest: 'bin/npengine.js'
-      }
-    }
-  });
+module.exports = function (grunt) {
 
-  grunt.loadNpmTasks('grunt-contrib-concat');
+    var srcFiles = [
+        'src/npengine/*.js',
+        'src/npengine/display/*.js',
+        'src/npengine/renderer/*.js',
+        'src/npengine/math/*.js'
+    ];
 
-  grunt.registerTask('build', ['concat']);
+    grunt.initConfig({
+        pkg: grunt.file.readJSON('package.json'),
+
+        concat: {
+            dist: {
+                src: srcFiles,
+                dest: 'bin/npengine.dev.js'
+            }
+        }
+    });
+
+    grunt.loadNpmTasks('grunt-contrib-concat');
+
+    grunt.registerTask('build', ['concat']);
 }

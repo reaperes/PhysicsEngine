@@ -1,19 +1,19 @@
-FPSBoard = function() {
+NPEngine.FPSBoard = function() {
     this.then = new Date;
     this.count = 0;
     this.fps = 0;
 };
 
 // constructor
-FPSBoard.prototype.constructor = CanvasRenderer;
+NPEngine.FPSBoard.prototype.constructor = NPEngine.CanvasRenderer;
 
 
 
-FPSBoard.prototype.update = function() {
+NPEngine.FPSBoard.prototype.update = function() {
     this.count++;
 };
 
-FPSBoard.prototype.render = function(context) {
+NPEngine.FPSBoard.prototype.render = function(context) {
     var now = new Date;
     var delta = now - this.then;
 
