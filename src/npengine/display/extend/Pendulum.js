@@ -13,6 +13,7 @@ NPEngine.Pendulum = function() {
 
     this.pivot = new NPEngine.Point(0, 0);
     this.circle = new NPEngine.Point(0, 400);
+
 };
 
 NPEngine.Pendulum.prototype = Object.create(NPEngine.DisplayObject.prototype);

@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Next PhysicsEngine (mini) - Pendulum</title>
+    <script type="text/javascript" src="bin/npengine.dev.js"></script>
+    <script type="text/javascript" src="lib/dat.gui.min.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        var renderer = new NPEngine.CanvasRenderer;
+        document.body.appendChild(renderer.view);
+
+        var pendulum = new NPEngine.Pendulum;
+        pendulum.setPivot(renderer.view.width/2, 0);
+        pendulum.setCircleCoordsFromPivot(0, 300);
+        renderer.addChild(pendulum);
+
+        requestAnimationFrame( animate );
+
+        function animate() {
+            requestAnimationFrame( animate );
+            renderer.render();
+        }
+
+        var FizzyText = function() {
+            this.message = 'dat.gui';
+            this.speed = 0.8;
+            this.displayOutline = false;
+            this.explode = function() {
+
+            };
+        };
+
+        window.onload = function() {
+            var text = new FizzyText();
+            var gui = new dat.GUI();
+            gui.add(text, 'message');
+            gui.add(text, 'speed', -5, 5);
+            gui.add(text, 'displayOutline');
+            gui.add(text, 'explode');
+        };
+    </script>
+</body>
+</html>
