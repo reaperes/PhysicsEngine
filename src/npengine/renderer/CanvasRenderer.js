@@ -4,6 +4,10 @@ NPEngine.CanvasRenderer = function(view) {
     this.children = [];
 
     this.view = view || document.createElement( "canvas" );
+    if (view != 'undefined') {
+        this.view.width = 800;
+        this.view.height = 600;
+    }
     console.log(this.view.width + " " + this.view.height);
     this.context = this.view.getContext( "2d" );
 
@@ -47,5 +51,14 @@ NPEngine.CanvasRenderer.prototype.render = function() {
 NPEngine.CanvasRenderer.prototype.addChild = function(displayObject) {
     if (displayObject instanceof NPEngine.DisplayObject) {
         this.children.push(displayObject);
+    }
+};
+
+NPEngine.CanvasRenderer.prototype.setFps = function(visible) {
+    if (visible == true) {
+        this.fps.visible = true;
+    }
+    else if (visible == false) {
+        this.fps.visible = false;
     }
 };

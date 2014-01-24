@@ -1,4 +1,5 @@
 NPEngine.FPSBoard = function() {
+    this.visible = true;
     this.then = new Date;
     this.count = 0;
     this.fps = 0;
@@ -20,7 +21,10 @@ NPEngine.FPSBoard.prototype.render = function(context) {
     if (this.count%100 == 0) {
         this.fps = Number((1000/delta).toFixed(1));
     }
-    context.font="20px Arial";
-    context.fillText("fps: " + this.fps, 0, 22);
+
+    if (this.visible == true) {
+        context.font="20px Arial";
+        context.fillText("fps: " + this.fps, 0, 22);
+    }
     this.then = now;
 };
