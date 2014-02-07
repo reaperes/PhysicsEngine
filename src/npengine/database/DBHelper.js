@@ -16,24 +16,19 @@ NPEngine.DBHelper.prototype.createDB = function (callback) {
   };
 };
 
-NPEngine.DBHelper.prototype.promiseOpen = function () {
+NPEngine.DBHelper.prototype.promiseOpen = function (displayObject) {
   var version = 1;
   var promise = new Promise(function(resolve, reject) {
     var request = window.indexedDB.open('NPEngine', version);
     request.onupgradeneeded = function(e) {
       var db = e.target.result;
-      var store = db.createObjectStore("books", {keyPath: "isbn"});
-      var titleIndex = store.createIndex("by_title", "title", {unique: true});
-      var authorIndex = store.createIndex("by_author", "author");
-
-      // Populate with initial data.
-      store.put({title: "Quarry Memories", author: "Fred", isbn: 123456});
-      store.put({title: "Water Buffaloes", author: "Fred", isbn: 234567});
-      store.put({title: "Bedrock Nights", author: "Barney", isbn: 345678});
+      if (!db.objectStoreNames.contains(displayObject.toString())) {
+        var objectStore = db.createObjectStore(displayObject.toString(), {keyPath: 'time'});
+      }
     };
     request.onsuccess = function(e) {
       this.db = e.target.result;
-      resolve();
+      resolve(this.db);
     };
     request.onerror = function(e) {
       reject(e);
