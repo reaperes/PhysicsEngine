@@ -1,4 +1,115 @@
-var NPEngine = NPEngine || {};
+NPEngine = function() {
+  // init database
+  var dbHelper = new NPEngine.DBHelper;
+
+  var promise = new Promise(function(resolve, reject) {
+    dbHelper.open().then(function() {
+      alert('success');
+    }, function(error) {
+      console.log(error);
+    });
+  });
+
+  return {
+    dbHelper : dbHelper
+  };
+
+//  var promise = new Promise(function(resolve, reject) {
+//    resolve(1);
+//  });
+//
+//  promise.then(function(val) {
+//    console.log(val);
+//    return val+2;
+//  }).then(function(val) {
+//      console.log(val);
+//  });
+};
+
+NPEngine.prototype.constructor = NPEngine.Pendulum;
+
+
+
+NPEngine.prototype.initDB = function() {
+
+};
+
+//MyClass = function( a, b ) {
+//  this.sum = function() {
+//    return internalCalcSum();
+//  };
+//  var internalCalcSum = function() {
+//    return a + b;
+//  };
+//};
+
+
+
+
+
+
+
+NPEngine.DBHelper = function () {
+};
+
+NPEngine.DBHelper.prototype.constructor = NPEngine.DBHelper;
+
+
+
+NPEngine.DBHelper.prototype.createDB = function (callback) {
+  var that = this;
+  var request = window.indexedDB.deleteDatabase('NPEngine');
+  request.onsuccess = function() {
+    that.open();
+  };
+  request.onerror = function() {
+    alert('create db error');
+  };
+};
+
+NPEngine.DBHelper.prototype.open = function () {
+  var version = 1;
+  var promise = new Promise(function(resolve, reject) {
+    var request = window.indexedDB.open('', version);
+    request.onupgradeneeded = function(e) {
+      var db = e.target.result;
+      var store = db.createObjectStore("books", {keyPath: "isbn"});
+      var titleIndex = store.createIndex("by_title", "title", {unique: true});
+      var authorIndex = store.createIndex("by_author", "author");
+
+      // Populate with initial data.
+      store.put({title: "Quarry Memories", author: "Fred", isbn: 123456});
+      store.put({title: "Water Buffaloes", author: "Fred", isbn: 234567});
+      store.put({title: "Bedrock Nights", author: "Barney", isbn: 345678});
+    };
+    request.onsuccess = function(e) {
+      this.db = e.target.result;
+      resolve();
+    };
+    request.onerror = function(e) {
+      reject(e);
+    }
+  });
+  return promise;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 NPEngine.DisplayObject = function() {
 };
 
@@ -11,7 +122,7 @@ NPEngine.Pendulum = function() {
     this.circleMass = 10;
     this.calculateRadius();
 
-    this.lineLength = 10;
+    this.lineLength = 2;
     this.gravity = 9.8;
     this.circleTheta0 = 0.7854;
     this.circlePosition0 = this.lineLength * this.circleTheta0;
@@ -91,7 +202,6 @@ NPEngine.Pendulum.prototype.setLineLength = function(value) {
     if (value == 'undefined') {
         throw new Error(value + ' is undefined');
     }
-
     this.lineLength = value;
 };
 
@@ -204,6 +314,21 @@ NPEngine.FPSBoard.prototype.render = function(context) {
     }
     this.then = now;
 };
+NPEngine.Convert = function() {};
+
+NPEngine.Convert.prototype = Object.create(NPEngine.Convert.prototype);
+NPEngine.Convert.prototype.constructor = NPEngine.Convert;
+
+
+
+NPEngine.Convert.toDegrees = function(angle) {
+  return angle * (180/Math.PI);
+}
+
+NPEngine.Convert.toRadians = function(angle) {
+  return angle * (Math.PI/180);
+}
+
 NPEngine.Point = function(positionX, positionY) {
     this.x = positionX || 0;
     this.y = positionY || 0;
