@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Next PhysicsEngine (mini) - Pendulum</title>
+  <script type="text/javascript" src="bin/npengine.dev.js"></script>
+  <script type="text/javascript" src="lib/dat.gui.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+  indexedDB.deleteDatabase('NPEngine');
+  var renderer = new NPEngine.CanvasRenderer;
+  document.body.appendChild(renderer.view);
+
+  var pendulum = new NPEngine.Pendulum;
+  pendulum.setPivot(renderer.view.width / 2, 0);
+  pendulum.setCircleCoordsFromPivot(0, 300);
+
+  renderer.addChild(pendulum);
+
+  var engine = new NPEngine(pendulum, function() {
+    requestAnimationFrame(animate);
+  });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    renderer.render();
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//  var controlBox = function () {
+//    this.fps = true;
+//    this.mass = 10;
+//    this.length = 2;
+//    this.theta0 = 0.7854;
+//    this.t = 0.01;
+//  };
+//
+//  window.onload = function () {
+//    var control = new controlBox();
+//    var gui = new dat.GUI();
+//    var fps = gui.add(control, 'fps');
+//    fps.onFinishChange(function (value) {
+//      renderer.setFps(value);
+//    });
+//
+//    var mass = gui.add(control, 'mass', 1, 20);
+//    mass.onChange(function (value) {
+//      pendulum.setMass(value);
+//    });
+//
+//    var length = gui.add(control, 'length', 1, 4);
+//    length.onChange(function (value) {
+//      pendulum.setLineLength(value);
+//    });
+//
+//    var theta0 = gui.add(control, 'theta0', 0, 1);
+//    theta0.onChange(function (value) {
+//      pendulum.setTheta0(value);
+//    });
+//
+//    var t = gui.add(control, 't', 0.01, 0.1);
+//    t.onChange(function (value) {
+//      pendulum.setT(value);
+//    });
+//  };
+</script>
+</body>
+</html>
