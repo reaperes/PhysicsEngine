@@ -1,54 +1,27 @@
 NPEngine = function() {
-  // init database
-  var dbHelper = new NPEngine.DBHelper;
-
-  var promise = new Promise(function(resolve, reject) {
-    dbHelper.open().then(function() {
-      alert('success');
-    }, function(error) {
-      console.log(error);
-    });
-  });
-
-  return {
-    dbHelper : dbHelper
-  };
-
-//  var promise = new Promise(function(resolve, reject) {
-//    resolve(1);
-//  });
-//
-//  promise.then(function(val) {
-//    console.log(val);
-//    return val+2;
-//  }).then(function(val) {
-//      console.log(val);
-//  });
+  this.renderer = new NPEngine.CanvasRenderer;
 };
 
 NPEngine.prototype.constructor = NPEngine.Pendulum;
 
 
 
-NPEngine.prototype.initDB = function() {
-
+NPEngine.prototype.render = function() {
+  this.renderer.render();
 };
 
-//MyClass = function( a, b ) {
-//  this.sum = function() {
-//    return internalCalcSum();
-//  };
-//  var internalCalcSum = function() {
-//    return a + b;
-//  };
-//};
+NPEngine.prototype.addDisplayObject = function(displayObject) {
+  if (displayObject == null) {
+    throw new Error('Parameter can not be null');
+  }
 
+  if ((displayObject instanceof NPEngine.DisplayObject) == false) {
+    throw new Error('Parameter is not DisplayObject');
+  }
 
-
-
-
-
-
+  displayObject.compute();
+  this.renderer.addChild(displayObject);
+};
 NPEngine.DBHelper = function () {
 };
 
@@ -67,24 +40,19 @@ NPEngine.DBHelper.prototype.createDB = function (callback) {
   };
 };
 
-NPEngine.DBHelper.prototype.open = function () {
+NPEngine.DBHelper.prototype.promiseOpen = function (displayObject) {
   var version = 1;
   var promise = new Promise(function(resolve, reject) {
-    var request = window.indexedDB.open('', version);
+    var request = window.indexedDB.open('NPEngine', version);
     request.onupgradeneeded = function(e) {
       var db = e.target.result;
-      var store = db.createObjectStore("books", {keyPath: "isbn"});
-      var titleIndex = store.createIndex("by_title", "title", {unique: true});
-      var authorIndex = store.createIndex("by_author", "author");
-
-      // Populate with initial data.
-      store.put({title: "Quarry Memories", author: "Fred", isbn: 123456});
-      store.put({title: "Water Buffaloes", author: "Fred", isbn: 234567});
-      store.put({title: "Bedrock Nights", author: "Barney", isbn: 345678});
+      if (!db.objectStoreNames.contains(displayObject.toString())) {
+        var objectStore = db.createObjectStore(displayObject.toString(), {keyPath: 'time'});
+      }
     };
     request.onsuccess = function(e) {
       this.db = e.target.result;
-      resolve();
+      resolve(this.db);
     };
     request.onerror = function(e) {
       reject(e);
@@ -116,24 +84,26 @@ NPEngine.DisplayObject = function() {
 // constructor
 NPEngine.DisplayObject.prototype.constructor = NPEngine.DisplayObject;
 
-NPEngine.Pendulum = function() {
-    NPEngine.DisplayObject.call(this);
+NPEngine.Pendulum = function () {
+  NPEngine.DisplayObject.call(this);
 
-    this.circleMass = 10;
-    this.calculateRadius();
+  // initial variables
+  this.mass = 1;
+  this.length = 10;
+  this.gravity = 9.8;
+  this.theta0 = 0.785398;
+  this.circumference = this.length * this.theta0;
+  this.deltaTime = 0.01;
 
-    this.lineLength = 2;
-    this.gravity = 9.8;
-    this.circleTheta0 = 0.7854;
-    this.circlePosition0 = this.lineLength * this.circleTheta0;
-    this.circumference = this.circlePosition0;
-    this.v = 0;
-    this.t = 0.01;
-    this.ratio = 100;
+  // initial position
+  this.pivot = new NPEngine.Point(400, 0);
+  this.circle = new NPEngine.Point;
 
-    this.pivot = new NPEngine.Point(0, 0);
-    this.circle = new NPEngine.Point(0, 400);
+  // etc variables
+  this.period = Math.round((2 * Math.PI * Math.sqrt(this.length/this.gravity))*100);
 
+  // update variables
+  this.isStart = false;
 };
 
 NPEngine.Pendulum.prototype = Object.create(NPEngine.DisplayObject.prototype);
@@ -141,33 +111,42 @@ NPEngine.Pendulum.prototype.constructor = NPEngine.Pendulum;
 
 
 
-NPEngine.Pendulum.prototype.update = function() {
-    this.v = this.v + (-this.gravity * Math.sin(this.circumference/this.lineLength))*this.t;
-    this.circumference = this.circumference + this.v * this.t;
-    this.circle.x = this.lineLength * Math.sin(this.circumference/this.lineLength);
-    this.circle.y = this.lineLength * Math.cos(this.circumference/this.lineLength);
+NPEngine.Pendulum.prototype.toString = function() {
+  return 'Pendulum';
 };
 
-NPEngine.Pendulum.prototype.render = function(context) {
-    // draw line
-    context.beginPath();
-    context.moveTo(this.pivot.x, this.pivot.y);
-    context.lineTo(this.pivot.x + this.circle.x * this.ratio, this.pivot.y + this.circle.y * this.ratio);
-    context.stroke();
+NPEngine.Pendulum.prototype.update = function () {
+  if (this.isStart == false) {
+    this.startTime = new Date().getTime();
+    this.isStart = true;
+  }
+  var gap = Math.round((new Date().getTime()-this.startTime)/10); // millisecond to 0.01 second
+  var phase = Math.round(gap%this.period);
 
-    context.beginPath();
-    context.arc(this.pivot.x + this.circle.x * this.ratio, this.pivot.y + this.circle.y * this.ratio, this.radius, 0, 2*Math.PI);
-    context.fillStyle = 'black';
-    context.fill();
-    context.stroke();
+  this.circle.x = this.memory[phase].x;
+  this.circle.y = this.memory[phase].y;
 };
 
-NPEngine.Pendulum.prototype.setPivot = function(x, y) {
-    if (x == 'undefined' || y == 'undefined')
-        throw new Error(x + 'or ' + y + ' is undefined');
+NPEngine.Pendulum.prototype.render = function (context) {
+  var ratio = 10;
+  context.beginPath();
+  context.moveTo(this.pivot.x, this.pivot.y);
+  context.lineTo(this.pivot.x + this.circle.x * ratio, this.pivot.y + this.circle.y * ratio);
+  context.stroke();
 
-    this.pivot.x = x;
-    this.pivot.y = y;
+  context.beginPath();
+  context.arc(this.pivot.x + this.circle.x * ratio, this.pivot.y + this.circle.y * ratio, 10, 0, 2 * Math.PI, true);
+  context.fillStyle = 'black';
+  context.fill();
+  context.stroke();
+};
+
+NPEngine.Pendulum.prototype.setPivot = function (x, y) {
+  if (x == 'undefined' || y == 'undefined')
+    throw new Error(x + 'or ' + y + ' is undefined');
+
+  this.pivot.x = x;
+  this.pivot.y = y;
 };
 
 /**
@@ -177,112 +156,120 @@ NPEngine.Pendulum.prototype.setPivot = function(x, y) {
  * @param x {Number} The X coord of the point to circle from pivot
  * @param y {Number} The Y coord of the point to circle from pivot
  */
-NPEngine.Pendulum.prototype.setCircleCoordsFromPivot = function(x, y) {
-    if (x == 'undefined' || y == 'undefined')
-        throw new Error(x + 'or ' + y + ' is undefined');
+NPEngine.Pendulum.prototype.setCircleCoordsFromPivot = function (x, y) {
+  if (x == 'undefined' || y == 'undefined')
+    throw new Error(x + 'or ' + y + ' is undefined');
 
-    this.circle.x = this.pivot.x + x;
-    this.circle.y = this.pivot.y + y;
+  this.circle.x = this.pivot.x + x;
+  this.circle.y = this.pivot.y + y;
 };
 
-NPEngine.Pendulum.prototype.setMass = function(value) {
-    if (value == 'undefined') {
-        throw new Error(value + ' is undefined');
-    }
+NPEngine.Pendulum.prototype.setMass = function (value) {
+  if (value == 'undefined') {
+    throw new Error(value + ' is undefined');
+  }
 
-    this.circleMass = value;
-    this.calculateRadius();
+  this.circleMass = value;
+  this.calculateRadius();
 };
 
-NPEngine.Pendulum.prototype.calculateRadius = function() {
-    this.radius = this.circleMass * 3 + 20;
+NPEngine.Pendulum.prototype.setLineLength = function (value) {
+  if (value == 'undefined') {
+    throw new Error(value + ' is undefined');
+  }
+  this.lineLength = value;
 };
 
-NPEngine.Pendulum.prototype.setLineLength = function(value) {
-    if (value == 'undefined') {
-        throw new Error(value + ' is undefined');
-    }
-    this.lineLength = value;
+NPEngine.Pendulum.prototype.setTheta0 = function (value) {
+  if (value == 'undefined') {
+    throw new Error(value + ' is undefined');
+  }
+  this.circleTheta0 = value;
+  this.circlePosition0 = this.lineLength * this.circleTheta0;
+  this.circumference = this.circlePosition0;
 };
 
-NPEngine.Pendulum.prototype.setTheta0 = function(value) {
-    if (value == 'undefined') {
-        throw new Error(value + ' is undefined');
-    }
-    this.circleTheta0 = value;
-    this.circlePosition0 = this.lineLength * this.circleTheta0;
-    this.circumference = this.circlePosition0;
+NPEngine.Pendulum.prototype.setT = function (value) {
+  if (value == 'undefined') {
+    throw new Error(value + ' is undefined');
+  }
+  this.t = value;
 };
 
-NPEngine.Pendulum.prototype.setT = function(value) {
-    if (value == 'undefined') {
-        throw new Error(value + ' is undefined');
-    }
-    this.t = value;
+NPEngine.Pendulum.prototype.compute = function () {
+  this.memory = [];
+  var period = this.period;
+  var velocity = 0;
+  var circumference = this.circumference;
+
+  for (var i=0; i<period; i++) {
+    velocity = velocity+(-this.gravity*Math.sin(circumference/this.length))*this.deltaTime;
+    circumference = circumference+velocity*this.deltaTime;
+    var thetaValue = circumference/this.length;
+    var xValue = this.length*Math.sin(thetaValue).toFixed(6);
+    var yValue = this.length*Math.cos(thetaValue).toFixed(6);
+    this.memory.push({time: i, theta: thetaValue, x: xValue, y: yValue});
+  }
 };
-NPEngine.CanvasRenderer = function(view) {
-    this.DEBUG = true;
 
-    this.children = [];
+NPEngine.CanvasRenderer = function () {
+  this.DEBUG = true;
 
-    this.view = view || document.createElement( "canvas" );
-    if (view != 'undefined') {
-        this.view.width = 800;
-        this.view.height = 600;
-    }
-    console.log(this.view.width + " " + this.view.height);
-    this.context = this.view.getContext( "2d" );
+  this.children = [];
 
-    if (this.DEBUG) {
-        this.fps = new NPEngine.FPSBoard();
-    }
+  this.view = document.createElement("canvas");
+  this.view.width = 800;
+  this.view.height = 600;
+  document.body.appendChild(this.view);
+
+  this.context = this.view.getContext("2d");
+
+  if (this.DEBUG) {
+    this.fps = new NPEngine.FPSBoard();
+  }
 };
 
 // constructor
 NPEngine.CanvasRenderer.prototype.constructor = NPEngine.CanvasRenderer;
 
 
+NPEngine.CanvasRenderer.prototype.render = function () {
+  // clear
+  this.context.clearRect(0, 0, this.view.width, this.view.height);
 
-NPEngine.CanvasRenderer.prototype.render = function() {
-    // clear
+  // update
+  var length = this.children.length;
+  for (var i = 0; i < length; i++) {
+    this.children[i].update();
+  }
 
-    this.context.clearRect(0, 0, this.view.width, this.view.height);
+  if (this.DEBUG) {
+    this.fps.update();
+  }
 
+  // render
+  for (var i = 0; i < length; i++) {
+    this.children[i].render(this.context);
+  }
 
-    // update
-    var length = this.children.length;
-    for (var i=0; i<length; i++) {
-        this.children[i].update();
-    }
-
-    if (this.DEBUG) {
-        this.fps.update();
-    }
-
-
-    // render
-    for (var i=0; i<length; i++) {
-        this.children[i].render(this.context);
-    }
-
-    if (this.DEBUG) {
-        this.fps.render(this.context);
-    }
+  if (this.DEBUG) {
+    this.fps.render(this.context);
+  }
 };
 
-NPEngine.CanvasRenderer.prototype.addChild = function(displayObject) {
-    if (displayObject instanceof NPEngine.DisplayObject) {
-        this.children.push(displayObject);
-    }
+NPEngine.CanvasRenderer.prototype.addChild = function (displayObject) {
+  if (displayObject instanceof NPEngine.DisplayObject) {
+    this.children.push(displayObject);
+  }
 };
 
-NPEngine.CanvasRenderer.prototype.setFps = function(visible) {
-    if (visible == true) {
-        this.fps.visible = true;
-    }
-    else if (visible == false) {
-        this.fps.visible = false;
-    }
+NPEngine.CanvasRenderer.prototype.setFps = function (visible) {
+  if (visible == true) {
+    this.fps.visible = true;
+  }
+  else if (visible == false) {
+    this.fps.visible = false;
+  }
 };
 NPEngine.FPSBoard = function() {
     this.visible = true;
