@@ -1,27 +1,23 @@
 NPEngine.Pendulum = function () {
   NPEngine.DisplayObject.call(this);
 
+  // initial variables
   this.mass = 1;
   this.length = 1;
   this.gravity = 9.8;
   this.theta0 = 0.785398;
-  this.circumference = 0.785398;
+  this.circumference = this.length * this.theta0;
   this.deltaTime = 0.01;
-  this.velocity = 0;
 
-  this.circleMass = 10;
-  this.calculateRadius();
-
-  this.circleTheta0 = 0.7854;
-  this.circlePosition0 = this.lineLength * this.circleTheta0;
-//  this.circumference = this.circlePosition0;
-  this.v = 0;
-  this.t = 0.01;
-  this.ratio = 100;
-
+  // initial position
   this.pivot = new NPEngine.Point(0, 0);
   this.circle = new NPEngine.Point(0, 400);
 
+  // etc variables
+  this.period = 2 * Math.PI * Math.sqrt(this.length/this.gravity);
+
+  // update variables
+  this.isStart = false;
 };
 
 NPEngine.Pendulum.prototype = Object.create(NPEngine.DisplayObject.prototype);
@@ -34,21 +30,37 @@ NPEngine.Pendulum.prototype.toString = function() {
 };
 
 NPEngine.Pendulum.prototype.update = function () {
-  this.v = this.v + (-this.gravity * Math.sin(this.circumference / this.lineLength)) * this.t;
-  this.circumference = this.circumference + this.v * this.t;
-  this.circle.x = this.lineLength * Math.sin(this.circumference / this.lineLength);
-  this.circle.y = this.lineLength * Math.cos(this.circumference / this.lineLength);
+  var that = this;
+  if (this.isStart == false) {
+    this.startTime = new Date().getTime();
+    this.isStart = true;
+  }
+  var gap = (new Date().getTime() - this.startTime) / 10; // millisecond to 0.01 second
+  var phase = (gap % this.period).toFixed(2);
+  var store = this.db.transaction([this.toString()],"readonly").objectStore(this.toString());
+  console.log('phase = ' + phase*100);
+  var request = store.get(phase*100);
+  request.onsuccess = function(e) {
+    var data = request.result;
+    console.log('data = ' + data);
+    that.circle.x = data.x;
+    that.circle.y = data.y;
+  }
+  request.onerror = function(e) {
+    alert('db error');
+  }
 };
 
 NPEngine.Pendulum.prototype.render = function (context) {
   // draw line
+  this.ratio = 100;
   context.beginPath();
   context.moveTo(this.pivot.x, this.pivot.y);
   context.lineTo(this.pivot.x + this.circle.x * this.ratio, this.pivot.y + this.circle.y * this.ratio);
   context.stroke();
 
   context.beginPath();
-  context.arc(this.pivot.x + this.circle.x * this.ratio, this.pivot.y + this.circle.y * this.ratio, this.radius, 0, 2 * Math.PI);
+  context.arc(this.pivot.x + this.circle.x * this.ratio, this.pivot.y + this.circle.y * this.ratio, 10, 0, 2 * Math.PI, true);
   context.fillStyle = 'black';
   context.fill();
   context.stroke();
@@ -86,10 +98,6 @@ NPEngine.Pendulum.prototype.setMass = function (value) {
   this.calculateRadius();
 };
 
-NPEngine.Pendulum.prototype.calculateRadius = function () {
-  this.radius = this.circleMass * 3 + 20;
-};
-
 NPEngine.Pendulum.prototype.setLineLength = function (value) {
   if (value == 'undefined') {
     throw new Error(value + ' is undefined');
@@ -114,7 +122,8 @@ NPEngine.Pendulum.prototype.setT = function (value) {
 };
 
 NPEngine.Pendulum.prototype.compute = function (db) {
-  var period = 2 * Math.PI * Math.sqrt(this.length/this.gravity);
+  this.db = db;
+  var period = this.period;
   var velocity = 0;
   var circumference = this.circumference;
 
@@ -123,8 +132,8 @@ NPEngine.Pendulum.prototype.compute = function (db) {
     velocity = velocity+(-this.gravity*Math.sin(circumference/this.length))*this.deltaTime;
     circumference = circumference+velocity*this.deltaTime;
     var thetaValue = circumference/this.length;
-    var xValue = this.length*Math.sin(thetaValue);
-    var yValue = this.length*Math.cos(thetaValue);
-    objectStore.add({time: i/100, theta: thetaValue, x: xValue, y: yValue});
+    var xValue = this.length*Math.sin(thetaValue).toFixed(6);
+    var yValue = this.length*Math.cos(thetaValue).toFixed(6);
+    objectStore.add({time: i, theta: thetaValue, x: xValue, y: yValue});
   }
 };

@@ -8,33 +8,25 @@
 </head>
 <body>
 <script type="text/javascript">
-indexedDB.deleteDatabase('NPEngine');
-  var engine = new NPEngine(new NPEngine.Pendulum);
+  indexedDB.deleteDatabase('NPEngine');
+  var renderer = new NPEngine.CanvasRenderer;
+  document.body.appendChild(renderer.view);
 
+  var pendulum = new NPEngine.Pendulum;
+  pendulum.setPivot(renderer.view.width / 2, 0);
+  pendulum.setCircleCoordsFromPivot(0, 300);
 
+  renderer.addChild(pendulum);
 
+  var engine = new NPEngine(pendulum, function() {
+    requestAnimationFrame(animate);
+  });
 
+  function animate() {
+    requestAnimationFrame(animate);
+    renderer.render();
+  }
 
-
-
-
-
-//  var renderer = new NPEngine.CanvasRenderer;
-//  document.body.appendChild(renderer.view);
-//
-//  var pendulum = new NPEngine.Pendulum;
-//  pendulum.setPivot(renderer.view.width / 2, 0);
-//  pendulum.setCircleCoordsFromPivot(0, 300);
-//  renderer.addChild(pendulum);
-//
-//  requestAnimationFrame(animate);
-//
-//  function animate() {
-//    requestAnimationFrame(animate);
-//    renderer.render();
-//  }
-//
-//  var db = new NPEngine.DBManager;
 
 
 

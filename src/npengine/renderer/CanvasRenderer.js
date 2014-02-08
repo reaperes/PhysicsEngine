@@ -8,7 +8,6 @@ NPEngine.CanvasRenderer = function(view) {
         this.view.width = 800;
         this.view.height = 600;
     }
-    console.log(this.view.width + " " + this.view.height);
     this.context = this.view.getContext( "2d" );
 
     if (this.DEBUG) {
@@ -23,7 +22,6 @@ NPEngine.CanvasRenderer.prototype.constructor = NPEngine.CanvasRenderer;
 
 NPEngine.CanvasRenderer.prototype.render = function() {
     // clear
-
     this.context.clearRect(0, 0, this.view.width, this.view.height);
 
 
