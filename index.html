@@ -9,9 +9,8 @@
 <body>
 <script type="text/javascript">
   var engine = new NPEngine;
-  engine.addDisplayObject(new NPEngine.Pendulum);
-
-
+  var pendulum = new NPEngine.Pendulum;
+  engine.addDisplayObject(pendulum);
 
   requestAnimationFrame(animate);
   function animate() {
@@ -21,47 +20,53 @@
 
 
 
-//  var controlBox = function () {
-//    this.fps = true;
-//    this.mass = 10;
-//    this.length = 2;
-//    this.theta0 = 0.7854;
-//    this.t = 0.01;
-//    this.restart = function () {
-//      alert('start');
-//    };
-//  };
-//
-//  window.onload = function () {
-//    var control = new controlBox();
-//    var gui = new dat.GUI();
-//    var fps = gui.add(control, 'fps');
-//    fps.onFinishChange(function (value) {
-//      renderer.setFps(value);
-//    });
-//
-//    var mass = gui.add(control, 'mass', 1, 20);
-//    mass.onChange(function (value) {
-//      pendulum.setMass(value);
-//    });
-//
-//    var length = gui.add(control, 'length', 1, 4);
-//    length.onChange(function (value) {
-//      pendulum.setLineLength(value);
-//    });
-//
-//    var theta0 = gui.add(control, 'theta0', 0, 1);
-//    theta0.onChange(function (value) {
-//      pendulum.setTheta0(value);
-//    });
-//
-//    var t = gui.add(control, 't', 0.01, 0.1);
-//    t.onChange(function (value) {
-//      pendulum.setT(value);
-//    });
-//
-//    gui.add(control, 'restart');
-//  };
+  var controlBox = function () {
+    this.fps = true;
+    this.mass = 10;
+    this.length = 5;
+    this.theta0 = 0.785398;
+    this.ΔdeltaT = 0.01;
+    this.restart = function () {
+      engine.stop();
+      pendulum.compute();
+      engine.start();
+    };
+  };
+
+  window.onload = function () {
+    var control = new controlBox();
+    var gui = new dat.GUI();
+    var fps = gui.add(control, 'fps');
+    fps.onFinishChange(function (value) {
+      engine.setDebug(value);
+    });
+
+    var mass = gui.add(control, 'mass', 1, 100);
+    mass.onChange(function (value) {
+      engine.stop();
+      pendulum.setMass(Math.round(value));
+    });
+
+    var length = gui.add(control, 'length', 1, 10);
+    length.onChange(function (value) {
+      engine.stop();
+      pendulum.setLength(Math.round(value));
+    });
+
+    var theta0 = gui.add(control, 'theta0', -90, 90);
+    theta0.onChange(function (value) {
+      engine.stop();
+      pendulum.setTheta0(Math.round(value));
+    });
+
+    var ΔdeltaT = gui.add(control, 'ΔdeltaT', 0.01, 0.1);
+    ΔdeltaT.onChange(function (value) {
+      engine.stop();
+      pendulum.setDeltaT(value);
+    });
+
+    gui.add(control, 'restart');
+  };
 </script>
 </body>
 </html>

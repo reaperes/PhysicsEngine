@@ -1,5 +1,7 @@
 NPEngine = function() {
   this.renderer = new NPEngine.CanvasRenderer;
+
+  this.isStop = false;
 };
 
 NPEngine.prototype.constructor = NPEngine.Pendulum;
@@ -7,7 +9,22 @@ NPEngine.prototype.constructor = NPEngine.Pendulum;
 
 
 NPEngine.prototype.render = function() {
+  if (this.isStop) {
+    return ;
+  }
   this.renderer.render();
+};
+
+NPEngine.prototype.stop = function() {
+  this.isStop = true;
+};
+
+NPEngine.prototype.start = function() {
+  this.isStop = false;
+};
+
+NPEngine.prototype.setDebug = function(flag) {
+  this.renderer.setFps(flag);
 };
 
 NPEngine.prototype.addDisplayObject = function(displayObject) {
