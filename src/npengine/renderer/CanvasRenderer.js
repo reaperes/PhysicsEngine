@@ -13,11 +13,18 @@ NPEngine.CanvasRenderer = function () {
   if (this.DEBUG) {
     this.fps = new NPEngine.FPSBoard();
   }
+
+  this.time = new NPEngine.TimeBoard;
 };
 
 // constructor
 NPEngine.CanvasRenderer.prototype.constructor = NPEngine.CanvasRenderer;
 
+
+
+NPEngine.CanvasRenderer.prototype.init = function() {
+  this.time.init();
+}
 
 NPEngine.CanvasRenderer.prototype.render = function () {
   // clear
@@ -32,6 +39,7 @@ NPEngine.CanvasRenderer.prototype.render = function () {
   if (this.DEBUG) {
     this.fps.update();
   }
+  this.time.update();
 
   // render
   for (var i = 0; i < length; i++) {
@@ -41,6 +49,7 @@ NPEngine.CanvasRenderer.prototype.render = function () {
   if (this.DEBUG) {
     this.fps.render(this.context);
   }
+  this.time.render(this.context);
 };
 
 NPEngine.CanvasRenderer.prototype.addChild = function (displayObject) {

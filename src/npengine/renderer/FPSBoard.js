@@ -24,7 +24,7 @@ NPEngine.FPSBoard.prototype.render = function(context) {
 
     if (this.visible == true) {
         context.font="20px Arial";
-        context.fillText("fps: " + this.fps, 0, 22);
+        context.fillText("fps: " + this.fps, 0, 46);
     }
     this.then = now;
 };

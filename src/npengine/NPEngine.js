@@ -1,5 +1,6 @@
 NPEngine = function() {
   this.renderer = new NPEngine.CanvasRenderer;
+  this.renderer.init();
 
   this.isStop = false;
 };
@@ -20,6 +21,7 @@ NPEngine.prototype.stop = function() {
 };
 
 NPEngine.prototype.start = function() {
+  this.renderer.init();
   this.isStop = false;
 };
 

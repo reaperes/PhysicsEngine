@@ -42,6 +42,7 @@ NPEngine.Pendulum.prototype.render = function (context) {
   var convertedLength = Math.round(this.length/50)+40;
   var convertedMass = Math.round(this.mass/3)+22;
   context.beginPath();
+  context.lineWidth = 2;
   context.moveTo(this.pivot.x, this.pivot.y);
   context.lineTo(this.pivot.x + this.circle.x * convertedLength, this.pivot.y + this.circle.y * convertedLength);
   context.stroke();
