@@ -11,14 +11,9 @@
   var engine = new NPEngine;
   var grid = new NPEngine.Grid;
   var collision = new NPEngine.Collision2d;
-  engine.setBackground(grid);
+  engine.setGrid(grid);
   engine.addDisplayObject(collision);
-
-  requestAnimationFrame(animate);
-  function animate() {
-    requestAnimationFrame(animate);
-    engine.render();
-  }
+  engine.start();
 </script>
 </body>
 </html>

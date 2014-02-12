@@ -1,7 +1,7 @@
 NPEngine.CanvasRenderer = function () {
   this.DEBUG = true;
 
-  this.background = null;
+  this.grid = null;
   this.children = [];
 
   this.view = document.createElement("canvas");
@@ -23,10 +23,6 @@ NPEngine.CanvasRenderer.prototype.constructor = NPEngine.CanvasRenderer;
 
 
 
-NPEngine.CanvasRenderer.prototype.init = function() {
-  this.time.init();
-}
-
 NPEngine.CanvasRenderer.prototype.render = function () {
   // clear
   this.context.clearRect(0, 0, this.view.width, this.view.height);
@@ -43,8 +39,8 @@ NPEngine.CanvasRenderer.prototype.render = function () {
   this.time.update();
 
   // render
-  if (this.background != null) {
-    this.background.render(this.context);
+  if (this.grid != null) {
+    this.grid.render(this.context);
   }
   for (var i = 0; i < length; i++) {
     this.children[i].render(this.context);
@@ -62,6 +58,9 @@ NPEngine.CanvasRenderer.prototype.addChild = function (displayObject) {
   }
   displayObject.onAttachedRenderer(this.view.width, this.view.height);
   this.children.push(displayObject);
+  if (this.grid != null) {
+    displayObject.onAttachedGrid(this.grid);
+  }
 };
 
 NPEngine.CanvasRenderer.prototype.setFps = function (visible) {
@@ -73,7 +72,29 @@ NPEngine.CanvasRenderer.prototype.setFps = function (visible) {
   }
 };
 
-NPEngine.CanvasRenderer.prototype.setBackground = function (displayObject) {
-  displayObject.onAttachedRenderer(this.view.width, this.view.height);
-  this.background = displayObject;
+NPEngine.CanvasRenderer.prototype.setGrid = function (gridObject) {
+  gridObject.onAttachedRenderer(this.view.width, this.view.height);
+  for (var i=0, length=this.children.length; i<length; i++) {
+    this.children[i].onAttachedGrid(gridObject);
+  }
+  this.grid = gridObject;
+};
+
+NPEngine.CanvasRenderer.prototype.onEnginePreStart = function() {
+  for (var i=0, length=this.children.length; i<length; i++) {
+    this.children[i].compute();
+  }
+};
+
+NPEngine.CanvasRenderer.prototype.onEngineStart = function() {
+  this.time.init();
+  for (var i=0, length=this.children.length; i<length; i++) {
+    this.children[i].onStart();
+  }
+};
+
+NPEngine.CanvasRenderer.prototype.onEngineStop = function() {
+  for (var i=0, length=this.children.length; i<length; i++) {
+    this.children[i].onStop();
+  }
 };

@@ -71,4 +71,14 @@ NPEngine.Grid.prototype.setWidth = function(width) {
 
 NPEngine.Grid.prototype.setHeight = function(height) {
   this.width = width;
-}
+};
+
+NPEngine.Grid.prototype.convertToGridPoint = function(point) {
+  var convertedX = this.centerWidth + point.x * 100;
+  var convertedY = this.centerHeight + point.y * -100;
+  return new NPEngine.Point(convertedX, convertedY);
+};
+
+NPEngine.Grid.prototype.convertToGridValue = function(value) {
+  return value*100;
+};

@@ -1,28 +1,28 @@
 NPEngine = function() {
   this.renderer = new NPEngine.CanvasRenderer;
-  this.renderer.init();
-
-  this.isStop = false;
 };
 
 NPEngine.prototype.constructor = NPEngine.Pendulum;
 
 
 
-NPEngine.prototype.render = function() {
-  if (this.isStop) {
-    return ;
+NPEngine.prototype.start = function() {
+  var that = this;
+  this.isStart = true;
+
+  this.renderer.onEnginePreStart();
+  this.renderer.onEngineStart();
+  requestAnimationFrame(run);
+  function run() {
+    requestAnimationFrame(run);
+    that.renderer.render();
   }
-  this.renderer.render();
 };
 
 NPEngine.prototype.stop = function() {
-  this.isStop = true;
-};
+  this.isStart = false;
 
-NPEngine.prototype.start = function() {
-  this.renderer.init();
-  this.isStop = false;
+  this.renderer.onEngineStop();
 };
 
 NPEngine.prototype.setDebug = function(flag) {
@@ -38,18 +38,17 @@ NPEngine.prototype.addDisplayObject = function(displayObject) {
     throw new Error('Parameter is not DisplayObject');
   }
 
-  displayObject.compute();
   this.renderer.addChild(displayObject);
 };
 
-NPEngine.prototype.setBackground = function(displayObject) {
-  if (displayObject == null) {
+NPEngine.prototype.setGrid = function(gridObject) {
+  if (gridObject == null) {
     throw new Error('Parameter can not be null');
   }
 
-  if ((displayObject instanceof NPEngine.DisplayObject) == false) {
+  if ((gridObject instanceof NPEngine.DisplayObject) == false) {
     throw new Error('Parameter is not DisplayObject');
   }
 
-  this.renderer.setBackground(displayObject);
+  this.renderer.setGrid(gridObject);
 };

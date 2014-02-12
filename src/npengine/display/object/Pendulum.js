@@ -24,7 +24,7 @@ NPEngine.Pendulum.prototype.init = function() {
   this.period = Math.round((2 * Math.PI * Math.sqrt(this.length/this.gravity))*(1/this.deltaTime));
   this.circumference = this.length * this.theta0;
   this.startTime = new Date().getTime();
-}
+};
 
 NPEngine.Pendulum.prototype.toString = function() {
   return 'Pendulum';
