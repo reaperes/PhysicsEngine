@@ -52,6 +52,72 @@ NPEngine.prototype.setGrid = function(gridObject) {
 
   this.renderer.setGrid(gridObject);
 };
+NPEngine.Convert = function() {};
+
+NPEngine.Convert.prototype = Object.create(NPEngine.Convert.prototype);
+NPEngine.Convert.prototype.constructor = NPEngine.Convert;
+
+
+
+NPEngine.Convert.toDegrees = function(angle) {
+  return angle * (180/Math.PI);
+}
+
+NPEngine.Convert.toRadians = function(angle) {
+  return angle * (Math.PI/180);
+}
+
+NPEngine.Convert.toTimeFormat = function(milliseconds) {
+  milliseconds = parseInt(milliseconds/10);
+
+  var ms = milliseconds % 100;
+  milliseconds = (milliseconds - ms) / 100;
+  var secs = milliseconds % 60;
+  milliseconds = (milliseconds - secs) / 60;
+
+
+  var mins = milliseconds % 60;
+  if (mins < 10) {
+    mins = '0' + mins;
+  }
+  if (secs < 10) {
+    secs = '0' + secs;
+  }
+  if (ms < 10) {
+    ms = '0' + ms;
+  }
+//  var hrs = (milliseconds - mins) / 60;
+
+//  return hrs + ':' + mins + ':' + secs + '.' + ms;
+  return mins + ':' + secs + ':' + ms;
+}
+NPEngine.Point = function(positionX, positionY) {
+    this.x = positionX || 0;
+    this.y = positionY || 0;
+};
+
+NPEngine.Point.prototype = Object.create(NPEngine.Point.prototype);
+NPEngine.Point.prototype.constructor = NPEngine.Point;
+
+NPEngine.Point.prototype.setX = function(positionX) {
+    this.x = positionX || this.x;
+};
+
+NPEngine.Point.prototype.setY = function(positionY) {
+    this.y = positionY || this.y;
+};
+
+NPEngine.Point.prototype.getX = function() {
+    return this.x;
+};
+
+NPEngine.Point.prototype.getY = function() {
+    return this.y;
+};
+
+NPEngine.Point.prototype.distance = function(target) {
+  return Math.sqrt(Math.pow((this.x-target.x),2)+Math.pow((this.y-target.y),2));
+};
 NPEngine.DBHelper = function () {
 };
 
@@ -225,15 +291,19 @@ NPEngine.Collision2d = function () {
   NPEngine.DisplayObject.call(this);
 
   // initial variables
-  this.deltaTime = 0.01;
-  this.ball1 = new NPEngine.Point;
-  this.ball2 = new NPEngine.Point;
-  this.diameter1 = 0.1;
-  this.diameter2 = 0.1;
-  this.velocityX1 = 1;
-  this.velocityY1 = 0;
+  this.deltaTime = 0.001;  //second
+  this.ball1 = new NPEngine.Point(-3, -3);
+  this.ball2 = new NPEngine.Point(1, 0);
+  this.mass1 = 2;         // kg
+  this.mass2 = 2;
+  this.diameter1 = 0.5;   // m
+  this.diameter2 = 0.5;
+  this.velocityX1 = 3;    // m/s
+  this.velocityY1 = 1.5;
   this.velocityX2 = 0;
   this.velocityY2 = 0;
+  this.k = 10000;         // N/m
+  this.mu = 50;           // N s/m
 };
 
 NPEngine.Collision2d.prototype = Object.create(NPEngine.DisplayObject.prototype);
@@ -242,10 +312,6 @@ NPEngine.Collision2d.prototype.constructor = NPEngine.Collision2d;
 
 
 NPEngine.Collision2d.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
-  this.ball1.x = -1;
-  this.ball1.y = 1;
-  this.ball2.x = 1;
-  this.ball2.y = 0;
 };
 
 NPEngine.Collision2d.prototype.onStart = function() {
@@ -261,8 +327,20 @@ NPEngine.Collision2d.prototype.compute = function () {
   var ball1_y = this.ball1.y;
   var ball2_x = this.ball2.x;
   var ball2_y = this.ball2.y;
+  var sumOfDiameter = this.diameter1 + this.diameter2;
+  this.memory.push({time: 0, ball1_x: ball1_x, ball1_y: ball1_y, ball2_x: ball2_x, ball2_y: ball2_y});
 
-  for (var i=0; i<10000; i++) {
+  for (var i=1; i<10000; i++) {
+    var distanceOfBall = Math.sqrt(Math.pow((ball1_x-ball2_x),2)+Math.pow((ball1_y-ball2_y),2));
+    if (distanceOfBall <= sumOfDiameter) {
+      this.forceX1 = this.k*(sumOfDiameter-distanceOfBall)*(ball1_x-ball2_x)/distanceOfBall-this.mu*(this.velocityX1-this.velocityX2);
+      this.forceY1 = this.k*(sumOfDiameter-distanceOfBall)*(ball1_y-ball2_y)/distanceOfBall-this.mu*(this.velocityY1-this.velocityY2);
+      this.velocityX1 = this.velocityX1 + this.forceX1/this.mass1*this.deltaTime;
+      this.velocityY1 = this.velocityY1 + this.forceY1/this.mass1*this.deltaTime;
+      this.velocityX2 = this.velocityX2 - this.forceX1/this.mass2*this.deltaTime;
+      this.velocityY2 = this.velocityY2 - this.forceY1/this.mass2*this.deltaTime;
+    }
+
     ball1_x = ball1_x+this.velocityX1*this.deltaTime;
     ball1_y = ball1_y+this.velocityY1*this.deltaTime;
     ball2_x = ball2_x+this.velocityX2*this.deltaTime;
@@ -272,13 +350,15 @@ NPEngine.Collision2d.prototype.compute = function () {
 };
 
 NPEngine.Collision2d.prototype.update = function () {
-  var gap = Math.round((new Date().getTime()-this.startTime)/(this.deltaTime*1000)); // convert millisecond to 0.01 second
+  var gap = Math.round((new Date().getTime()-this.startTime)/1); // convert millisecond to 0.01 second
 
-  var data = this.memory[gap];
-  this.ball1.x = data.ball1_x;
-  this.ball1.y = data.ball1_y;
-  this.ball2.x = data.ball2_x;
-  this.ball2.y = data.ball2_y;
+  if (gap < 10000) {
+    var data = this.memory[gap];
+    this.ball1.x = data.ball1_x;
+    this.ball1.y = data.ball1_y;
+    this.ball2.x = data.ball2_x;
+    this.ball2.y = data.ball2_y;
+  }
 };
 
 NPEngine.Collision2d.prototype.render = function (context) {
@@ -612,65 +692,3 @@ NPEngine.TimeBoard.prototype.render = function (context) {
     context.fillText("Time: " + timeFormat, 0, 22);
   }
 };
-NPEngine.Convert = function() {};
-
-NPEngine.Convert.prototype = Object.create(NPEngine.Convert.prototype);
-NPEngine.Convert.prototype.constructor = NPEngine.Convert;
-
-
-
-NPEngine.Convert.toDegrees = function(angle) {
-  return angle * (180/Math.PI);
-}
-
-NPEngine.Convert.toRadians = function(angle) {
-  return angle * (Math.PI/180);
-}
-
-NPEngine.Convert.toTimeFormat = function(milliseconds) {
-  milliseconds = parseInt(milliseconds/10);
-
-  var ms = milliseconds % 100;
-  milliseconds = (milliseconds - ms) / 100;
-  var secs = milliseconds % 60;
-  milliseconds = (milliseconds - secs) / 60;
-
-
-  var mins = milliseconds % 60;
-  if (mins < 10) {
-    mins = '0' + mins;
-  }
-  if (secs < 10) {
-    secs = '0' + secs;
-  }
-  if (ms < 10) {
-    ms = '0' + ms;
-  }
-//  var hrs = (milliseconds - mins) / 60;
-
-//  return hrs + ':' + mins + ':' + secs + '.' + ms;
-  return mins + ':' + secs + ':' + ms;
-}
-NPEngine.Point = function(positionX, positionY) {
-    this.x = positionX || 0;
-    this.y = positionY || 0;
-};
-
-NPEngine.Point.prototype = Object.create(NPEngine.Point.prototype);
-NPEngine.Point.prototype.constructor = NPEngine.Point;
-
-NPEngine.Point.prototype.setX = function(positionX) {
-    this.x = positionX || this.x;
-}
-
-NPEngine.Point.prototype.setY = function(positionY) {
-    this.y = positionY || this.y;
-}
-
-NPEngine.Point.prototype.getX = function() {
-    return this.x;
-}
-
-NPEngine.Point.prototype.getY = function() {
-    return this.y;
-}
