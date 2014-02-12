@@ -4,8 +4,8 @@ module.exports = function (grunt) {
     'src/npengine/*.js',
     'src/npengine/database/*.js',
     'src/npengine/display/*.js',
-    'src/npengine/display/base/*.js',
-    'src/npengine/display/extend/*.js',
+    'src/npengine/display/background/*.js',
+    'src/npengine/display/object/*.js',
     'src/npengine/renderer/*.js',
     'src/npengine/math/*.js'
   ];

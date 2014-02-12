@@ -22,7 +22,12 @@ NPEngine.Collision2d.prototype.update = function () {
 };
 
 NPEngine.Collision2d.prototype.render = function (context) {
-  cont
+  context.beginPath();
+  context.arc(this.ball1.x, this.ball1.y, 10, 0, 2*Math.PI, true);
+  context.arc(this.ball2.x, this.ball2.y, 10, 0, 2*Math.PI, true);
+  context.fillStyle = 'black';
+  context.fill();
+  context.stroke();
 };
 
 NPEngine.Collision2d.prototype.compute = function () {

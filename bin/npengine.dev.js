@@ -41,6 +41,18 @@ NPEngine.prototype.addDisplayObject = function(displayObject) {
   displayObject.compute();
   this.renderer.addChild(displayObject);
 };
+
+NPEngine.prototype.setBackground = function(displayObject) {
+  if (displayObject == null) {
+    throw new Error('Parameter can not be null');
+  }
+
+  if ((displayObject instanceof NPEngine.DisplayObject) == false) {
+    throw new Error('Parameter is not DisplayObject');
+  }
+
+  this.renderer.setBackground(displayObject);
+};
 NPEngine.DBHelper = function () {
 };
 
@@ -100,12 +112,14 @@ NPEngine.DBHelper.prototype.promiseOpen = function (displayObject) {
 NPEngine.DisplayObject = function() {
 };
 
-// constructor
 NPEngine.DisplayObject.prototype.constructor = NPEngine.DisplayObject;
 
 
 
 NPEngine.DisplayObject.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+};
+
+NPEngine.DisplayObject.prototype.compute = function () {
 };
 
 NPEngine.DisplayObject.prototype.update = function () {
@@ -114,15 +128,87 @@ NPEngine.DisplayObject.prototype.update = function () {
 NPEngine.DisplayObject.prototype.render = function (context) {
 };
 
-NPEngine.DisplayObject.prototype.compute = function () {
+NPEngine.Grid = function () {
+  NPEngine.DisplayObject.call(this);
+
+  // initial variables
+  this.width = 0;
+  this.height = 0;
 };
+
+NPEngine.Grid.prototype = Object.create(NPEngine.DisplayObject.prototype);
+NPEngine.Grid.prototype.constructor = NPEngine.Grid;
+
+
+
+NPEngine.Grid.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+  this.width = viewWidth;
+  this.height = viewHeight;
+  this.centerWidth = Math.round(viewWidth/2);
+  this.centerHeight = Math.round(viewHeight/2);
+};
+
+NPEngine.Grid.prototype.compute = function () {
+};
+
+NPEngine.Grid.prototype.update = function () {
+};
+
+NPEngine.Grid.prototype.render = function (context) {
+  context.beginPath();
+  context.lineWidth = 0.5;
+  context.strokeStyle = '#550000';
+
+  // draw left column line
+  for (var i=this.centerWidth-100; i>0; i-=100) {
+    context.moveTo(i, 0);
+    context.lineTo(i, this.height);
+  }
+
+  // draw right column line
+  for (var i=this.centerWidth+100; i<this.width; i+=100) {
+    context.moveTo(i, 0);
+    context.lineTo(i, this.height);
+  }
+
+  // draw upper row line
+  for (var i=this.centerHeight; i>0; i-=100) {
+    context.moveTo(0, i);
+    context.lineTo(this.width, i);
+  }
+
+  // draw lower row line
+  for (var i=this.centerHeight; i<this.height; i+=100) {
+    context.moveTo(0, i);
+    context.lineTo(this.width, i);
+  }
+  context.stroke();
+
+  // draw center line
+  context.beginPath();
+  context.lineWidth = 2;
+  context.strokeStyle = '#550000';
+  context.moveTo(this.centerWidth, 0);
+  context.lineTo(this.centerWidth, this.height);
+  context.moveTo(0, this.centerHeight);
+  context.lineTo(this.width, this.centerHeight);
+  context.stroke();
+};
+
+NPEngine.Grid.prototype.setWidth = function(width) {
+  this.width = width;
+};
+
+NPEngine.Grid.prototype.setHeight = function(height) {
+  this.width = width;
+}
 
 NPEngine.Collision2d = function () {
   NPEngine.DisplayObject.call(this);
 
   // initial variables
-  this.pivot = new NPEngine.Point(0, 300);
-  this.block = new NPEngine.Point(300, 300);
+  this.ball1 = new NPEngine.Point;
+  this.ball2 = new NPEngine.Point;
 };
 
 NPEngine.Collision2d.prototype = Object.create(NPEngine.DisplayObject.prototype);
@@ -131,10 +217,10 @@ NPEngine.Collision2d.prototype.constructor = NPEngine.Collision2d;
 
 
 NPEngine.Collision2d.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
-  this.pivot.x = 0;
-  this.pivot.y = parseInt(viewHeight/2);
-  this.block.x = parseInt(viewWidth/2);
-  this.block.y = parseInt(viewHeight/2);
+  this.ball1.x = -0.1;
+  this.ball1.y = 0.1;
+  this.ball2.x = 0.1;
+  this.ball2.y = 0;
 };
 
 NPEngine.Collision2d.prototype.update = function () {
@@ -142,16 +228,11 @@ NPEngine.Collision2d.prototype.update = function () {
 
 NPEngine.Collision2d.prototype.render = function (context) {
   context.beginPath();
-  context.lineWidth = 2;
-  context.moveTo(this.pivot.x, this.pivot.y);
-  context.lineTo(this.block.x, this.block.y);
+  context.arc(this.ball1.x, this.ball1.y, 10, 0, 2*Math.PI, true);
+  context.arc(this.ball2.x, this.ball2.y, 10, 0, 2*Math.PI, true);
+  context.fillStyle = 'black';
+  context.fill();
   context.stroke();
-
-//  context.beginPath();
-//  context.arc(this.pivot.x + this.circle.x * convertedLength, this.pivot.y + this.circle.y * convertedLength, convertedMass, 0, 2 * Math.PI, true);
-//  context.fillStyle = 'black';
-//  context.fill();
-//  context.stroke();
 };
 
 NPEngine.Collision2d.prototype.compute = function () {
@@ -307,6 +388,7 @@ NPEngine.Spring.prototype.compute = function () {
 NPEngine.CanvasRenderer = function () {
   this.DEBUG = true;
 
+  this.background = null;
   this.children = [];
 
   this.view = document.createElement("canvas");
@@ -348,6 +430,9 @@ NPEngine.CanvasRenderer.prototype.render = function () {
   this.time.update();
 
   // render
+  if (this.background != null) {
+    this.background.render(this.context);
+  }
   for (var i = 0; i < length; i++) {
     this.children[i].render(this.context);
   }
@@ -373,6 +458,11 @@ NPEngine.CanvasRenderer.prototype.setFps = function (visible) {
   else if (visible == false) {
     this.fps.visible = false;
   }
+};
+
+NPEngine.CanvasRenderer.prototype.setBackground = function (displayObject) {
+  displayObject.onAttachedRenderer(this.view.width, this.view.height);
+  this.background = displayObject;
 };
 NPEngine.FPSBoard = function() {
     this.visible = true;

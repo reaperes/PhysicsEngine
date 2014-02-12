@@ -41,3 +41,15 @@ NPEngine.prototype.addDisplayObject = function(displayObject) {
   displayObject.compute();
   this.renderer.addChild(displayObject);
 };
+
+NPEngine.prototype.setBackground = function(displayObject) {
+  if (displayObject == null) {
+    throw new Error('Parameter can not be null');
+  }
+
+  if ((displayObject instanceof NPEngine.DisplayObject) == false) {
+    throw new Error('Parameter is not DisplayObject');
+  }
+
+  this.renderer.setBackground(displayObject);
+};

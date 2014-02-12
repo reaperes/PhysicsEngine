@@ -9,10 +9,8 @@
 <body>
 <script type="text/javascript">
   var engine = new NPEngine;
-  var grid = new NPEngine.Grid;
-  var collision = new NPEngine.Collision2d;
-  engine.setBackground(grid);
-  engine.addDisplayObject(collision);
+  var spring = new NPEngine.Spring;
+  engine.addDisplayObject(spring);
 
   requestAnimationFrame(animate);
   function animate() {

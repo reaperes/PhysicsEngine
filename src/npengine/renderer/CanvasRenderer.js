@@ -1,6 +1,7 @@
 NPEngine.CanvasRenderer = function () {
   this.DEBUG = true;
 
+  this.background = null;
   this.children = [];
 
   this.view = document.createElement("canvas");
@@ -42,6 +43,9 @@ NPEngine.CanvasRenderer.prototype.render = function () {
   this.time.update();
 
   // render
+  if (this.background != null) {
+    this.background.render(this.context);
+  }
   for (var i = 0; i < length; i++) {
     this.children[i].render(this.context);
   }
@@ -67,4 +71,9 @@ NPEngine.CanvasRenderer.prototype.setFps = function (visible) {
   else if (visible == false) {
     this.fps.visible = false;
   }
+};
+
+NPEngine.CanvasRenderer.prototype.setBackground = function (displayObject) {
+  displayObject.onAttachedRenderer(this.view.width, this.view.height);
+  this.background = displayObject;
 };
