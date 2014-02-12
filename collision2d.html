@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Next PhysicsEngine (mini) - Spring</title>
+  <script type="text/javascript" src="bin/npengine.dev.js"></script>
+  <script type="text/javascript" src="lib/dat.gui.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+  var engine = new NPEngine;
+  var collision = new NPEngine.Collision2d;
+  engine.addDisplayObject(collision);
+
+  requestAnimationFrame(animate);
+  function animate() {
+    requestAnimationFrame(animate);
+    engine.render();
+  }
+</script>
+</body>
+</html>

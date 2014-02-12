@@ -18,7 +18,7 @@ NPEngine.FPSBoard.prototype.render = function(context) {
     var now = new Date;
     var delta = now - this.then;
 
-    if (this.count%100 == 0) {
+    if (this.count%80 == 0) {
         this.fps = Number((1000/delta).toFixed(1));
     }
 

@@ -53,9 +53,11 @@ NPEngine.CanvasRenderer.prototype.render = function () {
 };
 
 NPEngine.CanvasRenderer.prototype.addChild = function (displayObject) {
-  if (displayObject instanceof NPEngine.DisplayObject) {
-    this.children.push(displayObject);
+  if ((displayObject instanceof NPEngine.DisplayObject) == false) {
+    throw new Error();
   }
+  displayObject.onAttachedRenderer(this.view.width, this.view.height);
+  this.children.push(displayObject);
 };
 
 NPEngine.CanvasRenderer.prototype.setFps = function (visible) {

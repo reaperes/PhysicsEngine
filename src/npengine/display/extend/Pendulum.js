@@ -94,7 +94,7 @@ NPEngine.Pendulum.prototype.compute = function () {
   var period = this.period;
   var velocity = 0;
   var circumference = this.circumference;
-  console.log('period ' + period);
+
   for (var i=0; i<period; i++) {
     velocity = velocity+(-this.gravity*Math.sin(circumference/this.length))*this.deltaTime;
     circumference = circumference+velocity*this.deltaTime;
@@ -103,6 +103,4 @@ NPEngine.Pendulum.prototype.compute = function () {
     var yValue = this.length*Math.cos(thetaValue).toFixed(6);
     this.memory.push({time: i, theta: thetaValue, x: xValue, y: yValue});
   }
-  console.log(this.memory.length);
-  console.log(this.memory[0].x + ' ' + this.memory[0].y + ' ' + this.memory[this.memory.length-1].x + ' ' + this.memory[this.memory.length-1].y);
 };

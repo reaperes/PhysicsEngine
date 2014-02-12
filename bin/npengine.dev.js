@@ -103,6 +103,60 @@ NPEngine.DisplayObject = function() {
 // constructor
 NPEngine.DisplayObject.prototype.constructor = NPEngine.DisplayObject;
 
+
+
+NPEngine.DisplayObject.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+};
+
+NPEngine.DisplayObject.prototype.update = function () {
+};
+
+NPEngine.DisplayObject.prototype.render = function (context) {
+};
+
+NPEngine.DisplayObject.prototype.compute = function () {
+};
+
+NPEngine.Collision2d = function () {
+  NPEngine.DisplayObject.call(this);
+
+  // initial variables
+  this.pivot = new NPEngine.Point(0, 300);
+  this.block = new NPEngine.Point(300, 300);
+};
+
+NPEngine.Collision2d.prototype = Object.create(NPEngine.DisplayObject.prototype);
+NPEngine.Collision2d.prototype.constructor = NPEngine.Collision2d;
+
+
+
+NPEngine.Collision2d.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+  this.pivot.x = 0;
+  this.pivot.y = parseInt(viewHeight/2);
+  this.block.x = parseInt(viewWidth/2);
+  this.block.y = parseInt(viewHeight/2);
+};
+
+NPEngine.Collision2d.prototype.update = function () {
+};
+
+NPEngine.Collision2d.prototype.render = function (context) {
+  context.beginPath();
+  context.lineWidth = 2;
+  context.moveTo(this.pivot.x, this.pivot.y);
+  context.lineTo(this.block.x, this.block.y);
+  context.stroke();
+
+//  context.beginPath();
+//  context.arc(this.pivot.x + this.circle.x * convertedLength, this.pivot.y + this.circle.y * convertedLength, convertedMass, 0, 2 * Math.PI, true);
+//  context.fillStyle = 'black';
+//  context.fill();
+//  context.stroke();
+};
+
+NPEngine.Collision2d.prototype.compute = function () {
+};
+
 NPEngine.Pendulum = function () {
   NPEngine.DisplayObject.call(this);
 
@@ -199,7 +253,7 @@ NPEngine.Pendulum.prototype.compute = function () {
   var period = this.period;
   var velocity = 0;
   var circumference = this.circumference;
-  console.log('period ' + period);
+
   for (var i=0; i<period; i++) {
     velocity = velocity+(-this.gravity*Math.sin(circumference/this.length))*this.deltaTime;
     circumference = circumference+velocity*this.deltaTime;
@@ -208,8 +262,46 @@ NPEngine.Pendulum.prototype.compute = function () {
     var yValue = this.length*Math.cos(thetaValue).toFixed(6);
     this.memory.push({time: i, theta: thetaValue, x: xValue, y: yValue});
   }
-  console.log(this.memory.length);
-  console.log(this.memory[0].x + ' ' + this.memory[0].y + ' ' + this.memory[this.memory.length-1].x + ' ' + this.memory[this.memory.length-1].y);
+};
+
+NPEngine.Spring = function () {
+  NPEngine.DisplayObject.call(this);
+
+  // initial variables
+  this.pivot = new NPEngine.Point(0, 300);
+  this.block = new NPEngine.Point(300, 300);
+};
+
+NPEngine.Spring.prototype = Object.create(NPEngine.DisplayObject.prototype);
+NPEngine.Spring.prototype.constructor = NPEngine.Spring;
+
+
+
+NPEngine.Spring.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+  this.pivot.x = 0;
+  this.pivot.y = parseInt(viewHeight/2);
+  this.block.x = parseInt(viewWidth/2);
+  this.block.y = parseInt(viewHeight/2);
+};
+
+NPEngine.Spring.prototype.update = function () {
+};
+
+NPEngine.Spring.prototype.render = function (context) {
+  context.beginPath();
+  context.lineWidth = 2;
+  context.moveTo(this.pivot.x, this.pivot.y);
+  context.lineTo(this.block.x, this.block.y);
+  context.stroke();
+
+//  context.beginPath();
+//  context.arc(this.pivot.x + this.circle.x * convertedLength, this.pivot.y + this.circle.y * convertedLength, convertedMass, 0, 2 * Math.PI, true);
+//  context.fillStyle = 'black';
+//  context.fill();
+//  context.stroke();
+};
+
+NPEngine.Spring.prototype.compute = function () {
 };
 
 NPEngine.CanvasRenderer = function () {
@@ -267,9 +359,11 @@ NPEngine.CanvasRenderer.prototype.render = function () {
 };
 
 NPEngine.CanvasRenderer.prototype.addChild = function (displayObject) {
-  if (displayObject instanceof NPEngine.DisplayObject) {
-    this.children.push(displayObject);
+  if ((displayObject instanceof NPEngine.DisplayObject) == false) {
+    throw new Error();
   }
+  displayObject.onAttachedRenderer(this.view.width, this.view.height);
+  this.children.push(displayObject);
 };
 
 NPEngine.CanvasRenderer.prototype.setFps = function (visible) {
@@ -300,7 +394,7 @@ NPEngine.FPSBoard.prototype.render = function(context) {
     var now = new Date;
     var delta = now - this.then;
 
-    if (this.count%100 == 0) {
+    if (this.count%80 == 0) {
         this.fps = Number((1000/delta).toFixed(1));
     }
 
