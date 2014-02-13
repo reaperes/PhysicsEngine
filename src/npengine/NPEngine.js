@@ -14,6 +14,9 @@ NPEngine.prototype.start = function() {
   this.renderer.onEngineStart();
   requestAnimationFrame(run);
   function run() {
+    if (!that.isStart) {
+      return ;
+    }
     requestAnimationFrame(run);
     that.renderer.render();
   }
@@ -25,7 +28,7 @@ NPEngine.prototype.stop = function() {
   this.renderer.onEngineStop();
 };
 
-NPEngine.prototype.setDebug = function(flag) {
+NPEngine.prototype.setFps = function(flag) {
   this.renderer.setFps(flag);
 };
 

@@ -1,5 +1,5 @@
 NPEngine.CanvasRenderer = function () {
-  this.DEBUG = true;
+  this.DEBUG = false;
 
   this.grid = null;
   this.children = [];

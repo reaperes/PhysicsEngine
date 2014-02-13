@@ -14,6 +14,128 @@
   engine.setGrid(grid);
   engine.addDisplayObject(collision);
   engine.start();
+
+
+  // control module
+  var controlBox = function () {
+    this.mass1 = 2;
+    this.mass2 = 2;
+    this.k = 10000;
+    this.mu = 50;
+    this.diameter1 = 1;
+    this.diameter2 = 1;
+    this.ball1_x = -1;
+    this.ball1_y = 1;
+    this.ball2_x = 1;
+    this.ball2_y = 1;
+    this.velocity1_x = 1;
+    this.velocity1_y = 0;
+    this.velocity2_x = 0;
+    this.velocity2_y = 0;
+  };
+
+  window.onload = function () {
+    var box = new controlBox();
+    var gui = new dat.GUI();
+
+    var mass1 = gui.add(box, 'mass1', 1, 10);
+    mass1.onChange(function (value) {
+      engine.stop();
+      collision.setMass1(Math.round(value));
+      engine.start();
+    });
+
+    var mass2 = gui.add(box, 'mass2', 1, 10);
+    mass2.onChange(function (value) {
+      engine.stop();
+      collision.setMass2(Math.round(value));
+      engine.start();
+    });
+
+    var k = gui.add(box, 'k', 0, 20000);
+    k.onChange(function (value) {
+      engine.stop();
+      collision.setK(Math.round(value));
+      engine.start();
+    });
+
+    var mu = gui.add(box, 'mu', 0, 200);
+    mu.onChange(function (value) {
+      engine.stop();
+      collision.setMu(Math.round(value));
+      engine.start();
+    });
+
+    var diameter1 = gui.add(box, 'diameter1', 0.1, 2);
+    diameter1.onChange(function (value) {
+      engine.stop();
+      collision.setDiameter1(value);
+      engine.start();
+    });
+
+    var diameter2 = gui.add(box, 'diameter2', 0.1, 2);
+    diameter2.onChange(function (value) {
+      engine.stop();
+      collision.setDiameter2(value);
+      engine.start();
+    });
+
+    var ball1_x = gui.add(box, 'ball1_x', -4, 4);
+    ball1_x.onChange(function (value) {
+      engine.stop();
+      collision.setBall1_x(value);
+      engine.start();
+    });
+
+    var ball1_y = gui.add(box, 'ball1_y', -4, 4);
+    ball1_y.onChange(function (value) {
+      engine.stop();
+      collision.setBall1_y(value);
+      engine.start();
+    });
+
+    var ball2_x = gui.add(box, 'ball2_x', -4, 4);
+    ball1_y.onChange(function (value) {
+      engine.stop();
+      collision.setBall2_x(value);
+      engine.start();
+    });
+
+    var ball2_y = gui.add(box, 'ball2_y', -4, 4);
+    ball1_y.onChange(function (value) {
+      engine.stop();
+      collision.setBall2_y(value);
+      engine.start();
+    });
+
+    var velocity1_x = gui.add(box, 'velocity1_x', -4, 4);
+    velocity1_x.onChange(function (value) {
+      engine.stop();
+      collision.setVelocity1_x(value);
+      engine.start();
+    });
+
+    var velocity1_y = gui.add(box, 'velocity1_y', -4, 4);
+    velocity1_y.onChange(function (value) {
+      engine.stop();
+      collision.setVelocity1_y(value);
+      engine.start();
+    });
+
+    var velocity2_x = gui.add(box, 'velocity2_x', -4, 4);
+    velocity2_x.onChange(function (value) {
+      engine.stop();
+      collision.setVelocity2_x(value);
+      engine.start();
+    });
+
+    var velocity2_y = gui.add(box, 'velocity2_y', -4, 4);
+    velocity2_y.onChange(function (value) {
+      engine.stop();
+      collision.setVelocity2_y(value);
+      engine.start();
+    });
+  };
 </script>
 </body>
 </html>
