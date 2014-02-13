@@ -9,10 +9,8 @@ NPEngine.Pendulum = function () {
   this.deltaTime = 0.01;
 
   // initial position
-  this.pivot = new NPEngine.Point(400, 0);
-  this.circle = new NPEngine.Point;
-
-  this.init();
+  this.pivot = new NPEngine.Point;
+  this.curCircle = new NPEngine.Point;
 };
 
 NPEngine.Pendulum.prototype = Object.create(NPEngine.DisplayObject.prototype);
@@ -20,22 +18,40 @@ NPEngine.Pendulum.prototype.constructor = NPEngine.Pendulum;
 
 
 
-NPEngine.Pendulum.prototype.init = function() {
-  this.period = Math.round((2 * Math.PI * Math.sqrt(this.length/this.gravity))*(1/this.deltaTime));
-  this.circumference = this.length * this.theta0;
+NPEngine.Pendulum.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+  this.pivot.x = Math.round(viewWidth/2);
+  this.pivot.y = 0;
+};
+
+NPEngine.Pendulum.prototype.onStart = function() {
   this.startTime = new Date().getTime();
 };
 
-NPEngine.Pendulum.prototype.toString = function() {
-  return 'Pendulum';
+NPEngine.Pendulum.prototype.onStop = function() {
+};
+
+NPEngine.Pendulum.prototype.compute = function () {
+  this.memory = [];
+  this.period = Math.round((2 * Math.PI * Math.sqrt(this.length/this.gravity))*(1/this.deltaTime));
+  var velocity = 0;
+  var circumference = this.length * this.theta0;
+
+  for (var i=0; i<this.period; i++) {
+    velocity = velocity+(-this.gravity*Math.sin(circumference/this.length))*this.deltaTime;
+    circumference = circumference+velocity*this.deltaTime;
+    var thetaValue = circumference/this.length;
+    var xValue = this.length*Math.sin(thetaValue).toFixed(6);
+    var yValue = this.length*Math.cos(thetaValue).toFixed(6);
+    this.memory.push({time: i, theta: thetaValue, x: xValue, y: yValue});
+  }
 };
 
 NPEngine.Pendulum.prototype.update = function () {
   var gap = Math.round((new Date().getTime()-this.startTime)/(this.deltaTime*1000)); // millisecond to 0.01 second
   var phase = Math.round(gap%this.period);
 
-  this.circle.x = this.memory[phase].x;
-  this.circle.y = this.memory[phase].y;
+  this.curCircle.x = this.memory[phase].x;
+  this.curCircle.y = this.memory[phase].y;
 };
 
 NPEngine.Pendulum.prototype.render = function (context) {
@@ -44,11 +60,11 @@ NPEngine.Pendulum.prototype.render = function (context) {
   context.beginPath();
   context.lineWidth = 2;
   context.moveTo(this.pivot.x, this.pivot.y);
-  context.lineTo(this.pivot.x + this.circle.x * convertedLength, this.pivot.y + this.circle.y * convertedLength);
+  context.lineTo(this.pivot.x + this.curCircle.x * convertedLength, this.pivot.y + this.curCircle.y * convertedLength);
   context.stroke();
 
   context.beginPath();
-  context.arc(this.pivot.x + this.circle.x * convertedLength, this.pivot.y + this.circle.y * convertedLength, convertedMass, 0, 2 * Math.PI, true);
+  context.arc(this.pivot.x + this.curCircle.x * convertedLength, this.pivot.y + this.curCircle.y * convertedLength, convertedMass, 0, 2 * Math.PI, true);
   context.fillStyle = 'black';
   context.fill();
   context.stroke();
@@ -85,22 +101,4 @@ NPEngine.Pendulum.prototype.setTheta0 = function (degree) {
 
 NPEngine.Pendulum.prototype.setDeltaT = function (value) {
   this.deltaTime = value;
-};
-
-NPEngine.Pendulum.prototype.compute = function () {
-  this.init();
-
-  this.memory = [];
-  var period = this.period;
-  var velocity = 0;
-  var circumference = this.circumference;
-
-  for (var i=0; i<period; i++) {
-    velocity = velocity+(-this.gravity*Math.sin(circumference/this.length))*this.deltaTime;
-    circumference = circumference+velocity*this.deltaTime;
-    var thetaValue = circumference/this.length;
-    var xValue = this.length*Math.sin(thetaValue).toFixed(6);
-    var yValue = this.length*Math.cos(thetaValue).toFixed(6);
-    this.memory.push({time: i, theta: thetaValue, x: xValue, y: yValue});
-  }
 };

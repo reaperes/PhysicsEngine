@@ -11,61 +11,48 @@
   var engine = new NPEngine;
   var pendulum = new NPEngine.Pendulum;
   engine.addDisplayObject(pendulum);
-
-  requestAnimationFrame(animate);
-  function animate() {
-    requestAnimationFrame(animate);
-    engine.render();
-  }
+  engine.start();
 
 
-
+  // control module
   var controlBox = function () {
-    this.fps = true;
     this.mass = 10;
     this.length = 5;
     this.theta0 = 0.785398;
     this.ΔdeltaT = 0.01;
-    this.restart = function () {
-      engine.stop();
-      pendulum.compute();
-      engine.start();
-    };
   };
 
   window.onload = function () {
     var control = new controlBox();
     var gui = new dat.GUI();
-    var fps = gui.add(control, 'fps');
-    fps.onFinishChange(function (value) {
-      engine.setDebug(value);
-    });
 
     var mass = gui.add(control, 'mass', 1, 100);
     mass.onChange(function (value) {
       engine.stop();
       pendulum.setMass(Math.round(value));
+      engine.start();
     });
 
     var length = gui.add(control, 'length', 1, 10);
     length.onChange(function (value) {
       engine.stop();
       pendulum.setLength(Math.round(value));
+      engine.start();
     });
 
     var theta0 = gui.add(control, 'theta0', -90, 90);
     theta0.onChange(function (value) {
       engine.stop();
       pendulum.setTheta0(Math.round(value));
+      engine.start();
     });
 
     var ΔdeltaT = gui.add(control, 'ΔdeltaT', 0.01, 0.1);
     ΔdeltaT.onChange(function (value) {
       engine.stop();
       pendulum.setDeltaT(value);
+      engine.start();
     });
-
-    gui.add(control, 'restart');
   };
 </script>
 </body>
