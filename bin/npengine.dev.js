@@ -121,6 +121,21 @@ NPEngine.Point.prototype.getY = function() {
 NPEngine.Point.prototype.distance = function(target) {
   return Math.sqrt(Math.pow((this.x-target.x),2)+Math.pow((this.y-target.y),2));
 };
+
+NPEngine.Point.prototype.clone = function() {
+  return new NPEngine.Point(this.x, this.y);
+}
+NPEngine.Rectangle = function(x, y, width, height) {
+  this.x = x || 0;
+  this.y = y || 0;
+  this.width = width || 0;
+  this.height = height || 0;
+  this.center = new NPEngine.Point;
+};
+
+NPEngine.Rectangle.prototype.constructor = NPEngine.Rectangle;
+
+
 NPEngine.DBHelper = function () {
 };
 
@@ -187,6 +202,9 @@ NPEngine.DisplayObject.prototype.constructor = NPEngine.DisplayObject;
 NPEngine.DisplayObject.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
 };
 
+NPEngine.DisplayObject.prototype.onAttachedGrid = function (gridObject) {
+};
+
 NPEngine.DisplayObject.prototype.onStart = function() {
 };
 
@@ -200,9 +218,6 @@ NPEngine.DisplayObject.prototype.update = function () {
 };
 
 NPEngine.DisplayObject.prototype.render = function (context) {
-};
-
-NPEngine.DisplayObject.prototype.onAttachedGrid = function (gridObject) {
 };
 
 NPEngine.Grid = function () {
@@ -286,7 +301,15 @@ NPEngine.Grid.prototype.convertToGridPoint = function(point) {
   return new NPEngine.Point(convertedX, convertedY);
 };
 
-NPEngine.Grid.prototype.convertToGridValue = function(value) {
+NPEngine.Grid.prototype.convertToVectorValueX = function(x) {
+  return this.centerWidth + x * 100;
+};
+
+NPEngine.Grid.prototype.convertToVectorValueY = function(y) {
+  return this.centerWidth + y * -100;
+};
+
+NPEngine.Grid.prototype.convertToGridScalaValue = function(value) {
   return value*100;
 };
 
@@ -317,6 +340,10 @@ NPEngine.Collision2d.prototype.constructor = NPEngine.Collision2d;
 
 
 NPEngine.Collision2d.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+};
+
+NPEngine.Collision2d.prototype.onAttachedGrid = function (gridObject) {
+  this.grid = gridObject;
 };
 
 NPEngine.Collision2d.prototype.onStart = function() {
@@ -376,8 +403,8 @@ NPEngine.Collision2d.prototype.update = function () {
 NPEngine.Collision2d.prototype.render = function (context) {
   var convertedBall1 = this.grid.convertToGridPoint(this.curBall1);
   var convertedBall2 = this.grid.convertToGridPoint(this.curBall2);
-  var convertedDiameter1 = this.grid.convertToGridValue(this.diameter1);
-  var convertedDiameter2 = this.grid.convertToGridValue(this.diameter2);
+  var convertedDiameter1 = this.grid.convertToGridScalaValue(this.diameter1);
+  var convertedDiameter2 = this.grid.convertToGridScalaValue(this.diameter2);
 
   context.beginPath();
   context.fillStyle = 'black';
@@ -390,10 +417,6 @@ NPEngine.Collision2d.prototype.render = function (context) {
   context.arc(convertedBall2.x, convertedBall2.y, convertedDiameter2, 0, 2*Math.PI, true);
   context.fill();
   context.stroke();
-};
-
-NPEngine.Collision2d.prototype.onAttachedGrid = function (gridObject) {
-  this.grid = gridObject;
 };
 
 NPEngine.Collision2d.prototype.setMass1 = function(value) {
@@ -528,18 +551,6 @@ NPEngine.Pendulum.prototype.setPivot = function (x, y) {
   this.pivot.y = y;
 };
 
-/**
- * Set pendulum's ball by relative pivot's coordinates
- *
- * @method setCircle
- * @param x {Number} The X coord of the point to circle from pivot
- * @param y {Number} The Y coord of the point to circle from pivot
- */
-NPEngine.Pendulum.prototype.setCircleCoordsFromPivot = function (x, y) {
-  this.circle.x = this.pivot.x + x;
-  this.circle.y = this.pivot.y + y;
-};
-
 NPEngine.Pendulum.prototype.setMass = function (value) {
   this.mass = value;
 };
@@ -558,9 +569,21 @@ NPEngine.Pendulum.prototype.setDeltaT = function (value) {
 NPEngine.Spring = function () {
   NPEngine.DisplayObject.call(this);
 
+  // final variables
+  this.pivot = new NPEngine.Point(-4, 0);
+  this.block = new NPEngine.Rectangle();
+  this.block.width = 1;     // m
+  this.block.height = 0.4;  // m
+
   // initial variables
-  this.pivot = new NPEngine.Point(0, 300);
-  this.block = new NPEngine.Point(300, 300);
+  this.mass = 2;      // kg
+  this.k = 100;       // N/m
+  this.gravity = 9.8; // m/s^2
+  this.mu = 3;        // N s/m
+  this.block.center.x = 4;    // m
+  this.block.center.y = 0;    // m/s
+  this.velocity = 0;  // m/s
+  this.deltaTime = 0.01;
 };
 
 NPEngine.Spring.prototype = Object.create(NPEngine.DisplayObject.prototype);
@@ -569,30 +592,57 @@ NPEngine.Spring.prototype.constructor = NPEngine.Spring;
 
 
 NPEngine.Spring.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
-  this.pivot.x = 0;
-  this.pivot.y = parseInt(viewHeight/2);
-  this.block.x = parseInt(viewWidth/2);
-  this.block.y = parseInt(viewHeight/2);
+};
+
+NPEngine.Spring.prototype.onAttachedGrid = function (gridObject) {
+  this.grid = gridObject;
+};
+
+NPEngine.Spring.prototype.onStart = function() {
+  this.convertedPivot = this.grid.convertToGridPoint(this.pivot);
+  this.halfOfConvertedBlockWidth = parseInt(this.grid.convertToGridScalaValue(this.block.width)/2);
+  this.halfOfConvertedBlockHeight = parseInt(this.grid.convertToGridScalaValue(this.block.height)/2);
+  this.convertedBlockPosY = this.convertedPivot.y;
+  this.startTime = new Date().getTime();
+};
+
+NPEngine.Spring.prototype.onStop = function() {
+};
+
+NPEngine.Spring.prototype.compute = function () {
+  this.memory = [];
+  var blockPosX = this.block.center.x;
+  var velocity = this.velocity;
+  var force = -this.k*blockPosX-this.mu*velocity;
+  this.memory.push({time: 0, blockPosX: blockPosX});
+
+  for (var i=1; i<10000; i++) {
+    velocity = velocity+force/this.mass*this.deltaTime;
+    blockPosX = blockPosX+velocity*this.deltaTime;
+    force = -this.k*blockPosX-this.mu*velocity;
+    this.memory.push({time: i, blockPosX: blockPosX});
+  }
 };
 
 NPEngine.Spring.prototype.update = function () {
+  var gap = Math.round((new Date().getTime()-this.startTime)/(this.deltaTime/0.001));
+
+  var data = this.memory[gap];
+  this.convertedBlockPosX = this.grid.convertToVectorValueX(data.blockPosX);
 };
 
 NPEngine.Spring.prototype.render = function (context) {
   context.beginPath();
-  context.lineWidth = 2;
-  context.moveTo(this.pivot.x, this.pivot.y);
-  context.lineTo(this.block.x, this.block.y);
+  context.lineWidth = 4;
+  context.moveTo(this.convertedPivot.x, this.convertedPivot.y);
+  context.lineTo(this.convertedBlockPosX, this.convertedBlockPosY);
   context.stroke();
 
-//  context.beginPath();
-//  context.arc(this.pivot.x + this.circle.x * convertedLength, this.pivot.y + this.circle.y * convertedLength, convertedMass, 0, 2 * Math.PI, true);
-//  context.fillStyle = 'black';
-//  context.fill();
-//  context.stroke();
-};
-
-NPEngine.Spring.prototype.compute = function () {
+  context.beginPath();
+  context.rect(this.convertedBlockPosX-this.halfOfConvertedBlockWidth, this.convertedBlockPosY-this.halfOfConvertedBlockHeight, this.halfOfConvertedBlockWidth*2, this.halfOfConvertedBlockHeight*2);
+  context.fillStyle = 'black';
+  context.fill();
+  context.stroke();
 };
 
 NPEngine.CanvasRenderer = function () {
@@ -655,6 +705,7 @@ NPEngine.CanvasRenderer.prototype.addChild = function (displayObject) {
   }
   displayObject.onAttachedRenderer(this.view.width, this.view.height);
   this.children.push(displayObject);
+
   if (this.grid != null) {
     displayObject.onAttachedGrid(this.grid);
   }
