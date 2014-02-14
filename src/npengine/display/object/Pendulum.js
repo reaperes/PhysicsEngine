@@ -70,11 +70,6 @@ NPEngine.Pendulum.prototype.render = function (context) {
   context.stroke();
 };
 
-NPEngine.Pendulum.prototype.setPivot = function (x, y) {
-  this.pivot.x = x;
-  this.pivot.y = y;
-};
-
 NPEngine.Pendulum.prototype.setMass = function (value) {
   this.mass = value;
 };
