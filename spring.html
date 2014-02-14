@@ -9,14 +9,11 @@
 <body>
 <script type="text/javascript">
   var engine = new NPEngine;
+  var grid = new NPEngine.Grid;
   var spring = new NPEngine.Spring;
+  engine.setGrid(grid);
   engine.addDisplayObject(spring);
-
-  requestAnimationFrame(animate);
-  function animate() {
-    requestAnimationFrame(animate);
-    engine.render();
-  }
+  engine.start();
 </script>
 </body>
 </html>

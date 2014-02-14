@@ -79,6 +79,14 @@ NPEngine.Grid.prototype.convertToGridPoint = function(point) {
   return new NPEngine.Point(convertedX, convertedY);
 };
 
-NPEngine.Grid.prototype.convertToGridValue = function(value) {
+NPEngine.Grid.prototype.convertToVectorValueX = function(x) {
+  return this.centerWidth + x * 100;
+};
+
+NPEngine.Grid.prototype.convertToVectorValueY = function(y) {
+  return this.centerWidth + y * -100;
+};
+
+NPEngine.Grid.prototype.convertToGridScalaValue = function(value) {
   return value*100;
 };
