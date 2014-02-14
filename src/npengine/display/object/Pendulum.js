@@ -32,17 +32,59 @@ NPEngine.Pendulum.prototype.onStop = function() {
 
 NPEngine.Pendulum.prototype.compute = function () {
   this.memory = [];
-  this.period = Math.round((2 * Math.PI * Math.sqrt(this.length/this.gravity))*(1/this.deltaTime));
-  var velocity = 0;
-  var circumference = this.length * this.theta0;
+  if (this.theta0 < 0.5) { /* theta0 is less than about 30 degrees */
+    this.period = Math.round((2 * Math.PI * Math.sqrt(this.length/this.gravity))*(1/this.deltaTime));
+    var velocity = 0;
+    var circumference = this.length * this.theta0;
 
-  for (var i=0; i<this.period; i++) {
-    velocity = velocity+(-this.gravity*Math.sin(circumference/this.length))*this.deltaTime;
-    circumference = circumference+velocity*this.deltaTime;
-    var thetaValue = circumference/this.length;
-    var xValue = this.length*Math.sin(thetaValue).toFixed(6);
-    var yValue = this.length*Math.cos(thetaValue).toFixed(6);
-    this.memory.push({time: i, theta: thetaValue, x: xValue, y: yValue});
+    for (var i=0; i<this.period; i++) {
+      velocity = velocity+(-this.gravity*Math.sin(circumference/this.length))*this.deltaTime;
+      circumference = circumference+velocity*this.deltaTime;
+      var thetaValue = circumference/this.length;
+      var xValue = this.length*Math.sin(thetaValue).toFixed(6);
+      var yValue = this.length*Math.cos(thetaValue).toFixed(6);
+      this.memory.push({time: i, theta: thetaValue, x: xValue, y: yValue});
+    }
+  }
+  else { /* for theta0 !<< 1 */
+    // for performance, I apply uncommon algorithm.
+    var flag = false;             // it is used if it is after half or before half
+    var isSignPositive = false;
+    if (this.theta0 > 0) {
+      isSignPositive = true;
+    }
+
+    var velocity = 0;
+    var circumference = this.length * this.theta0;
+    var firstCircumference = circumference;
+    var lastGap = Number.MAX_VALUE;
+
+    for (var i=0; ; i++) {
+      velocity = velocity+(-this.gravity*Math.sin(circumference/this.length))*this.deltaTime;
+      circumference = circumference+velocity*this.deltaTime;
+      var thetaValue = circumference/this.length;
+      var xValue = this.length*Math.sin(thetaValue).toFixed(6);
+      var yValue = this.length*Math.cos(thetaValue).toFixed(6);
+      this.memory.push({time: i, theta: thetaValue, x: xValue, y: yValue});
+
+      if (flag == false) {
+        if ((circumference>0) != isSignPositive) {
+          flag = true;
+        }
+      }
+      else {
+        if ((circumference>0) == isSignPositive) {
+          var gap = Math.abs(firstCircumference - circumference);
+          if (lastGap < gap) {
+            this.period = i;
+            return ;
+          }
+          else {
+            lastGap = gap;
+          }
+        }
+      }
+    }
   }
 };
 
@@ -68,11 +110,6 @@ NPEngine.Pendulum.prototype.render = function (context) {
   context.fillStyle = 'black';
   context.fill();
   context.stroke();
-};
-
-NPEngine.Pendulum.prototype.setPivot = function (x, y) {
-  this.pivot.x = x;
-  this.pivot.y = y;
 };
 
 NPEngine.Pendulum.prototype.setMass = function (value) {
