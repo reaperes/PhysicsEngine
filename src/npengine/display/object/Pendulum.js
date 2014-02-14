@@ -75,18 +75,6 @@ NPEngine.Pendulum.prototype.setPivot = function (x, y) {
   this.pivot.y = y;
 };
 
-/**
- * Set pendulum's ball by relative pivot's coordinates
- *
- * @method setCircle
- * @param x {Number} The X coord of the point to circle from pivot
- * @param y {Number} The Y coord of the point to circle from pivot
- */
-NPEngine.Pendulum.prototype.setCircleCoordsFromPivot = function (x, y) {
-  this.circle.x = this.pivot.x + x;
-  this.circle.y = this.pivot.y + y;
-};
-
 NPEngine.Pendulum.prototype.setMass = function (value) {
   this.mass = value;
 };
