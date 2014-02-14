@@ -12,7 +12,7 @@ NPEngine.Spring = function () {
   this.k = 100;       // N/m
   this.gravity = 9.8; // m/s^2
   this.mu = 3;        // N s/m
-  this.block.center.x = 4;    // m
+  this.block.center.x = 1;    // m
   this.block.center.y = 0;    // m/s
   this.velocity = 0;  // m/s
   this.deltaTime = 0.01;
@@ -75,4 +75,28 @@ NPEngine.Spring.prototype.render = function (context) {
   context.fillStyle = 'black';
   context.fill();
   context.stroke();
+};
+
+NPEngine.Spring.prototype.setMass = function (value) {
+  this.mass = value;
+};
+
+NPEngine.Spring.prototype.setK = function (value) {
+  this.k = value;
+};
+
+NPEngine.Spring.prototype.setGravity = function (value) {
+  this.gravity = value;
+};
+
+NPEngine.Spring.prototype.setMu = function (value) {
+  this.mu = value;
+};
+
+NPEngine.Spring.prototype.setX = function (value) {
+  this.block.center.x = value;
+};
+
+NPEngine.Spring.prototype.setVelocity = function (value) {
+  this.velocity = value;
 };

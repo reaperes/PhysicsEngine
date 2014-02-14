@@ -14,6 +14,63 @@
   engine.setGrid(grid);
   engine.addDisplayObject(spring);
   engine.start();
+
+  // control module
+  var controlBox = function () {
+    this.mass = 2;
+    this.k = 100;
+    this.gravity = 9.8;
+    this.mu = 3;
+    this.x = 1;
+    this.velocity = 0;
+  };
+
+  window.onload = function () {
+    var box = new controlBox();
+    var gui = new dat.GUI();
+
+    var mass = gui.add(box, 'mass', 0.1, 5);
+    mass.onChange(function (value) {
+      engine.stop();
+      spring.setMass(value);
+      engine.start();
+    });
+
+    var k = gui.add(box, 'k', 10, 1000);
+    k.onChange(function (value) {
+      engine.stop();
+      spring.setK(value);
+      engine.start();
+    });
+
+    var gravity = gui.add(box, 'gravity', 1, 100);
+    gravity.onChange(function (value) {
+      engine.stop();
+      spring.setGravity(value);
+      engine.start();
+    });
+
+    var mu = gui.add(box, 'mu', 0, 30);
+    mu.onChange(function (value) {
+      engine.stop();
+      spring.setMu(value);
+      engine.start();
+    });
+
+    var x = gui.add(box, 'x', -4, 4);
+    x.onChange(function (value) {
+      engine.stop();
+      spring.setX(value);
+      engine.start();
+    });
+
+    var velocity = gui.add(box, 'velocity', -30, 30);
+    velocity.onChange(function (value) {
+      engine.stop();
+      spring.setVelocity(value);
+      engine.start();
+    });
+  }
 </script>
 </body>
 </html>
