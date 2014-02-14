@@ -58,6 +58,7 @@ NPEngine.CanvasRenderer.prototype.addChild = function (displayObject) {
   }
   displayObject.onAttachedRenderer(this.view.width, this.view.height);
   this.children.push(displayObject);
+
   if (this.grid != null) {
     displayObject.onAttachedGrid(this.grid);
   }

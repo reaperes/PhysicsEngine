@@ -25,3 +25,7 @@ NPEngine.Point.prototype.getY = function() {
 NPEngine.Point.prototype.distance = function(target) {
   return Math.sqrt(Math.pow((this.x-target.x),2)+Math.pow((this.y-target.y),2));
 };
+
+NPEngine.Point.prototype.clone = function() {
+  return new NPEngine.Point(this.x, this.y);
+}
