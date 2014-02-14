@@ -27,6 +27,10 @@ NPEngine.Collision2d.prototype.constructor = NPEngine.Collision2d;
 NPEngine.Collision2d.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
 };
 
+NPEngine.Collision2d.prototype.onAttachedGrid = function (gridObject) {
+  this.grid = gridObject;
+};
+
 NPEngine.Collision2d.prototype.onStart = function() {
   this.startTime = new Date().getTime();
 };
@@ -84,8 +88,8 @@ NPEngine.Collision2d.prototype.update = function () {
 NPEngine.Collision2d.prototype.render = function (context) {
   var convertedBall1 = this.grid.convertToGridPoint(this.curBall1);
   var convertedBall2 = this.grid.convertToGridPoint(this.curBall2);
-  var convertedDiameter1 = this.grid.convertToGridValue(this.diameter1);
-  var convertedDiameter2 = this.grid.convertToGridValue(this.diameter2);
+  var convertedDiameter1 = this.grid.convertToGridScalaValue(this.diameter1);
+  var convertedDiameter2 = this.grid.convertToGridScalaValue(this.diameter2);
 
   context.beginPath();
   context.fillStyle = 'black';
@@ -98,10 +102,6 @@ NPEngine.Collision2d.prototype.render = function (context) {
   context.arc(convertedBall2.x, convertedBall2.y, convertedDiameter2, 0, 2*Math.PI, true);
   context.fill();
   context.stroke();
-};
-
-NPEngine.Collision2d.prototype.onAttachedGrid = function (gridObject) {
-  this.grid = gridObject;
 };
 
 NPEngine.Collision2d.prototype.setMass1 = function(value) {
