@@ -1,4 +1,5 @@
 NPEngine = function() {
+  this.fps = new NPEngine.FPS();
   this.state = 'create';    // create, init, ready, start, resume, pause, stop, destroy
 
   var that = this;
@@ -60,8 +61,10 @@ NPEngine.prototype.resume = function() {
       return ;
     }
     requestAnimationFrame(run);
+    that.fps.begin();
     that.renderer.update();
     that.renderer.render();
+    that.fps.end();
   }
 };
 

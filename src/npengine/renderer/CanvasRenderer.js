@@ -1,6 +1,4 @@
 NPEngine.CanvasRenderer = function () {
-  this.DEBUG = false;
-
   this.grid = null;
   this.children = [];
 
@@ -10,10 +8,6 @@ NPEngine.CanvasRenderer = function () {
   document.body.appendChild(this.view);
 
   this.context = this.view.getContext("2d");
-
-  if (this.DEBUG) {
-    this.fps = new NPEngine.FPSBoard();w
-  }
 
   this.timeBoard = new NPEngine.TimeBoard;
 };
@@ -71,15 +65,6 @@ NPEngine.CanvasRenderer.prototype.addChild = function (displayObject) {
   }
 };
 
-NPEngine.CanvasRenderer.prototype.setFps = function (visible) {
-  if (visible == true) {
-    this.fps.visible = true;
-  }
-  else if (visible == false) {
-    this.fps.visible = false;
-  }
-};
-
 NPEngine.CanvasRenderer.prototype.setGrid = function (gridObject) {
   gridObject.onAttachedRenderer(this.view.width, this.view.height);
   for (var i=0, length=this.children.length; i<length; i++) {
@@ -94,9 +79,6 @@ NPEngine.CanvasRenderer.prototype.update = function () {
     this.children[i].update();
   }
 
-  if (this.DEBUG) {
-    this.fps.update();
-  }
   this.timeBoard.update();
 }
 
@@ -113,8 +95,5 @@ NPEngine.CanvasRenderer.prototype.render = function () {
     this.children[i].render(this.context);
   }
 
-  if (this.DEBUG) {
-    this.fps.render(this.context);
-  }
   this.timeBoard.render(this.context);
 };
