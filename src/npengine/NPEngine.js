@@ -1,5 +1,21 @@
 NPEngine = function() {
   this.state = 'create';    // create, init, ready, start, resume, pause, stop, destroy
+
+  var that = this;
+  this.keyHandler = function(e) {
+    if (e.keyCode != 13) {
+      return ;
+    }
+    if (that.state == 'create' || that.state == 'init' || that.state == 'destroy') {
+      return ;
+    }
+
+    if (that.state=='ready') {
+      that.start();
+    }
+  };
+  window.addEventListener("keypress", this.keyHandler, false);
+
   this.init();
 };
 
@@ -8,30 +24,29 @@ NPEngine.prototype.constructor = NPEngine;
 
 
 NPEngine.prototype.init = function() {
-  this.state = 'init';
   this.renderer = new NPEngine.CanvasRenderer;
+  this.state = 'init';
 };
 
 NPEngine.prototype.ready = function() {
-  this.state = 'ready';
   this.renderer.compute();
   this.renderer.onEngineReady();
+  this.state = 'ready';
 };
 
 NPEngine.prototype.start = function() {
-  this.state = 'start';
-
   this.renderer.onEngineStart();
+  this.state = 'start';
 
   this.resume();
 };
 
 NPEngine.prototype.resume = function() {
-  this.state = 'resume';
   var that = this;
   this.isRun = true;
 
   this.renderer.onEngineResume();
+  this.state = 'resume';
 
   requestAnimationFrame(run);
   function run() {
@@ -56,6 +71,7 @@ NPEngine.prototype.stop = function() {
 };
 
 NPEngine.prototype.destroy = function() {
+  this.state = 'destroy';
   this.renderer.onEngineDestroy();
 };
 

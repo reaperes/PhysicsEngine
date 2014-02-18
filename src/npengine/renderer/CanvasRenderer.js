@@ -29,6 +29,7 @@ NPEngine.CanvasRenderer.prototype.compute = function() {
 };
 
 NPEngine.CanvasRenderer.prototype.onEngineReady = function() {
+  this.time.init();
   for (var i=0, length=this.children.length; i<length; i++) {
     this.children[i].onReady();
   }
