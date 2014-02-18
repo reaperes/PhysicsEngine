@@ -11,8 +11,8 @@
   var engine = new NPEngine;
   var pendulum = new NPEngine.Pendulum;
   engine.addDisplayObject(pendulum);
+  engine.ready();
   engine.start();
-
 
   // control module
   var controlBox = function () {
