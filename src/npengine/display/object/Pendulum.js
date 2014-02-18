@@ -23,13 +23,6 @@ NPEngine.Pendulum.prototype.onAttachedRenderer = function(viewWidth, viewHeight)
   this.pivot.y = 0;
 };
 
-NPEngine.Pendulum.prototype.onStart = function() {
-  this.startTime = new Date().getTime();
-};
-
-NPEngine.Pendulum.prototype.onStop = function() {
-};
-
 NPEngine.Pendulum.prototype.compute = function () {
   this.memory = [];
   if (this.theta0 < 0.5) { /* theta0 is less than about 30 degrees */
@@ -86,6 +79,18 @@ NPEngine.Pendulum.prototype.compute = function () {
       }
     }
   }
+};
+
+NPEngine.Pendulum.prototype.onReady = function() {
+  this.curCircle.x = this.memory[0].x;
+  this.curCircle.y = this.memory[0].y;
+};
+
+NPEngine.Pendulum.prototype.onStart = function() {
+  this.startTime = new Date().getTime();
+};
+
+NPEngine.Pendulum.prototype.onStop = function() {
 };
 
 NPEngine.Pendulum.prototype.update = function () {

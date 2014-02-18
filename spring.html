@@ -14,7 +14,6 @@
   engine.setGrid(grid);
   engine.addDisplayObject(spring);
   engine.ready();
-  engine.start();
 
   // control module
   var controlBox = function () {
@@ -34,42 +33,42 @@
     mass.onChange(function (value) {
       engine.stop();
       spring.setMass(value);
-      engine.start();
+      engine.ready();
     });
 
     var k = gui.add(box, 'k', 10, 1000);
     k.onChange(function (value) {
       engine.stop();
       spring.setK(value);
-      engine.start();
+      engine.ready();
     });
 
     var gravity = gui.add(box, 'gravity', 1, 100);
     gravity.onChange(function (value) {
       engine.stop();
       spring.setGravity(value);
-      engine.start();
+      engine.ready();
     });
 
     var mu = gui.add(box, 'mu', 0, 30);
     mu.onChange(function (value) {
       engine.stop();
       spring.setMu(value);
-      engine.start();
+      engine.ready();
     });
 
     var x = gui.add(box, 'x', -4, 4);
     x.onChange(function (value) {
       engine.stop();
       spring.setX(value);
-      engine.start();
+      engine.ready();
     });
 
     var velocity = gui.add(box, 'velocity', -30, 30);
     velocity.onChange(function (value) {
       engine.stop();
       spring.setVelocity(value);
-      engine.start();
+      engine.ready();
     });
   }
 </script>

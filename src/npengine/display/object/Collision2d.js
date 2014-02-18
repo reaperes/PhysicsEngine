@@ -31,13 +31,6 @@ NPEngine.Collision2d.prototype.onAttachedGrid = function (gridObject) {
   this.grid = gridObject;
 };
 
-NPEngine.Collision2d.prototype.onStart = function() {
-  this.startTime = new Date().getTime();
-};
-
-NPEngine.Collision2d.prototype.onStop = function() {
-};
-
 NPEngine.Collision2d.prototype.compute = function () {
   this.memory = [];
   var ball1_x = this.ball1.x;
@@ -71,6 +64,21 @@ NPEngine.Collision2d.prototype.compute = function () {
     ball2_y = ball2_y+velocity2_y*this.deltaTime;
     this.memory.push({time: i, ball1_x: ball1_x, ball1_y: ball1_y, ball2_x: ball2_x, ball2_y: ball2_y});
   }
+};
+
+NPEngine.Collision2d.prototype.onReady = function() {
+  var data = this.memory[0];
+  this.curBall1.x = data.ball1_x;
+  this.curBall1.y = data.ball1_y;
+  this.curBall2.x = data.ball2_x;
+  this.curBall2.y = data.ball2_y;
+};
+
+NPEngine.Collision2d.prototype.onStart = function() {
+  this.startTime = new Date().getTime();
+};
+
+NPEngine.Collision2d.prototype.onStop = function() {
 };
 
 NPEngine.Collision2d.prototype.update = function () {

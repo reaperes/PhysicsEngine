@@ -30,17 +30,6 @@ NPEngine.Spring.prototype.onAttachedGrid = function (gridObject) {
   this.grid = gridObject;
 };
 
-NPEngine.Spring.prototype.onStart = function() {
-  this.convertedPivot = this.grid.convertToGridPoint(this.pivot);
-  this.halfOfConvertedBlockWidth = parseInt(this.grid.convertToGridScalaValue(this.block.width)/2);
-  this.halfOfConvertedBlockHeight = parseInt(this.grid.convertToGridScalaValue(this.block.height)/2);
-  this.convertedBlockPosY = this.convertedPivot.y;
-  this.startTime = new Date().getTime();
-};
-
-NPEngine.Spring.prototype.onStop = function() {
-};
-
 NPEngine.Spring.prototype.compute = function () {
   this.memory = [];
   var blockPosX = this.block.center.x;
@@ -54,6 +43,25 @@ NPEngine.Spring.prototype.compute = function () {
     force = -this.k*blockPosX-this.mu*velocity;
     this.memory.push({time: i, blockPosX: blockPosX});
   }
+};
+
+NPEngine.Spring.prototype.onReady = function() {
+  this.convertedPivot = this.grid.convertToGridPoint(this.pivot);
+  this.halfOfConvertedBlockWidth = parseInt(this.grid.convertToGridScalaValue(this.block.width)/2);
+  this.halfOfConvertedBlockHeight = parseInt(this.grid.convertToGridScalaValue(this.block.height)/2);
+  this.convertedBlockPosY = this.convertedPivot.y;
+  this.convertedBlockPosX = this.grid.convertToVectorValueX(this.memory[0].blockPosX);
+};
+
+NPEngine.Spring.prototype.onStart = function() {
+  this.convertedPivot = this.grid.convertToGridPoint(this.pivot);
+  this.halfOfConvertedBlockWidth = parseInt(this.grid.convertToGridScalaValue(this.block.width)/2);
+  this.halfOfConvertedBlockHeight = parseInt(this.grid.convertToGridScalaValue(this.block.height)/2);
+  this.convertedBlockPosY = this.convertedPivot.y;
+  this.startTime = new Date().getTime();
+};
+
+NPEngine.Spring.prototype.onStop = function() {
 };
 
 NPEngine.Spring.prototype.update = function () {

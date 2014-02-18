@@ -12,7 +12,7 @@
   var pendulum = new NPEngine.Pendulum;
   engine.addDisplayObject(pendulum);
   engine.ready();
-  engine.start();
+//  engine.start();
 
   // control module
   var controlBox = function () {
@@ -30,28 +30,28 @@
     mass.onChange(function (value) {
       engine.stop();
       pendulum.setMass(Math.round(value));
-      engine.start();
+      engine.ready();
     });
 
     var length = gui.add(control, 'length', 1, 10);
     length.onChange(function (value) {
       engine.stop();
       pendulum.setLength(Math.round(value));
-      engine.start();
+      engine.ready();
     });
 
     var theta0 = gui.add(control, 'theta0', -90, 90);
     theta0.onChange(function (value) {
       engine.stop();
       pendulum.setTheta0(Math.round(value));
-      engine.start();
+      engine.ready();
     });
 
     var ΔdeltaT = gui.add(control, 'ΔdeltaT', 0.01, 0.1);
     ΔdeltaT.onChange(function (value) {
       engine.stop();
       pendulum.setDeltaT(value);
-      engine.start();
+      engine.ready();
     });
   };
 </script>

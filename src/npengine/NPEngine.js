@@ -10,11 +10,11 @@ NPEngine.prototype.constructor = NPEngine;
 NPEngine.prototype.init = function() {
   this.state = 'init';
   this.renderer = new NPEngine.CanvasRenderer;
-  this.renderer.onEngineInit();
 };
 
 NPEngine.prototype.ready = function() {
   this.state = 'ready';
+  this.renderer.compute();
   this.renderer.onEngineReady();
 };
 
@@ -39,6 +39,7 @@ NPEngine.prototype.resume = function() {
       return ;
     }
     requestAnimationFrame(run);
+    that.renderer.update();
     that.renderer.render();
   }
 };
