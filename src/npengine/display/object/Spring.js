@@ -23,7 +23,8 @@ NPEngine.Spring.prototype.constructor = NPEngine.Spring;
 
 
 
-NPEngine.Spring.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+NPEngine.Spring.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
+  this.timeBoard = timeBoard;
 };
 
 NPEngine.Spring.prototype.onAttachedGrid = function (gridObject) {
@@ -58,14 +59,13 @@ NPEngine.Spring.prototype.onStart = function() {
   this.halfOfConvertedBlockWidth = parseInt(this.grid.convertToGridScalaValue(this.block.width)/2);
   this.halfOfConvertedBlockHeight = parseInt(this.grid.convertToGridScalaValue(this.block.height)/2);
   this.convertedBlockPosY = this.convertedPivot.y;
-  this.startTime = new Date().getTime();
 };
 
 NPEngine.Spring.prototype.onStop = function() {
 };
 
 NPEngine.Spring.prototype.update = function () {
-  var gap = Math.round((new Date().getTime()-this.startTime)/(this.deltaTime/0.001));
+  var gap = Math.round((new Date().getTime()-this.timeBoard.then)/(this.deltaTime/0.001));
 
   var data = this.memory[gap];
   this.convertedBlockPosX = this.grid.convertToVectorValueX(data.blockPosX);

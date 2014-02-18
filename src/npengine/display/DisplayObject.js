@@ -20,6 +20,12 @@ NPEngine.DisplayObject.prototype.onReady = function() {
 NPEngine.DisplayObject.prototype.onStart = function() {
 };
 
+NPEngine.DisplayObject.prototype.onResume = function() {
+};
+
+NPEngine.DisplayObject.prototype.onPause = function() {
+};
+
 NPEngine.DisplayObject.prototype.onStop = function() {
 };
 

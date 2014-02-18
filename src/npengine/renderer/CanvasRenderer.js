@@ -15,7 +15,7 @@ NPEngine.CanvasRenderer = function () {
     this.fps = new NPEngine.FPSBoard();w
   }
 
-  this.time = new NPEngine.TimeBoard;
+  this.timeBoard = new NPEngine.TimeBoard;
 };
 
 NPEngine.CanvasRenderer.prototype.constructor = NPEngine.CanvasRenderer;
@@ -29,7 +29,7 @@ NPEngine.CanvasRenderer.prototype.compute = function() {
 };
 
 NPEngine.CanvasRenderer.prototype.onEngineReady = function() {
-  this.time.init();
+  this.timeBoard.init();
   for (var i=0, length=this.children.length; i<length; i++) {
     this.children[i].onReady();
   }
@@ -40,13 +40,14 @@ NPEngine.CanvasRenderer.prototype.onEngineStart = function() {
 };
 
 NPEngine.CanvasRenderer.prototype.onEngineResume = function() {
-  this.time.init();
+  this.timeBoard.resume();
   for (var i=0, length=this.children.length; i<length; i++) {
     this.children[i].onStart();
   }
 };
 
 NPEngine.CanvasRenderer.prototype.onEnginePause = function() {
+  this.timeBoard.pause();
 };
 
 NPEngine.CanvasRenderer.prototype.onEngineStop = function() {
@@ -62,7 +63,7 @@ NPEngine.CanvasRenderer.prototype.addChild = function (displayObject) {
   if ((displayObject instanceof NPEngine.DisplayObject) == false) {
     throw new Error();
   }
-  displayObject.onAttachedRenderer(this.view.width, this.view.height);
+  displayObject.onAttachedRenderer(this.view.width, this.view.height, this.timeBoard);
   this.children.push(displayObject);
 
   if (this.grid != null) {
@@ -96,7 +97,7 @@ NPEngine.CanvasRenderer.prototype.update = function () {
   if (this.DEBUG) {
     this.fps.update();
   }
-  this.time.update();
+  this.timeBoard.update();
 }
 
 NPEngine.CanvasRenderer.prototype.render = function () {
@@ -115,5 +116,5 @@ NPEngine.CanvasRenderer.prototype.render = function () {
   if (this.DEBUG) {
     this.fps.render(this.context);
   }
-  this.time.render(this.context);
+  this.timeBoard.render(this.context);
 };

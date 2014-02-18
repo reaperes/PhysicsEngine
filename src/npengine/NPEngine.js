@@ -13,6 +13,12 @@ NPEngine = function() {
     if (that.state=='ready') {
       that.start();
     }
+    else if (that.state=='resume') {
+      that.pause();
+    }
+    else if (that.state=='pause') {
+      that.resume();
+    }
   };
   window.addEventListener("keypress", this.keyHandler, false);
 
@@ -61,6 +67,7 @@ NPEngine.prototype.resume = function() {
 
 NPEngine.prototype.pause = function() {
   this.state = 'pause';
+  this.isRun = false;
   this.renderer.onEnginePause();
 };
 
