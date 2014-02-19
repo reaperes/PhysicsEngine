@@ -5,7 +5,7 @@ NPEngine.DisplayObject.prototype.constructor = NPEngine.DisplayObject;
 
 
 
-NPEngine.DisplayObject.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+NPEngine.DisplayObject.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
 };
 
 NPEngine.DisplayObject.prototype.onAttachedGrid = function (gridObject) {
