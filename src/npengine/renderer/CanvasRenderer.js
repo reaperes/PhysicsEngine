@@ -1,6 +1,4 @@
 NPEngine.CanvasRenderer = function () {
-  this.DEBUG = false;
-
   this.grid = null;
   this.children = [];
 
@@ -11,65 +9,59 @@ NPEngine.CanvasRenderer = function () {
 
   this.context = this.view.getContext("2d");
 
-  if (this.DEBUG) {
-    this.fps = new NPEngine.FPSBoard();
-  }
-
-  this.time = new NPEngine.TimeBoard;
+  this.timeBoard = new NPEngine.TimeBoard;
 };
 
-// constructor
 NPEngine.CanvasRenderer.prototype.constructor = NPEngine.CanvasRenderer;
 
 
 
-NPEngine.CanvasRenderer.prototype.render = function () {
-  // clear
-  this.context.clearRect(0, 0, this.view.width, this.view.height);
+NPEngine.CanvasRenderer.prototype.compute = function() {
+  for (var i=0, length=this.children.length; i<length; i++) {
+    this.children[i].compute();
+  }
+};
 
-  // update
-  var length = this.children.length;
-  for (var i = 0; i < length; i++) {
-    this.children[i].update();
+NPEngine.CanvasRenderer.prototype.onEngineReady = function() {
+  this.timeBoard.init();
+  for (var i=0, length=this.children.length; i<length; i++) {
+    this.children[i].onReady();
   }
+  this.render();
+};
 
-  if (this.DEBUG) {
-    this.fps.update();
-  }
-  this.time.update();
+NPEngine.CanvasRenderer.prototype.onEngineStart = function() {
+};
 
-  // render
-  if (this.grid != null) {
-    this.grid.render(this.context);
+NPEngine.CanvasRenderer.prototype.onEngineResume = function() {
+  this.timeBoard.resume();
+  for (var i=0, length=this.children.length; i<length; i++) {
+    this.children[i].onStart();
   }
-  for (var i = 0; i < length; i++) {
-    this.children[i].render(this.context);
-  }
+};
 
-  if (this.DEBUG) {
-    this.fps.render(this.context);
+NPEngine.CanvasRenderer.prototype.onEnginePause = function() {
+  this.timeBoard.pause();
+};
+
+NPEngine.CanvasRenderer.prototype.onEngineStop = function() {
+  for (var i=0, length=this.children.length; i<length; i++) {
+    this.children[i].onStop();
   }
-  this.time.render(this.context);
+};
+
+NPEngine.CanvasRenderer.prototype.onEngineDestroy = function() {
 };
 
 NPEngine.CanvasRenderer.prototype.addChild = function (displayObject) {
   if ((displayObject instanceof NPEngine.DisplayObject) == false) {
     throw new Error();
   }
-  displayObject.onAttachedRenderer(this.view.width, this.view.height);
+  displayObject.onAttachedRenderer(this.view.width, this.view.height, this.timeBoard);
   this.children.push(displayObject);
 
   if (this.grid != null) {
     displayObject.onAttachedGrid(this.grid);
-  }
-};
-
-NPEngine.CanvasRenderer.prototype.setFps = function (visible) {
-  if (visible == true) {
-    this.fps.visible = true;
-  }
-  else if (visible == false) {
-    this.fps.visible = false;
   }
 };
 
@@ -81,21 +73,27 @@ NPEngine.CanvasRenderer.prototype.setGrid = function (gridObject) {
   this.grid = gridObject;
 };
 
-NPEngine.CanvasRenderer.prototype.onEnginePreStart = function() {
-  for (var i=0, length=this.children.length; i<length; i++) {
-    this.children[i].compute();
+NPEngine.CanvasRenderer.prototype.update = function () {
+  var length = this.children.length;
+  for (var i = 0; i < length; i++) {
+    this.children[i].update();
   }
-};
 
-NPEngine.CanvasRenderer.prototype.onEngineStart = function() {
-  this.time.init();
-  for (var i=0, length=this.children.length; i<length; i++) {
-    this.children[i].onStart();
-  }
-};
+  this.timeBoard.update();
+}
 
-NPEngine.CanvasRenderer.prototype.onEngineStop = function() {
-  for (var i=0, length=this.children.length; i<length; i++) {
-    this.children[i].onStop();
+NPEngine.CanvasRenderer.prototype.render = function () {
+  // clear
+  this.context.clearRect(0, 0, this.view.width, this.view.height);
+
+  // render
+  var length = this.children.length;
+  if (this.grid != null) {
+    this.grid.render(this.context);
   }
+  for (var i = 0; i < length; i++) {
+    this.children[i].render(this.context);
+  }
+
+  this.timeBoard.render(this.context);
 };

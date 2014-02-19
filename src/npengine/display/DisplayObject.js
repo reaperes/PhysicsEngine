@@ -11,13 +11,22 @@ NPEngine.DisplayObject.prototype.onAttachedRenderer = function(viewWidth, viewHe
 NPEngine.DisplayObject.prototype.onAttachedGrid = function (gridObject) {
 };
 
+NPEngine.DisplayObject.prototype.compute = function () {
+};
+
+NPEngine.DisplayObject.prototype.onReady = function() {
+};
+
 NPEngine.DisplayObject.prototype.onStart = function() {
 };
 
-NPEngine.DisplayObject.prototype.onStop = function() {
+NPEngine.DisplayObject.prototype.onResume = function() {
 };
 
-NPEngine.DisplayObject.prototype.compute = function () {
+NPEngine.DisplayObject.prototype.onPause = function() {
+};
+
+NPEngine.DisplayObject.prototype.onStop = function() {
 };
 
 NPEngine.DisplayObject.prototype.update = function () {

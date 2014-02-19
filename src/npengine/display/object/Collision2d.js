@@ -24,18 +24,12 @@ NPEngine.Collision2d.prototype.constructor = NPEngine.Collision2d;
 
 
 
-NPEngine.Collision2d.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+NPEngine.Collision2d.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
+  this.timeBoard = timeBoard;
 };
 
 NPEngine.Collision2d.prototype.onAttachedGrid = function (gridObject) {
   this.grid = gridObject;
-};
-
-NPEngine.Collision2d.prototype.onStart = function() {
-  this.startTime = new Date().getTime();
-};
-
-NPEngine.Collision2d.prototype.onStop = function() {
 };
 
 NPEngine.Collision2d.prototype.compute = function () {
@@ -73,8 +67,28 @@ NPEngine.Collision2d.prototype.compute = function () {
   }
 };
 
+NPEngine.Collision2d.prototype.onReady = function() {
+  var data = this.memory[0];
+  this.curBall1.x = data.ball1_x;
+  this.curBall1.y = data.ball1_y;
+  this.curBall2.x = data.ball2_x;
+  this.curBall2.y = data.ball2_y;
+};
+
+NPEngine.Collision2d.prototype.onStart = function() {
+};
+
+NPEngine.Collision2d.prototype.onResume = function() {
+};
+
+NPEngine.Collision2d.prototype.onPause = function() {
+};
+
+NPEngine.Collision2d.prototype.onStop = function() {
+};
+
 NPEngine.Collision2d.prototype.update = function () {
-  var gap = Math.round((new Date().getTime()-this.startTime)/1); // convert millisecond to 0.01 second
+  var gap = Math.round((new Date().getTime()-this.timeBoard.then)/1); // convert millisecond to 0.01 second
 
   if (gap < 10000) {
     var data = this.memory[gap];

@@ -13,8 +13,7 @@
   var collision = new NPEngine.Collision2d;
   engine.setGrid(grid);
   engine.addDisplayObject(collision);
-  engine.start();
-
+  engine.ready();
 
   // control module
   var controlBox = function () {
@@ -42,98 +41,98 @@
     mass1.onChange(function (value) {
       engine.stop();
       collision.setMass1(Math.round(value));
-      engine.start();
+      engine.ready();
     });
 
     var mass2 = gui.add(box, 'mass2', 1, 10);
     mass2.onChange(function (value) {
       engine.stop();
       collision.setMass2(Math.round(value));
-      engine.start();
+      engine.ready();
     });
 
     var k = gui.add(box, 'k', 0, 20000);
     k.onChange(function (value) {
       engine.stop();
       collision.setK(Math.round(value));
-      engine.start();
+      engine.ready();
     });
 
     var mu = gui.add(box, 'mu', 0, 200);
     mu.onChange(function (value) {
       engine.stop();
       collision.setMu(Math.round(value));
-      engine.start();
+      engine.ready();
     });
 
     var diameter1 = gui.add(box, 'diameter1', 0.1, 2);
     diameter1.onChange(function (value) {
       engine.stop();
       collision.setDiameter1(value);
-      engine.start();
+      engine.ready();
     });
 
     var diameter2 = gui.add(box, 'diameter2', 0.1, 2);
     diameter2.onChange(function (value) {
       engine.stop();
       collision.setDiameter2(value);
-      engine.start();
+      engine.ready();
     });
 
     var ball1_x = gui.add(box, 'ball1_x', -4, 4);
     ball1_x.onChange(function (value) {
       engine.stop();
       collision.setBall1_x(value);
-      engine.start();
+      engine.ready();
     });
 
     var ball1_y = gui.add(box, 'ball1_y', -4, 4);
     ball1_y.onChange(function (value) {
       engine.stop();
       collision.setBall1_y(value);
-      engine.start();
+      engine.ready();
     });
 
     var ball2_x = gui.add(box, 'ball2_x', -4, 4);
     ball1_y.onChange(function (value) {
       engine.stop();
       collision.setBall2_x(value);
-      engine.start();
+      engine.ready();
     });
 
     var ball2_y = gui.add(box, 'ball2_y', -4, 4);
     ball1_y.onChange(function (value) {
       engine.stop();
       collision.setBall2_y(value);
-      engine.start();
+      engine.ready();
     });
 
     var velocity1_x = gui.add(box, 'velocity1_x', -4, 4);
     velocity1_x.onChange(function (value) {
       engine.stop();
       collision.setVelocity1_x(value);
-      engine.start();
+      engine.ready();
     });
 
     var velocity1_y = gui.add(box, 'velocity1_y', -4, 4);
     velocity1_y.onChange(function (value) {
       engine.stop();
       collision.setVelocity1_y(value);
-      engine.start();
+      engine.ready();
     });
 
     var velocity2_x = gui.add(box, 'velocity2_x', -4, 4);
     velocity2_x.onChange(function (value) {
       engine.stop();
       collision.setVelocity2_x(value);
-      engine.start();
+      engine.ready();
     });
 
     var velocity2_y = gui.add(box, 'velocity2_y', -4, 4);
     velocity2_y.onChange(function (value) {
       engine.stop();
       collision.setVelocity2_y(value);
-      engine.start();
+      engine.ready();
     });
   };
 </script>

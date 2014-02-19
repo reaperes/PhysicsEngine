@@ -1,7 +1,8 @@
 module.exports = function (grunt) {
 
   var srcFiles = [
-    'src/npengine/*.js',
+    'src/npengine/NPEngine.js',
+    'src/npengine/FPS.js',
     'src/npengine/math/*.js',
     'src/npengine/database/*.js',
     'src/npengine/display/*.js',

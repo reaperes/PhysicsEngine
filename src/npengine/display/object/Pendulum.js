@@ -18,16 +18,10 @@ NPEngine.Pendulum.prototype.constructor = NPEngine.Pendulum;
 
 
 
-NPEngine.Pendulum.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+NPEngine.Pendulum.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
   this.pivot.x = Math.round(viewWidth/2);
   this.pivot.y = 0;
-};
-
-NPEngine.Pendulum.prototype.onStart = function() {
-  this.startTime = new Date().getTime();
-};
-
-NPEngine.Pendulum.prototype.onStop = function() {
+  this.timeBoard = timeBoard;
 };
 
 NPEngine.Pendulum.prototype.compute = function () {
@@ -88,8 +82,25 @@ NPEngine.Pendulum.prototype.compute = function () {
   }
 };
 
+NPEngine.Pendulum.prototype.onReady = function() {
+  this.curCircle.x = this.memory[0].x;
+  this.curCircle.y = this.memory[0].y;
+};
+
+NPEngine.Pendulum.prototype.onStart = function() {
+};
+
+NPEngine.Pendulum.prototype.onResume = function() {
+};
+
+NPEngine.Pendulum.prototype.onPause = function() {
+};
+
+NPEngine.Pendulum.prototype.onStop = function() {
+};
+
 NPEngine.Pendulum.prototype.update = function () {
-  var gap = Math.round((new Date().getTime()-this.startTime)/(this.deltaTime*1000)); // millisecond to 0.01 second
+  var gap = Math.round((new Date().getTime()-this.timeBoard.then)/(this.deltaTime*1000)); // millisecond to 0.01 second
   var phase = Math.round(gap%this.period);
 
   this.curCircle.x = this.memory[phase].x;

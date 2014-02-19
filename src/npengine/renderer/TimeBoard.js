@@ -4,15 +4,32 @@ NPEngine.TimeBoard = function () {
 };
 
 // constructor
-NPEngine.TimeBoard.prototype.constructor = NPEngine.CanvasRenderer;
+NPEngine.TimeBoard.prototype.constructor = NPEngine.TimeBoard;
 
 
 
 NPEngine.TimeBoard.prototype.init = function () {
-  this.then = new Date().getTime();
-}
+  this.timeFormat = "00:00:00";
+  this.sumOfTime = undefined;
+};
+
+NPEngine.TimeBoard.prototype.resume = function () {
+  if (this.sumOfTime === undefined) {
+    this.then = new Date().getTime();
+  }
+  else {
+    this.then = new Date().getTime() - this.sumOfTime;
+  }
+};
+
+NPEngine.TimeBoard.prototype.pause = function () {
+  this.sumOfTime = new Date().getTime() - this.then;
+};
 
 NPEngine.TimeBoard.prototype.update = function () {
+  var now = new Date().getTime();
+  var delta = now - this.then;
+  this.timeFormat = NPEngine.Convert.toTimeFormat(delta);
 };
 
 NPEngine.TimeBoard.prototype.render = function (context) {
@@ -20,12 +37,8 @@ NPEngine.TimeBoard.prototype.render = function (context) {
     return ;
   }
 
-  var now = new Date().getTime();
-  var delta = now - this.then;
-  var timeFormat = NPEngine.Convert.toTimeFormat(delta);
-
   if (this.visible == true) {
     context.font = "20px Arial";
-    context.fillText("Time: " + timeFormat, 0, 22);
+    context.fillText("Time: " + this.timeFormat, 0, 22);
   }
 };
