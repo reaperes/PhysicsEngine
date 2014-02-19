@@ -61,8 +61,8 @@ NPEngine.prototype.resume = function() {
       return ;
     }
     requestAnimationFrame(run);
-    that.fps.begin();
     that.renderer.update();
+    that.fps.begin();
     that.renderer.render();
     that.fps.end();
   }
