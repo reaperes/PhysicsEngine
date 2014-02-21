@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d3978edd-d839-4542-b287-bdf2c1035046" name="Default" comment="delete cached unnecessary file.">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/npengine.dev.js" afterPath="$PROJECT_DIR$/bin/npengine.dev.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="DELETED" beforePath="C:\Users\nhk\Documents\WebstormProjects\PhysicsEngine\.idea\workspace.xml" afterPath="" />
     </list>
     <ignored path="PhysicsEngine.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -11,7 +10,7 @@
     <file path="/a.dummy" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389926339952" ignored="false" />
     <file path="$PROJECT_DIR$/../PhysicsJS/examples/spaceship/js/player-behavior.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389523282015" ignored="false" />
     <file path="/index.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1391785986152" ignored="false" />
-    <file path="/Dummy.txt" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392994368689" ignored="false" />
+    <file path="/Dummy.txt" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392995407715" ignored="false" />
     <file path="/newton.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389526964581" ignored="false" />
     <file path="$PROJECT_DIR$/../pixi.js/examples/example 1 - Basics/index.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389577480406" ignored="false" />
     <file path="/CanvasRenderer.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392729408828" ignored="false" />
@@ -36,7 +35,7 @@
     <file path="/Grid.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392385949162" ignored="false" />
     <file path="/spring.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392399028289" ignored="false" />
     <file path="/test.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392722398472" ignored="false" />
-    <file path="/collision2d.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392729645082" ignored="false" />
+    <file path="/collision2d.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392995342165" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,37 +55,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="NPEngine.js" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/npengine/NPEngine.js">
+      <file leaf-file-name="collision2d.html" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/collision2d.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="0" selection-start="354" selection-end="354" vertical-scroll-proportion="0.034700315">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CanvasRenderer.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/npengine/renderer/CanvasRenderer.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="99" column="0" selection-start="2434" selection-end="2463" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Collision2d.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/npengine/display/object/Collision2d.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="91" column="0" selection-start="3123" selection-end="3123" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DBHelper.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/npengine/database/DBHelper.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="17" selection-start="1015" selection-end="1015" vertical-scroll-proportion="0.0">
+            <state line="96" column="11" selection-start="2436" selection-end="2436" vertical-scroll-proportion="0.5856905">
               <folding />
             </state>
           </provider>
@@ -129,8 +101,8 @@
         <option value="$PROJECT_DIR$/src/npengine/renderer/CanvasRenderer.js" />
         <option value="$PROJECT_DIR$/src/npengine/NPEngine.js" />
         <option value="$PROJECT_DIR$/pendulum.html" />
-        <option value="$PROJECT_DIR$/collision2d.html" />
         <option value="$PROJECT_DIR$/spring.html" />
+        <option value="$PROJECT_DIR$/collision2d.html" />
       </list>
     </option>
   </component>
@@ -405,8 +377,8 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/.idea" />
     <property name="FullScreen" value="false" />
     <property name="DefaultHtmlFileTemplate" value="Html5" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -548,16 +520,20 @@
       <created>1392730236417</created>
       <updated>1392730236417</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="fix minor bug #20">
+      <created>1392995400677</created>
+      <updated>1392995400677</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1234" height="816" extended-state="6" />
     <editor active="false" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32829046" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24937238" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19916318" sideWeight="0.67170954" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -568,7 +544,7 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32829046" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -616,7 +592,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="delete cached unnecessary file." />
+    <option name="LAST_COMMIT_MESSAGE" value="fix minor bug #20" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -647,6 +623,7 @@
     <MESSAGE value="compile project" />
     <MESSAGE value="add control module" />
     <MESSAGE value="delete cached unnecessary file." />
+    <MESSAGE value="fix minor bug #20" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -654,6 +631,13 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/npengine/database/DBHelper.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="17" selection-start="1015" selection-end="1015" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/bin/npengine.dev.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="41" column="0" selection-start="568" selection-end="568" vertical-scroll-proportion="0.0" />
@@ -681,7 +665,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/npengine/database/DBHelper.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="17" selection-start="1015" selection-end="1015" vertical-scroll-proportion="0.0">
+        <state line="36" column="17" selection-start="1015" selection-end="1015" vertical-scroll-proportion="0.12974684">
           <folding />
         </state>
       </provider>
@@ -695,7 +679,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/npengine/display/object/Collision2d.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="91" column="0" selection-start="3123" selection-end="3123" vertical-scroll-proportion="0.0">
+        <state line="91" column="0" selection-start="3123" selection-end="3123" vertical-scroll-proportion="0.034810126">
           <folding />
         </state>
       </provider>
@@ -705,23 +689,9 @@
         <state line="22" column="0" selection-start="647" selection-end="647" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/npengine/renderer/CanvasRenderer.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="99" column="0" selection-start="2434" selection-end="2463" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/npengine/display/object/Pendulum.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="74" column="12" selection-start="2509" selection-end="2509" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/collision2d.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="2" selection-start="460" selection-end="475" vertical-scroll-proportion="0.32967034">
-          <folding />
-        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pendulum.html">
@@ -740,7 +710,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/npengine/NPEngine.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="0" selection-start="354" selection-end="354" vertical-scroll-proportion="0.034700315">
+        <state line="19" column="35" selection-start="509" selection-end="509" vertical-scroll-proportion="0.24367088">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/npengine/renderer/CanvasRenderer.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="99" column="0" selection-start="2434" selection-end="2463" vertical-scroll-proportion="0.79113925">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/collision2d.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="96" column="11" selection-start="2436" selection-end="2436" vertical-scroll-proportion="0.5856905">
           <folding />
         </state>
       </provider>
