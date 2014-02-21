@@ -94,14 +94,14 @@
     });
 
     var ball2_x = gui.add(box, 'ball2_x', -4, 4);
-    ball1_y.onChange(function (value) {
+    ball2_x.onChange(function (value) {
       engine.stop();
       collision.setBall2_x(value);
       engine.ready();
     });
 
     var ball2_y = gui.add(box, 'ball2_y', -4, 4);
-    ball1_y.onChange(function (value) {
+    ball2_y.onChange(function (value) {
       engine.stop();
       collision.setBall2_y(value);
       engine.ready();
