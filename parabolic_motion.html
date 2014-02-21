@@ -9,10 +9,52 @@
 <body>
 <script type="text/javascript">
   var engine = new NPEngine;
-  var grid = new NPEngine.Grid;
   var parabolicMotion = new NPEngine.ParabolicMotion;
+  var grid = new NPEngine.QuadrantGrid;
+  grid.setRatio(50);
+  engine.setGrid(grid);
   engine.addDisplayObject(parabolicMotion);
   engine.ready();
+
+  var controlBox = function () {
+    this.gravity = 9.8;
+    this.mass = 1;
+    this.angle = 45;
+    this.velocity = 70;
+  };
+
+  window.onload = function () {
+    var control = new controlBox();
+    var gui = new dat.GUI();
+
+    var gravity = gui.add(control, 'gravity', 1, 20);
+    gravity.onChange(function (value) {
+      engine.stop();
+      parabolicMotion.setGravity(value);
+      engine.ready();
+    });
+
+    var mass = gui.add(control, 'mass', 1, 100);
+    mass.onChange(function (value) {
+      engine.stop();
+      parabolicMotion.setMass(value);
+      engine.ready();
+    });
+
+    var angle = gui.add(control, 'angle', 0, 90);
+    angle.onChange(function (value) {
+      engine.stop();
+      parabolicMotion.setAngle(value);
+      engine.ready();
+    });
+
+    var velocity = gui.add(control, 'velocity', 0, 90);
+    velocity.onChange(function (value) {
+      engine.stop();
+      parabolicMotion.setVelocity(value);
+      engine.ready();
+    });
+  };
 </script>
 </body>
 </html>
