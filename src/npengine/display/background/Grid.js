@@ -70,7 +70,7 @@ NPEngine.Grid.prototype.setWidth = function(width) {
 };
 
 NPEngine.Grid.prototype.setHeight = function(height) {
-  this.width = width;
+  this.height = height;
 };
 
 NPEngine.Grid.prototype.convertToGridPoint = function(point) {
