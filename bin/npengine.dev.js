@@ -1,31 +1,88 @@
 NPEngine = function() {
-  this.renderer = new NPEngine.CanvasRenderer;
+  this.fps = new NPEngine.FPS();
+  this.state = 'create';    // create, init, ready, start, resume, pause, stop, destroy
+
+  var that = this;
+  this.keyHandler = function(e) {
+    if (e.keyCode != 13) {
+      return ;
+    }
+    if (that.state == 'create' || that.state == 'init' || that.state == 'destroy') {
+      return ;
+    }
+
+    if (that.state=='ready') {
+      that.start();
+    }
+    else if (that.state=='resume') {
+      that.pause();
+    }
+    else if (that.state=='pause') {
+      that.resume();
+    }
+  };
+  window.addEventListener("keypress", this.keyHandler, false);
+
+  this.init();
 };
 
-NPEngine.prototype.constructor = NPEngine.Pendulum;
+NPEngine.prototype.constructor = NPEngine;
 
 
+
+NPEngine.prototype.init = function() {
+  this.renderer = new NPEngine.CanvasRenderer;
+  this.state = 'init';
+};
+
+NPEngine.prototype.ready = function() {
+  this.renderer.compute();
+  this.renderer.onEngineReady();
+  this.state = 'ready';
+};
 
 NPEngine.prototype.start = function() {
-  var that = this;
-  this.isStart = true;
-
-  this.renderer.onEnginePreStart();
   this.renderer.onEngineStart();
+  this.state = 'start';
+
+  this.resume();
+};
+
+NPEngine.prototype.resume = function() {
+  var that = this;
+  this.isRun = true;
+
+  this.renderer.onEngineResume();
+  this.state = 'resume';
+
   requestAnimationFrame(run);
   function run() {
-    if (!that.isStart) {
+    if (!that.isRun) {
       return ;
     }
     requestAnimationFrame(run);
+    that.renderer.update();
+    that.fps.begin();
     that.renderer.render();
+    that.fps.end();
   }
 };
 
-NPEngine.prototype.stop = function() {
-  this.isStart = false;
+NPEngine.prototype.pause = function() {
+  this.state = 'pause';
+  this.isRun = false;
+  this.renderer.onEnginePause();
+};
 
+NPEngine.prototype.stop = function() {
+  this.state = 'stop';
+  this.isRun = false;
   this.renderer.onEngineStop();
+};
+
+NPEngine.prototype.destroy = function() {
+  this.state = 'destroy';
+  this.renderer.onEngineDestroy();
 };
 
 NPEngine.prototype.setFps = function(flag) {
@@ -55,6 +112,157 @@ NPEngine.prototype.setGrid = function(gridObject) {
 
   this.renderer.setGrid(gridObject);
 };
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+NPEngine.FPS = function() {
+  var startTime = Date.now(), prevTime = startTime;
+  var ms = 0, msMin = Infinity, msMax = 0;
+  var fps = 0, fpsMin = Infinity, fpsMax = 0;
+  var frames = 0, mode = 0;
+
+  var container = document.createElement( 'div' );
+  container.id = 'stats';
+  container.addEventListener( 'mousedown', function ( event ) { event.preventDefault(); setMode( ++ mode % 2 ) }, false );
+  container.style.cssText='width:80px;opacity:0.6;position:absolute;left:0px;top:0px';
+  document.body.appendChild(container);
+
+  var fpsDiv = document.createElement( 'div' );
+  fpsDiv.id = 'fps';
+  fpsDiv.style.cssText = 'padding:0 0 3px 3px;text-align:left;background-color:#002';
+  container.appendChild( fpsDiv );
+
+  var fpsText = document.createElement( 'div' );
+  fpsText.id = 'fpsText';
+  fpsText.style.cssText = 'color:#0ff;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;line-height:15px';
+  fpsText.innerHTML = 'FPS';
+  fpsDiv.appendChild( fpsText );
+
+  var fpsGraph = document.createElement( 'div' );
+  fpsGraph.id = 'fpsGraph';
+  fpsGraph.style.cssText = 'position:relative;width:74px;height:30px;background-color:#0ff';
+  fpsDiv.appendChild( fpsGraph );
+
+  while ( fpsGraph.children.length < 74 ) {
+
+    var bar = document.createElement( 'span' );
+    bar.style.cssText = 'width:1px;height:30px;float:left;background-color:#113';
+    fpsGraph.appendChild( bar );
+
+  }
+
+  var msDiv = document.createElement( 'div' );
+  msDiv.id = 'ms';
+  msDiv.style.cssText = 'padding:0 0 3px 3px;text-align:left;background-color:#020;display:none';
+  container.appendChild( msDiv );
+
+  var msText = document.createElement( 'div' );
+  msText.id = 'msText';
+  msText.style.cssText = 'color:#0f0;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;line-height:15px';
+  msText.innerHTML = 'MS';
+  msDiv.appendChild( msText );
+
+  var msGraph = document.createElement( 'div' );
+  msGraph.id = 'msGraph';
+  msGraph.style.cssText = 'position:relative;width:74px;height:30px;background-color:#0f0';
+  msDiv.appendChild( msGraph );
+
+  while ( msGraph.children.length < 74 ) {
+
+    var bar = document.createElement( 'span' );
+    bar.style.cssText = 'width:1px;height:30px;float:left;background-color:#131';
+    msGraph.appendChild( bar );
+
+  }
+
+  var setMode = function ( value ) {
+
+    mode = value;
+
+    switch ( mode ) {
+
+      case 0:
+        fpsDiv.style.display = 'block';
+        msDiv.style.display = 'none';
+        break;
+      case 1:
+        fpsDiv.style.display = 'none';
+        msDiv.style.display = 'block';
+        break;
+    }
+
+  }
+
+  var updateGraph = function ( dom, value ) {
+
+    var child = dom.appendChild( dom.firstChild );
+    child.style.height = value + 'px';
+
+  }
+
+  return {
+
+    REVISION: 11,
+
+    domElement: container,
+
+    setMode: setMode,
+
+    begin: function () {
+
+      startTime = Date.now();
+
+    },
+
+    end: function () {
+
+      var time = Date.now();
+
+      ms = time - startTime;
+      msMin = Math.min( msMin, ms );
+      msMax = Math.max( msMax, ms );
+
+      msText.textContent = ms + ' MS (' + msMin + '-' + msMax + ')';
+      updateGraph( msGraph, Math.min( 30, 30 - ( ms / 200 ) * 30 ) );
+
+      frames ++;
+
+      if ( time > prevTime + 1000 ) {
+
+        fps = Math.round( ( frames * 1000 ) / ( time - prevTime ) );
+        fpsMin = Math.min( fpsMin, fps );
+        fpsMax = Math.max( fpsMax, fps );
+
+        fpsText.textContent = fps + ' FPS (' + fpsMin + '-' + fpsMax + ')';
+        updateGraph( fpsGraph, Math.min( 30, 30 - ( fps / 100 ) * 30 ) );
+
+        prevTime = time;
+        frames = 0;
+
+      }
+
+      return time;
+
+    },
+
+    update: function () {
+
+      startTime = this.end();
+
+    }
+
+  }
+
+};
+
+
+// constructor
+NPEngine.FPS.prototype.constructor = NPEngine.FPS;
+
+
+
+
 NPEngine.Convert = function() {};
 
 NPEngine.Convert.prototype = Object.create(NPEngine.Convert.prototype);
@@ -199,19 +407,28 @@ NPEngine.DisplayObject.prototype.constructor = NPEngine.DisplayObject;
 
 
 
-NPEngine.DisplayObject.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+NPEngine.DisplayObject.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
 };
 
 NPEngine.DisplayObject.prototype.onAttachedGrid = function (gridObject) {
 };
 
+NPEngine.DisplayObject.prototype.compute = function () {
+};
+
+NPEngine.DisplayObject.prototype.onReady = function() {
+};
+
 NPEngine.DisplayObject.prototype.onStart = function() {
 };
 
-NPEngine.DisplayObject.prototype.onStop = function() {
+NPEngine.DisplayObject.prototype.onResume = function() {
 };
 
-NPEngine.DisplayObject.prototype.compute = function () {
+NPEngine.DisplayObject.prototype.onPause = function() {
+};
+
+NPEngine.DisplayObject.prototype.onStop = function() {
 };
 
 NPEngine.DisplayObject.prototype.update = function () {
@@ -292,7 +509,7 @@ NPEngine.Grid.prototype.setWidth = function(width) {
 };
 
 NPEngine.Grid.prototype.setHeight = function(height) {
-  this.width = width;
+  this.height = height;
 };
 
 NPEngine.Grid.prototype.convertToGridPoint = function(point) {
@@ -306,11 +523,105 @@ NPEngine.Grid.prototype.convertToVectorValueX = function(x) {
 };
 
 NPEngine.Grid.prototype.convertToVectorValueY = function(y) {
-  return this.centerWidth + y * -100;
+  return this.centerHeight + y * -100;
 };
 
 NPEngine.Grid.prototype.convertToGridScalaValue = function(value) {
   return value*100;
+};
+
+NPEngine.QuadrantGrid = function() {
+  NPEngine.DisplayObject.call(this);
+  this.ratio = 50;
+};
+
+NPEngine.QuadrantGrid.prototype.constructor = NPEngine.QuadrantGrid;
+NPEngine.QuadrantGrid.prototype = Object.create(NPEngine.DisplayObject.prototype);
+
+
+
+NPEngine.QuadrantGrid.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+  this.width = viewWidth;
+  this.height = viewHeight;
+
+  // 80 is default default interval
+  this.centerX = 80;
+  this.centerY = viewHeight-80;
+};
+
+NPEngine.QuadrantGrid.prototype.onAttachedGrid = function (gridObject) {
+};
+
+NPEngine.QuadrantGrid.prototype.compute = function () {
+};
+
+NPEngine.QuadrantGrid.prototype.onReady = function() {
+};
+
+NPEngine.QuadrantGrid.prototype.onStart = function() {
+};
+
+NPEngine.QuadrantGrid.prototype.onResume = function() {
+};
+
+NPEngine.QuadrantGrid.prototype.onPause = function() {
+};
+
+NPEngine.QuadrantGrid.prototype.onStop = function() {
+};
+
+NPEngine.QuadrantGrid.prototype.update = function () {
+};
+
+NPEngine.QuadrantGrid.prototype.render = function (context) {
+  context.beginPath();
+  context.lineWidth = 0.4;
+  context.strokeStyle = '#550000';
+
+  // draw right column line
+  for (var i=this.centerX+80; i<this.width; i+=80) {
+    context.moveTo(i, 0);
+    context.lineTo(i, this.height);
+  }
+
+  // draw upper row line
+  for (var i=this.centerY; i>0; i-=80) {
+    context.moveTo(0, i);
+    context.lineTo(this.width, i);
+  }
+  context.stroke();
+
+  // draw center line
+  context.beginPath();
+  context.lineWidth = 2;
+  context.strokeStyle = '#550000';
+  context.moveTo(this.centerX, 0);
+  context.lineTo(this.centerX, this.height);
+  context.moveTo(0, this.centerY);
+  context.lineTo(this.width, this.centerY);
+  context.stroke();
+};
+
+NPEngine.QuadrantGrid.prototype.setRatio = function(value) {
+  this.ratio = value;
+};
+
+NPEngine.QuadrantGrid.prototype.convertToGridPoint = function(point) {
+  var convertedX = this.centerX+point.x/this.ratio*80;
+  var convertedY = this.centerY+point.y/this.ratio*-80;
+  return new NPEngine.Point(convertedX, convertedY);
+};
+
+NPEngine.QuadrantGrid.prototype.convertToVectorValueX = function(x) {
+  return this.centerX + x/this.ratio * 80;
+};
+
+NPEngine.QuadrantGrid.prototype.convertToVectorValueY = function(y) {
+  return this.centerY + y/this.ratio * -80;
+};
+
+NPEngine.QuadrantGrid.prototype.convertToGridScalaValue = function(value) {
+  return value/this.ratio*80;
 };
 
 NPEngine.Collision2d = function () {
@@ -326,8 +637,8 @@ NPEngine.Collision2d = function () {
   this.mass2 = 2;
   this.diameter1 = 1;   // m
   this.diameter2 = 1;
-  this.velocity1_x = 3;    // m/s
-  this.velocity1_y = 1.5;
+  this.velocity1_x = 1;    // m/s
+  this.velocity1_y = 0;
   this.velocity2_x = 0;
   this.velocity2_y = 0;
   this.k = 10000;         // N/m
@@ -339,18 +650,12 @@ NPEngine.Collision2d.prototype.constructor = NPEngine.Collision2d;
 
 
 
-NPEngine.Collision2d.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+NPEngine.Collision2d.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
+  this.timeBoard = timeBoard;
 };
 
 NPEngine.Collision2d.prototype.onAttachedGrid = function (gridObject) {
   this.grid = gridObject;
-};
-
-NPEngine.Collision2d.prototype.onStart = function() {
-  this.startTime = new Date().getTime();
-};
-
-NPEngine.Collision2d.prototype.onStop = function() {
 };
 
 NPEngine.Collision2d.prototype.compute = function () {
@@ -388,8 +693,28 @@ NPEngine.Collision2d.prototype.compute = function () {
   }
 };
 
+NPEngine.Collision2d.prototype.onReady = function() {
+  var data = this.memory[0];
+  this.curBall1.x = data.ball1_x;
+  this.curBall1.y = data.ball1_y;
+  this.curBall2.x = data.ball2_x;
+  this.curBall2.y = data.ball2_y;
+};
+
+NPEngine.Collision2d.prototype.onStart = function() {
+};
+
+NPEngine.Collision2d.prototype.onResume = function() {
+};
+
+NPEngine.Collision2d.prototype.onPause = function() {
+};
+
+NPEngine.Collision2d.prototype.onStop = function() {
+};
+
 NPEngine.Collision2d.prototype.update = function () {
-  var gap = Math.round((new Date().getTime()-this.startTime)/1); // convert millisecond to 0.01 second
+  var gap = Math.round((new Date().getTime()-this.timeBoard.then)/1); // convert millisecond to 0.01 second
 
   if (gap < 10000) {
     var data = this.memory[gap];
@@ -474,6 +799,119 @@ NPEngine.Collision2d.prototype.setVelocity2_x = function(value) {
 NPEngine.Collision2d.prototype.setVelocity2_y = function(value) {
   this.velocity2_y = value;
 };
+NPEngine.ParabolicMotion = function() {
+  NPEngine.DisplayObject.call(this);
+
+  // final variables
+  this.deltaTime  = 0.1;        // second
+
+  // initial variables
+  this.gravity    = 9.8;        // m/s^2
+  this.mass       = 1;          // kg
+  this.theta      = 0.785398;   // rad
+  this.velocity   = 70;         // m/s
+  this.mu         = 0.1;        // friction constant
+
+  // initial positions
+  this.ball = new NPEngine.Point(0, 0);
+
+  // moving position
+  this.curBall = new NPEngine.Point;
+};
+
+NPEngine.ParabolicMotion.prototype.constructor = NPEngine.ParabolicMotion;
+NPEngine.ParabolicMotion.prototype = Object.create(NPEngine.DisplayObject.prototype);
+
+
+
+NPEngine.ParabolicMotion.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
+  this.timeBoard = timeBoard;
+};
+
+NPEngine.ParabolicMotion.prototype.onAttachedGrid = function (gridObject) {
+  this.grid = gridObject;
+};
+
+NPEngine.ParabolicMotion.prototype.compute = function () {
+  this.memory = [];
+  var ballX = this.ball.x;
+  var ballY = this.ball.y;
+  var velocityX = this.velocity*Math.cos(this.theta);
+  var velocityY = this.velocity*Math.sin(this.theta);
+  var forceX = -this.mu*velocityX;
+  var forceY = -this.mu*velocityY - this.mass*this.gravity;
+  this.memory.push({
+    time: 0,
+    ballX: ballX,
+    ballY: ballY
+  });
+
+  for (var i=1; i<10000; i++) {
+    ballX = ballX+this.deltaTime*velocityX;
+    ballY = ballY+this.deltaTime*velocityY;
+    velocityX = velocityX+forceX/this.mass*this.deltaTime;
+    velocityY = velocityY+forceY/this.mass*this.deltaTime;
+    forceX = -this.mu*velocityX;
+    forceY = -this.mu*velocityY - this.mass*this.gravity;
+    this.memory.push({
+      time: i,
+      ballX: ballX,
+      ballY: ballY
+    })
+  }
+};
+
+NPEngine.ParabolicMotion.prototype.onReady = function() {
+  var data = this.memory[0];
+  this.curBall.x = this.grid.convertToVectorValueX(data.ballX);
+  this.curBall.y = this.grid.convertToVectorValueY(data.ballY);
+};
+
+NPEngine.ParabolicMotion.prototype.onStart = function() {
+};
+
+NPEngine.ParabolicMotion.prototype.onResume = function() {
+};
+
+NPEngine.ParabolicMotion.prototype.onPause = function() {
+};
+
+NPEngine.ParabolicMotion.prototype.onStop = function() {
+};
+
+NPEngine.ParabolicMotion.prototype.update = function () {
+  var gap = Math.round((new Date().getTime()-this.timeBoard.then)/(this.deltaTime*1000)); // convert millisecond to 0.01 second
+
+  if (gap < 10000) {
+    var data = this.memory[gap];
+    this.curBall.x = this.grid.convertToVectorValueX(data.ballX);
+    this.curBall.y = this.grid.convertToVectorValueY(data.ballY);
+  }
+};
+
+NPEngine.ParabolicMotion.prototype.render = function (context) {
+  context.beginPath();
+  context.arc(this.curBall.x, this.curBall.y, 10, 0, 2*Math.PI, true);
+  context.fillStyle = 'black';
+  context.fill();
+  context.stroke();
+};
+
+NPEngine.ParabolicMotion.prototype.setGravity = function (value) {
+  this.gravity = value;
+};
+
+NPEngine.ParabolicMotion.prototype.setMass = function (value) {
+  this.mass = value;
+};
+
+NPEngine.ParabolicMotion.prototype.setAngle = function (value) {
+  this.theta = NPEngine.Convert.toRadians(value);
+};
+
+NPEngine.ParabolicMotion.prototype.setVelocity = function (value) {
+  this.velocity = value;   // m/s
+};
 NPEngine.Pendulum = function () {
   NPEngine.DisplayObject.call(this);
 
@@ -494,16 +932,10 @@ NPEngine.Pendulum.prototype.constructor = NPEngine.Pendulum;
 
 
 
-NPEngine.Pendulum.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+NPEngine.Pendulum.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
   this.pivot.x = Math.round(viewWidth/2);
   this.pivot.y = 0;
-};
-
-NPEngine.Pendulum.prototype.onStart = function() {
-  this.startTime = new Date().getTime();
-};
-
-NPEngine.Pendulum.prototype.onStop = function() {
+  this.timeBoard = timeBoard;
 };
 
 NPEngine.Pendulum.prototype.compute = function () {
@@ -564,8 +996,25 @@ NPEngine.Pendulum.prototype.compute = function () {
   }
 };
 
+NPEngine.Pendulum.prototype.onReady = function() {
+  this.curCircle.x = this.memory[0].x;
+  this.curCircle.y = this.memory[0].y;
+};
+
+NPEngine.Pendulum.prototype.onStart = function() {
+};
+
+NPEngine.Pendulum.prototype.onResume = function() {
+};
+
+NPEngine.Pendulum.prototype.onPause = function() {
+};
+
+NPEngine.Pendulum.prototype.onStop = function() {
+};
+
 NPEngine.Pendulum.prototype.update = function () {
-  var gap = Math.round((new Date().getTime()-this.startTime)/(this.deltaTime*1000)); // millisecond to 0.01 second
+  var gap = Math.round((new Date().getTime()-this.timeBoard.then)/(this.deltaTime*1000)); // millisecond to 0.01 second
   var phase = Math.round(gap%this.period);
 
   this.curCircle.x = this.memory[phase].x;
@@ -628,22 +1077,12 @@ NPEngine.Spring.prototype.constructor = NPEngine.Spring;
 
 
 
-NPEngine.Spring.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+NPEngine.Spring.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
+  this.timeBoard = timeBoard;
 };
 
 NPEngine.Spring.prototype.onAttachedGrid = function (gridObject) {
   this.grid = gridObject;
-};
-
-NPEngine.Spring.prototype.onStart = function() {
-  this.convertedPivot = this.grid.convertToGridPoint(this.pivot);
-  this.halfOfConvertedBlockWidth = parseInt(this.grid.convertToGridScalaValue(this.block.width)/2);
-  this.halfOfConvertedBlockHeight = parseInt(this.grid.convertToGridScalaValue(this.block.height)/2);
-  this.convertedBlockPosY = this.convertedPivot.y;
-  this.startTime = new Date().getTime();
-};
-
-NPEngine.Spring.prototype.onStop = function() {
 };
 
 NPEngine.Spring.prototype.compute = function () {
@@ -661,8 +1100,26 @@ NPEngine.Spring.prototype.compute = function () {
   }
 };
 
+NPEngine.Spring.prototype.onReady = function() {
+  this.convertedPivot = this.grid.convertToGridPoint(this.pivot);
+  this.halfOfConvertedBlockWidth = parseInt(this.grid.convertToGridScalaValue(this.block.width)/2);
+  this.halfOfConvertedBlockHeight = parseInt(this.grid.convertToGridScalaValue(this.block.height)/2);
+  this.convertedBlockPosY = this.convertedPivot.y;
+  this.convertedBlockPosX = this.grid.convertToVectorValueX(this.memory[0].blockPosX);
+};
+
+NPEngine.Spring.prototype.onStart = function() {
+  this.convertedPivot = this.grid.convertToGridPoint(this.pivot);
+  this.halfOfConvertedBlockWidth = parseInt(this.grid.convertToGridScalaValue(this.block.width)/2);
+  this.halfOfConvertedBlockHeight = parseInt(this.grid.convertToGridScalaValue(this.block.height)/2);
+  this.convertedBlockPosY = this.convertedPivot.y;
+};
+
+NPEngine.Spring.prototype.onStop = function() {
+};
+
 NPEngine.Spring.prototype.update = function () {
-  var gap = Math.round((new Date().getTime()-this.startTime)/(this.deltaTime/0.001));
+  var gap = Math.round((new Date().getTime()-this.timeBoard.then)/(this.deltaTime/0.001));
 
   var data = this.memory[gap];
   this.convertedBlockPosX = this.grid.convertToVectorValueX(data.blockPosX);
@@ -707,8 +1164,6 @@ NPEngine.Spring.prototype.setVelocity = function (value) {
 };
 
 NPEngine.CanvasRenderer = function () {
-  this.DEBUG = false;
-
   this.grid = null;
   this.children = [];
 
@@ -719,65 +1174,59 @@ NPEngine.CanvasRenderer = function () {
 
   this.context = this.view.getContext("2d");
 
-  if (this.DEBUG) {
-    this.fps = new NPEngine.FPSBoard();
-  }
-
-  this.time = new NPEngine.TimeBoard;
+  this.timeBoard = new NPEngine.TimeBoard;
 };
 
-// constructor
 NPEngine.CanvasRenderer.prototype.constructor = NPEngine.CanvasRenderer;
 
 
 
-NPEngine.CanvasRenderer.prototype.render = function () {
-  // clear
-  this.context.clearRect(0, 0, this.view.width, this.view.height);
+NPEngine.CanvasRenderer.prototype.compute = function() {
+  for (var i=0, length=this.children.length; i<length; i++) {
+    this.children[i].compute();
+  }
+};
 
-  // update
-  var length = this.children.length;
-  for (var i = 0; i < length; i++) {
-    this.children[i].update();
+NPEngine.CanvasRenderer.prototype.onEngineReady = function() {
+  this.timeBoard.init();
+  for (var i=0, length=this.children.length; i<length; i++) {
+    this.children[i].onReady();
   }
+  this.render();
+};
 
-  if (this.DEBUG) {
-    this.fps.update();
-  }
-  this.time.update();
+NPEngine.CanvasRenderer.prototype.onEngineStart = function() {
+};
 
-  // render
-  if (this.grid != null) {
-    this.grid.render(this.context);
+NPEngine.CanvasRenderer.prototype.onEngineResume = function() {
+  this.timeBoard.resume();
+  for (var i=0, length=this.children.length; i<length; i++) {
+    this.children[i].onStart();
   }
-  for (var i = 0; i < length; i++) {
-    this.children[i].render(this.context);
-  }
+};
 
-  if (this.DEBUG) {
-    this.fps.render(this.context);
+NPEngine.CanvasRenderer.prototype.onEnginePause = function() {
+  this.timeBoard.pause();
+};
+
+NPEngine.CanvasRenderer.prototype.onEngineStop = function() {
+  for (var i=0, length=this.children.length; i<length; i++) {
+    this.children[i].onStop();
   }
-  this.time.render(this.context);
+};
+
+NPEngine.CanvasRenderer.prototype.onEngineDestroy = function() {
 };
 
 NPEngine.CanvasRenderer.prototype.addChild = function (displayObject) {
   if ((displayObject instanceof NPEngine.DisplayObject) == false) {
     throw new Error();
   }
-  displayObject.onAttachedRenderer(this.view.width, this.view.height);
+  displayObject.onAttachedRenderer(this.view.width, this.view.height, this.timeBoard);
   this.children.push(displayObject);
 
   if (this.grid != null) {
     displayObject.onAttachedGrid(this.grid);
-  }
-};
-
-NPEngine.CanvasRenderer.prototype.setFps = function (visible) {
-  if (visible == true) {
-    this.fps.visible = true;
-  }
-  else if (visible == false) {
-    this.fps.visible = false;
   }
 };
 
@@ -789,70 +1238,63 @@ NPEngine.CanvasRenderer.prototype.setGrid = function (gridObject) {
   this.grid = gridObject;
 };
 
-NPEngine.CanvasRenderer.prototype.onEnginePreStart = function() {
-  for (var i=0, length=this.children.length; i<length; i++) {
-    this.children[i].compute();
+NPEngine.CanvasRenderer.prototype.update = function () {
+  var length = this.children.length;
+  for (var i = 0; i < length; i++) {
+    this.children[i].update();
   }
-};
 
-NPEngine.CanvasRenderer.prototype.onEngineStart = function() {
-  this.time.init();
-  for (var i=0, length=this.children.length; i<length; i++) {
-    this.children[i].onStart();
+  this.timeBoard.update();
+}
+
+NPEngine.CanvasRenderer.prototype.render = function () {
+  // clear
+  this.context.clearRect(0, 0, this.view.width, this.view.height);
+
+  // render
+  var length = this.children.length;
+  if (this.grid != null) {
+    this.grid.render(this.context);
   }
-};
-
-NPEngine.CanvasRenderer.prototype.onEngineStop = function() {
-  for (var i=0, length=this.children.length; i<length; i++) {
-    this.children[i].onStop();
+  for (var i = 0; i < length; i++) {
+    this.children[i].render(this.context);
   }
+
+  this.timeBoard.render(this.context);
 };
 
-NPEngine.FPSBoard = function() {
-    this.visible = true;
-    this.then = new Date;
-    this.count = 0;
-    this.fps = 0;
-};
-
-// constructor
-NPEngine.FPSBoard.prototype.constructor = NPEngine.CanvasRenderer;
-
-
-
-NPEngine.FPSBoard.prototype.update = function() {
-    this.count++;
-};
-
-NPEngine.FPSBoard.prototype.render = function(context) {
-    var now = new Date;
-    var delta = now - this.then;
-
-    if (this.count%80 == 0) {
-        this.fps = Number((1000/delta).toFixed(1));
-    }
-
-    if (this.visible == true) {
-        context.font="20px Arial";
-        context.fillText("fps: " + this.fps, 0, 46);
-    }
-    this.then = now;
-};
 NPEngine.TimeBoard = function () {
   this.visible = true;
   this.init();
 };
 
 // constructor
-NPEngine.TimeBoard.prototype.constructor = NPEngine.CanvasRenderer;
+NPEngine.TimeBoard.prototype.constructor = NPEngine.TimeBoard;
 
 
 
 NPEngine.TimeBoard.prototype.init = function () {
-  this.then = new Date().getTime();
-}
+  this.timeFormat = "00:00:00";
+  this.sumOfTime = undefined;
+};
+
+NPEngine.TimeBoard.prototype.resume = function () {
+  if (this.sumOfTime === undefined) {
+    this.then = new Date().getTime();
+  }
+  else {
+    this.then = new Date().getTime() - this.sumOfTime;
+  }
+};
+
+NPEngine.TimeBoard.prototype.pause = function () {
+  this.sumOfTime = new Date().getTime() - this.then;
+};
 
 NPEngine.TimeBoard.prototype.update = function () {
+  var now = new Date().getTime();
+  var delta = now - this.then;
+  this.timeFormat = NPEngine.Convert.toTimeFormat(delta);
 };
 
 NPEngine.TimeBoard.prototype.render = function (context) {
@@ -860,12 +1302,8 @@ NPEngine.TimeBoard.prototype.render = function (context) {
     return ;
   }
 
-  var now = new Date().getTime();
-  var delta = now - this.then;
-  var timeFormat = NPEngine.Convert.toTimeFormat(delta);
-
   if (this.visible == true) {
     context.font = "20px Arial";
-    context.fillText("Time: " + timeFormat, 0, 22);
+    context.fillText("Time: " + this.timeFormat, 0, 22);
   }
 };
