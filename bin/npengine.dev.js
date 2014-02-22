@@ -912,7 +912,6 @@ NPEngine.ParabolicMotion.prototype.setAngle = function (value) {
 NPEngine.ParabolicMotion.prototype.setVelocity = function (value) {
   this.velocity = value;   // m/s
 };
-
 NPEngine.Pendulum = function () {
   NPEngine.DisplayObject.call(this);
 
