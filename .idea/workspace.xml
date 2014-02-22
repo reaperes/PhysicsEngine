@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d3978edd-d839-4542-b287-bdf2c1035046" name="Default" comment="delete cached unnecessary file.">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/npengine.dev.js" afterPath="$PROJECT_DIR$/bin/npengine.dev.js" />
+    <list default="true" id="d3978edd-d839-4542-b287-bdf2c1035046" name="Default" comment="why file is not deleted?">
+      <change type="DELETED" beforePath="C:\Users\nhk\Documents\WebstormProjects\PhysicsEngine\.idea\workspace.xml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
     </list>
     <ignored path="PhysicsEngine.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -11,7 +11,7 @@
     <file path="/a.dummy" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389926339952" ignored="false" />
     <file path="$PROJECT_DIR$/../PhysicsJS/examples/spaceship/js/player-behavior.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389523282015" ignored="false" />
     <file path="/index.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1391785986152" ignored="false" />
-    <file path="/Dummy.txt" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1393081400205" ignored="false" />
+    <file path="/Dummy.txt" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1393081461965" ignored="false" />
     <file path="/newton.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389526964581" ignored="false" />
     <file path="$PROJECT_DIR$/../pixi.js/examples/example 1 - Basics/index.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389577480406" ignored="false" />
     <file path="/CanvasRenderer.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392729408828" ignored="false" />
@@ -457,7 +457,11 @@
       <created>1393081403295</created>
       <updated>1393081403295</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="why file is not deleted?">
+      <created>1393081453378</created>
+      <updated>1393081453378</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -525,7 +529,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="delete cached unnecessary file." />
+    <option name="LAST_COMMIT_MESSAGE" value="why file is not deleted?" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -558,6 +562,7 @@
     <MESSAGE value="fix minor bug #20" />
     <MESSAGE value="pendulum collision completed" />
     <MESSAGE value="delete cached unnecessary file." />
+    <MESSAGE value="why file is not deleted?" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -587,7 +592,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/npengine/display/DisplayObject.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="33" selection-start="319" selection-end="319" vertical-scroll-proportion="0.2771318" />
+        <state line="13" column="33" selection-start="319" selection-end="319" vertical-scroll-proportion="0.2771318">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/npengine/display/object/Collision2d.js">
@@ -609,17 +616,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pendulum.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="14" selection-start="431" selection-end="431" vertical-scroll-proportion="0.3016983" />
+        <state line="14" column="14" selection-start="431" selection-end="431" vertical-scroll-proportion="0.3016983">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/spring.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="17" selection-start="464" selection-end="464" vertical-scroll-proportion="0.32967034" />
+        <state line="15" column="17" selection-start="464" selection-end="464" vertical-scroll-proportion="0.32967034">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/npengine/NPEngine.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="35" selection-start="509" selection-end="509" vertical-scroll-proportion="0.24367088" />
+        <state line="19" column="35" selection-start="509" selection-end="509" vertical-scroll-proportion="0.24367088">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/npengine/renderer/CanvasRenderer.js">
