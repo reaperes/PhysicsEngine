@@ -9,50 +9,74 @@
 <body>
 <script type="text/javascript">
   var engine = new NPEngine;
-  var pendulum = new NPEngine.Pendulum;
-  engine.addDisplayObject(pendulum);
+  var pendulumCollision = new NPEngine.PendulumCollision;
+  engine.addDisplayObject(pendulumCollision);
   engine.ready();
 
   // control module
   var controlBox = function () {
-    this.mass = 10;
-    this.length = 5;
-    this.theta0 = 45;
-    this.ΔdeltaT = 0.01;
+    this.gravity = 9.8;
+    this.k = 1000000;
+    this.mu = 10;
+    this.diameter1 = 0.1;
+    this.diameter2 = 0.1;
+    this.angle1 = 0;
+    this.angle2 = 45;
   };
 
   window.onload = function () {
-    var control = new controlBox();
+    var box = new controlBox();
     var gui = new dat.GUI();
 
-    var mass = gui.add(control, 'mass', 1, 100);
-    mass.onChange(function (value) {
+    var gravity = gui.add(box, 'gravity', 1, 10);
+    gravity.onChange(function (value) {
       engine.stop();
-      pendulum.setMass(Math.round(value));
+      pendulumCollision.setGravity(value);
       engine.ready();
     });
 
-    var length = gui.add(control, 'length', 1, 10);
-    length.onChange(function (value) {
+    var k = gui.add(box, 'k', 10000, 10000000);
+    k.onChange(function (value) {
       engine.stop();
-      pendulum.setLength(Math.round(value));
+      pendulumCollision.setK(Math.round(value));
       engine.ready();
     });
 
-    var theta0 = gui.add(control, 'theta0', -90, 90);
-    theta0.onChange(function (value) {
+    var mu = gui.add(box, 'mu', 0, 300);
+    mu.onChange(function (value) {
       engine.stop();
-      pendulum.setTheta0(Math.round(value));
+      pendulumCollision.setMu(Math.round(value));
       engine.ready();
     });
 
-    var ΔdeltaT = gui.add(control, 'ΔdeltaT', 0.01, 0.1);
-    ΔdeltaT.onChange(function (value) {
+    var diameter1 = gui.add(box, 'diameter1', 0, 1);
+    diameter1.onChange(function (value) {
       engine.stop();
-      pendulum.setDeltaT(value);
+      pendulumCollision.setDiameter1(value);
       engine.ready();
     });
-  };
+
+    var diameter2 = gui.add(box, 'diameter2', 0, 1);
+    diameter2.onChange(function (value) {
+      engine.stop();
+      pendulumCollision.setDiameter2(value);
+      engine.ready();
+    });
+
+    var angle1 = gui.add(box, 'angle1', -90, 0);
+    angle1.onChange(function (value) {
+      engine.stop();
+      pendulumCollision.setAngle1(value);
+      engine.ready();
+    });
+
+    var angle2 = gui.add(box, 'angle2', 0, 90);
+    angle2.onChange(function (value) {
+      engine.stop();
+      pendulumCollision.setAngle2(value);
+      engine.ready();
+    });
+  }
 </script>
 </body>
 </html>

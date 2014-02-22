@@ -1,140 +1,167 @@
-NPEngine.Pendulum = function () {
+NPEngine.PendulumCollision = function() {
   NPEngine.DisplayObject.call(this);
 
+  // final variables
+  this.deltaTime  = 0.0005;        // second
+
   // initial variables
-  this.mass = 10;
-  this.length = 5;
-  this.gravity = 9.8;
-  this.theta0 = 0.785398;
-  this.deltaTime = 0.01;
+  this.gravity          = 9.8;        // m/s^2
+  this.mass             = 0.5;        // kg
+  this.lineLength       = 1;          // m
+  this.k                = 1000000;    // N/m
+  this.mu               = 10;         // N s/m
+  this.diameter1        = 0.1;        // m
+  this.diameter2        = 0.1;        // m
+  this.theta1           = 0;          // rad
+  this.theta2           = NPEngine.Convert.toRadians(45);   // rad
+//  this.circumference1   = this.lineLength*this.theta1;          // m
+//  this.circumference2   = this.lineLength*this.theta2;          // m
+  this.angularVelocity1 = 0;
+  this.angularVelocity2 = 0;
 
   // initial position
-  this.pivot = new NPEngine.Point;
-  this.curCircle = new NPEngine.Point;
+  this.pivot1 = new NPEngine.Point;
+  this.pivot2 = new NPEngine.Point;
+
+  this.ratio = Math.pow(2, 8);
 };
 
-NPEngine.Pendulum.prototype = Object.create(NPEngine.DisplayObject.prototype);
-NPEngine.Pendulum.prototype.constructor = NPEngine.Pendulum;
+NPEngine.PendulumCollision.prototype.constructor = NPEngine.PendulumCollision;
+NPEngine.PendulumCollision.prototype = Object.create(NPEngine.DisplayObject.prototype);
 
 
 
-NPEngine.Pendulum.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
-  this.pivot.x = Math.round(viewWidth/2);
-  this.pivot.y = 0;
+NPEngine.PendulumCollision.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
+  this.width = viewWidth;
+  this.height = viewHeight;
   this.timeBoard = timeBoard;
 };
 
-NPEngine.Pendulum.prototype.compute = function () {
+NPEngine.PendulumCollision.prototype.onAttachedGrid = function (gridObject) {
+  this.grid = gridObject;
+};
+
+NPEngine.PendulumCollision.prototype.compute = function () {
   this.memory = [];
-  if (this.theta0 < 0.5) { /* theta0 is less than about 30 degrees */
-    this.period = Math.round((2 * Math.PI * Math.sqrt(this.length/this.gravity))*(1/this.deltaTime));
-    var velocity = 0;
-    var circumference = this.length * this.theta0;
+  this.pivot1.x = Math.round(this.width/2-this.ratio*this.diameter1);
+  this.pivot1.y = 0;
+  this.pivot2.x = Math.round(this.width/2+this.ratio*this.diameter2);
+  this.pivot2.y = 0;
 
-    for (var i=0; i<this.period; i++) {
-      velocity = velocity+(-this.gravity*Math.sin(circumference/this.length))*this.deltaTime;
-      circumference = circumference+velocity*this.deltaTime;
-      var thetaValue = circumference/this.length;
-      var xValue = this.length*Math.sin(thetaValue).toFixed(6);
-      var yValue = this.length*Math.cos(thetaValue).toFixed(6);
-      this.memory.push({time: i, theta: thetaValue, x: xValue, y: yValue});
+  var inertia = this.mass*this.lineLength*this.lineLength;  // moment of inertia
+  var theta1 = this.theta1;
+  var theta2 = this.theta2;
+  var angularVelocity1 = this.angularVelocity1;
+  var angularVelocity2 = this.angularVelocity2;
+  var impulsiveForce = theta1>theta2 ? this.k*(theta1-theta2)*this.lineLength+this.mu*this.lineLength*(angularVelocity1-angularVelocity2) : 0;
+  var torque1 = -this.mass*this.gravity*this.lineLength*Math.sin(theta1)-this.lineLength*impulsiveForce;
+  var torque2 = -this.mass*this.gravity*this.lineLength*Math.sin(theta2)+this.lineLength*impulsiveForce;
+  this.memory.push({
+    time: 0,
+    theta1: theta1,
+    theta2: theta2
+  });
+
+  var memoryFlag = 1;
+  for (var i=this.deltaTime; i<200000; i++) {
+    impulsiveForce = theta1>theta2 ? this.k*(theta1-theta2)*this.lineLength+this.mu*this.lineLength*(angularVelocity1-angularVelocity2) : 0;
+    torque1 = -this.mass*this.gravity*this.lineLength*Math.sin(theta1)-this.lineLength*impulsiveForce;
+    torque2 = -this.mass*this.gravity*this.lineLength*Math.sin(theta2)+this.lineLength*impulsiveForce;
+
+    angularVelocity1 = angularVelocity1+torque1/inertia*this.deltaTime;
+    angularVelocity2 = angularVelocity2+torque2/inertia*this.deltaTime;
+    theta1 = theta1+angularVelocity1*this.deltaTime;
+    theta2 = theta2+angularVelocity2*this.deltaTime;
+    if (memoryFlag==20) {
+      memoryFlag=1;
+      this.memory.push({
+        time: i,
+        theta1: theta1,
+        theta2: theta2
+      });
     }
-  }
-  else { /* for theta0 !<< 1 */
-    // for performance, I apply uncommon algorithm.
-    var flag = false;             // it is used if it is after half or before half
-    var isSignPositive = false;
-    if (this.theta0 > 0) {
-      isSignPositive = true;
-    }
-
-    var velocity = 0;
-    var circumference = this.length * this.theta0;
-    var firstCircumference = circumference;
-    var lastGap = Number.MAX_VALUE;
-
-    for (var i=0; ; i++) {
-      velocity = velocity+(-this.gravity*Math.sin(circumference/this.length))*this.deltaTime;
-      circumference = circumference+velocity*this.deltaTime;
-      var thetaValue = circumference/this.length;
-      var xValue = this.length*Math.sin(thetaValue).toFixed(6);
-      var yValue = this.length*Math.cos(thetaValue).toFixed(6);
-      this.memory.push({time: i, theta: thetaValue, x: xValue, y: yValue});
-
-      if (flag == false) {
-        if ((circumference>0) != isSignPositive) {
-          flag = true;
-        }
-      }
-      else {
-        if ((circumference>0) == isSignPositive) {
-          var gap = Math.abs(firstCircumference - circumference);
-          if (lastGap < gap) {
-            this.period = i;
-            return ;
-          }
-          else {
-            lastGap = gap;
-          }
-        }
-      }
+    else {
+      memoryFlag++;
     }
   }
 };
 
-NPEngine.Pendulum.prototype.onReady = function() {
-  this.curCircle.x = this.memory[0].x;
-  this.curCircle.y = this.memory[0].y;
+NPEngine.PendulumCollision.prototype.onReady = function() {
+  this.ball1 = new NPEngine.Point(this.lineLength*Math.sin(this.theta1), this.lineLength*Math.cos(this.theta1));
+  this.ball2 = new NPEngine.Point(this.lineLength*Math.sin(this.theta2), this.lineLength*Math.cos(this.theta2));
 };
 
-NPEngine.Pendulum.prototype.onStart = function() {
+NPEngine.PendulumCollision.prototype.onStart = function() {
 };
 
-NPEngine.Pendulum.prototype.onResume = function() {
+NPEngine.PendulumCollision.prototype.onResume = function() {
 };
 
-NPEngine.Pendulum.prototype.onPause = function() {
+NPEngine.PendulumCollision.prototype.onPause = function() {
 };
 
-NPEngine.Pendulum.prototype.onStop = function() {
+NPEngine.PendulumCollision.prototype.onStop = function() {
 };
 
-NPEngine.Pendulum.prototype.update = function () {
-  var gap = Math.round((new Date().getTime()-this.timeBoard.then)/(this.deltaTime*1000)); // millisecond to 0.01 second
-  var phase = Math.round(gap%this.period);
+NPEngine.PendulumCollision.prototype.update = function () {
+  var gap = Math.round((new Date().getTime()-this.timeBoard.then)/10);
 
-  this.curCircle.x = this.memory[phase].x;
-  this.curCircle.y = this.memory[phase].y;
+  this.ball1.x = this.lineLength*Math.sin(this.memory[gap].theta1);
+  this.ball1.y = this.lineLength*Math.cos(this.memory[gap].theta1);
+  this.ball2.x = this.lineLength*Math.sin(this.memory[gap].theta2);
+  this.ball2.y = this.lineLength*Math.cos(this.memory[gap].theta2);
 };
 
-NPEngine.Pendulum.prototype.render = function (context) {
-  var convertedLength = Math.round(this.length/50)+40;
-  var convertedMass = Math.round(this.mass/3)+22;
+NPEngine.PendulumCollision.prototype.render = function (context) {
   context.beginPath();
   context.lineWidth = 2;
-  context.moveTo(this.pivot.x, this.pivot.y);
-  context.lineTo(this.pivot.x + this.curCircle.x * convertedLength, this.pivot.y + this.curCircle.y * convertedLength);
+  context.moveTo(this.pivot1.x, this.pivot1.y);
+  context.lineTo(this.pivot1.x+this.ratio*this.ball1.x, this.pivot1.y+this.ratio*this.ball1.y);
   context.stroke();
 
   context.beginPath();
-  context.arc(this.pivot.x + this.curCircle.x * convertedLength, this.pivot.y + this.curCircle.y * convertedLength, convertedMass, 0, 2 * Math.PI, true);
+  context.arc(this.pivot1.x+this.ratio*this.ball1.x, this.pivot1.y+this.ratio*this.ball1.y, this.ratio*this.diameter1, 0, 2*Math.PI, true);
+  context.fillStyle = 'black';
+  context.fill();
+  context.stroke();
+
+  context.beginPath();
+  context.lineWidth = 2;
+  context.moveTo(this.pivot2.x, this.pivot2.y);
+  context.lineTo(this.pivot2.x+this.ratio*this.ball2.x, this.pivot2.y+this.ratio*this.ball2.y);
+  context.stroke();
+
+  context.beginPath();
+  context.arc(this.pivot2.x+this.ratio*this.ball2.x, this.pivot2.y+this.ratio*this.ball2.y, this.ratio*this.diameter2, 0, 2*Math.PI, true);
   context.fillStyle = 'black';
   context.fill();
   context.stroke();
 };
 
-NPEngine.Pendulum.prototype.setMass = function (value) {
-  this.mass = value;
+NPEngine.PendulumCollision.prototype.setGravity = function (value) {
+  this.gravity = value;
 };
 
-NPEngine.Pendulum.prototype.setLength = function (value) {
-  this.length = value;
+NPEngine.PendulumCollision.prototype.setK = function (value) {
+  this.k = value;
 };
 
-NPEngine.Pendulum.prototype.setTheta0 = function (degree) {
-  this.theta0 = NPEngine.Convert.toRadians(degree);
+NPEngine.PendulumCollision.prototype.setMu = function (value) {
+  this.mu = value;
 };
 
-NPEngine.Pendulum.prototype.setDeltaT = function (value) {
-  this.deltaTime = value;
+NPEngine.PendulumCollision.prototype.setDiameter1 = function (value) {
+  this.diameter1 = value;
+};
+
+NPEngine.PendulumCollision.prototype.setDiameter2 = function (value) {
+  this.diameter2 = value;
+};
+
+NPEngine.PendulumCollision.prototype.setAngle1 = function (value) {
+  this.theta1 = NPEngine.Convert.toRadians(value);
+};
+
+NPEngine.PendulumCollision.prototype.setAngle2 = function (value) {
+  this.theta2 = NPEngine.Convert.toRadians(value);
 };
