@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d3978edd-d839-4542-b287-bdf2c1035046" name="Default" comment="why file is not deleted?">
-      <change type="DELETED" beforePath="C:\Users\nhk\Documents\WebstormProjects\PhysicsEngine\.idea\workspace.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+    <list default="true" id="d3978edd-d839-4542-b287-bdf2c1035046" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
     </list>
     <ignored path="PhysicsEngine.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -11,7 +10,7 @@
     <file path="/a.dummy" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389926339952" ignored="false" />
     <file path="$PROJECT_DIR$/../PhysicsJS/examples/spaceship/js/player-behavior.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389523282015" ignored="false" />
     <file path="/index.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1391785986152" ignored="false" />
-    <file path="/Dummy.txt" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1393081461965" ignored="false" />
+    <file path="/Dummy.txt" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1393081572676" ignored="false" />
     <file path="/newton.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389526964581" ignored="false" />
     <file path="$PROJECT_DIR$/../pixi.js/examples/example 1 - Basics/index.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389577480406" ignored="false" />
     <file path="/CanvasRenderer.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392729408828" ignored="false" />
@@ -461,7 +460,11 @@
       <created>1393081453378</created>
       <updated>1393081453378</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="why file is not deleted?">
+      <created>1393081587623</created>
+      <updated>1393081587623</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -492,8 +495,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="false" />
-    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
-    <option name="CHECK_NEW_TODO" value="true" />
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
     <option name="myTodoPanelSettings">
       <value>
         <are-packages-shown value="false" />
