@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d3978edd-d839-4542-b287-bdf2c1035046" name="Default" comment="delete cached unnecessary file.">
-      <change type="DELETED" beforePath="C:\Users\nhk\Documents\WebstormProjects\PhysicsEngine\.idea\workspace.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/npengine.dev.js" afterPath="$PROJECT_DIR$/bin/npengine.dev.js" />
     </list>
     <ignored path="PhysicsEngine.iws" />
@@ -11,7 +11,7 @@
     <file path="/a.dummy" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389926339952" ignored="false" />
     <file path="$PROJECT_DIR$/../PhysicsJS/examples/spaceship/js/player-behavior.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389523282015" ignored="false" />
     <file path="/index.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1391785986152" ignored="false" />
-    <file path="/Dummy.txt" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1393081331685" ignored="false" />
+    <file path="/Dummy.txt" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1393081363076" ignored="false" />
     <file path="/newton.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389526964581" ignored="false" />
     <file path="$PROJECT_DIR$/../pixi.js/examples/example 1 - Basics/index.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389577480406" ignored="false" />
     <file path="/CanvasRenderer.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392729408828" ignored="false" />
@@ -449,13 +449,18 @@
       <created>1393063502563</created>
       <updated>1393063502563</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="delete cached unnecessary file.">
+      <created>1393081368576</created>
+      <updated>1393081368576</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="1272" y="-288" width="1936" height="1096" extended-state="6" />
     <editor active="false" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24937238" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -469,7 +474,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32829046" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -517,7 +521,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="pendulum collision completed" />
+    <option name="LAST_COMMIT_MESSAGE" value="delete cached unnecessary file." />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -547,9 +551,9 @@
     <MESSAGE value="???" />
     <MESSAGE value="compile project" />
     <MESSAGE value="add control module" />
-    <MESSAGE value="delete cached unnecessary file." />
     <MESSAGE value="fix minor bug #20" />
     <MESSAGE value="pendulum collision completed" />
+    <MESSAGE value="delete cached unnecessary file." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
