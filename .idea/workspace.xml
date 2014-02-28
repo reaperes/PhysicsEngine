@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d3978edd-d839-4542-b287-bdf2c1035046" name="Default" comment="delete cached unnecessary file.">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pendulumCollision.html" />
       <change type="DELETED" beforePath="C:\Users\nhk\Documents\WebstormProjects\PhysicsEngine\.idea\workspace.xml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/npengine.dev.js" afterPath="$PROJECT_DIR$/bin/npengine.dev.js" />
     </list>
     <ignored path="PhysicsEngine.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -11,7 +11,7 @@
     <file path="/a.dummy" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389926339952" ignored="false" />
     <file path="$PROJECT_DIR$/../PhysicsJS/examples/spaceship/js/player-behavior.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389523282015" ignored="false" />
     <file path="/index.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1391785986152" ignored="false" />
-    <file path="/Dummy.txt" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392995921722" ignored="false" />
+    <file path="/Dummy.txt" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1393596051996" ignored="false" />
     <file path="/newton.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389526964581" ignored="false" />
     <file path="$PROJECT_DIR$/../pixi.js/examples/example 1 - Basics/index.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1389577480406" ignored="false" />
     <file path="/CanvasRenderer.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392729408828" ignored="false" />
@@ -37,6 +37,7 @@
     <file path="/spring.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392399028289" ignored="false" />
     <file path="/test.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392722398472" ignored="false" />
     <file path="/collision2d.html" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1392995342165" ignored="false" />
+    <file path="/Collision2d.js" changelist="d3978edd-d839-4542-b287-bdf2c1035046" time="1393595713891" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,10 +57,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="pendulumCollision.html" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="pendulumCollision.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pendulumCollision.html">
           <provider selected="true" editor-type-id="text-editor">
             <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Collision2d.js" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/npengine/display/object/Collision2d.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="74" column="66" selection-start="2856" selection-end="2856" vertical-scroll-proportion="0.021276595">
               <folding />
             </state>
           </provider>
@@ -94,7 +104,6 @@
         <option value="$PROJECT_DIR$/src/npengine/display/DisplayObject.js" />
         <option value="$PROJECT_DIR$/src/npengine/math/Rectangle.js" />
         <option value="$PROJECT_DIR$/src/npengine/math/Point.js" />
-        <option value="$PROJECT_DIR$/src/npengine/display/object/Collision2d.js" />
         <option value="$PROJECT_DIR$/src/npengine/display/background/Grid.js" />
         <option value="$PROJECT_DIR$/src/npengine/display/object/Pendulum.js" />
         <option value="$PROJECT_DIR$/src/npengine/display/object/Spring.js" />
@@ -104,14 +113,15 @@
         <option value="$PROJECT_DIR$/pendulum.html" />
         <option value="$PROJECT_DIR$/spring.html" />
         <option value="$PROJECT_DIR$/collision2d.html" />
+        <option value="$PROJECT_DIR$/src/npengine/display/object/Collision2d.js" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1234" />
-    <option name="height" value="816" />
+    <option name="x" value="1272" />
+    <option name="y" value="-408" />
+    <option name="width" value="1936" />
+    <option name="height" value="1216" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -212,6 +222,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -230,9 +241,100 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PhysicsEngine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PhysicsEngine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="npengine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PhysicsEngine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PhysicsEngine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="npengine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="display" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PhysicsEngine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PhysicsEngine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="npengine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="display" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="object" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PhysicsEngine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PhysicsEngine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="npengine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="display" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="background" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -389,17 +491,21 @@
       <created>1392995400677</created>
       <updated>1392995400677</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="#7">
+      <created>1393595869928</created>
+      <updated>1393595869928</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1234" height="816" extended-state="6" />
+    <frame x="1272" y="-408" width="1936" height="1216" extended-state="6" />
     <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24937238" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19916318" sideWeight="0.67170954" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.12493411" sideWeight="0.67170954" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
@@ -457,7 +563,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix minor bug #20" />
+    <option name="LAST_COMMIT_MESSAGE" value="#7" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -489,6 +595,7 @@
     <MESSAGE value="add control module" />
     <MESSAGE value="delete cached unnecessary file." />
     <MESSAGE value="fix minor bug #20" />
+    <MESSAGE value="#7" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -511,11 +618,6 @@
         <state line="29" column="44" selection-start="786" selection-end="786" vertical-scroll-proportion="0.61821705" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/npengine/display/background/Grid.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="81" column="45" selection-start="2059" selection-end="2080" vertical-scroll-proportion="0.80813956" />
-      </provider>
-    </entry>
     <entry file="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/JavascriptLanguage.jar!/com/intellij/lang/javascript/index/predefined/DHTML.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1129" column="0" selection-start="17190" selection-end="17190" vertical-scroll-proportion="0.3322785" />
@@ -523,21 +625,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/npengine/database/DBHelper.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="17" selection-start="1015" selection-end="1015" vertical-scroll-proportion="0.12974684">
-          <folding />
-        </state>
+        <state line="36" column="17" selection-start="1015" selection-end="1015" vertical-scroll-proportion="0.12974684" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/npengine/display/DisplayObject.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="13" column="33" selection-start="319" selection-end="319" vertical-scroll-proportion="0.2771318">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/npengine/display/object/Collision2d.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="91" column="0" selection-start="3123" selection-end="3123" vertical-scroll-proportion="0.034810126">
           <folding />
         </state>
       </provider>
@@ -554,9 +647,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pendulum.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="14" selection-start="431" selection-end="431" vertical-scroll-proportion="0.3016983">
-          <folding />
-        </state>
+        <state line="14" column="14" selection-start="431" selection-end="431" vertical-scroll-proportion="0.3016983" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/spring.html">
@@ -568,9 +659,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/npengine/NPEngine.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="35" selection-start="509" selection-end="509" vertical-scroll-proportion="0.24367088">
-          <folding />
-        </state>
+        <state line="19" column="35" selection-start="509" selection-end="509" vertical-scroll-proportion="0.24367088" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/npengine/renderer/CanvasRenderer.js">
@@ -590,6 +679,20 @@
     <entry file="file://$PROJECT_DIR$/pendulumCollision.html">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/npengine/display/background/Grid.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="81" column="45" selection-start="2061" selection-end="2082" vertical-scroll-proportion="0.63829786">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/npengine/display/object/Collision2d.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="74" column="66" selection-start="2856" selection-end="2856" vertical-scroll-proportion="0.021276595">
           <folding />
         </state>
       </provider>

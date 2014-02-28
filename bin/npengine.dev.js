@@ -695,10 +695,12 @@ NPEngine.Collision2d.prototype.compute = function () {
 
 NPEngine.Collision2d.prototype.onReady = function() {
   var data = this.memory[0];
-  this.curBall1.x = data.ball1_x;
-  this.curBall1.y = data.ball1_y;
-  this.curBall2.x = data.ball2_x;
-  this.curBall2.y = data.ball2_y;
+  this.curBall1.x = this.grid.convertToVectorValueX(data.ball1_x);
+  this.curBall1.y = this.grid.convertToVectorValueY(data.ball1_y);
+  this.curBall2.x = this.grid.convertToVectorValueX(data.ball2_x);
+  this.curBall2.y = this.grid.convertToVectorValueY(data.ball2_y);
+  this.curBallDiameter1 = this.grid.convertToGridScalaValue(this.diameter1);
+  this.curBallDiameter2 = this.grid.convertToGridScalaValue(this.diameter2);
 };
 
 NPEngine.Collision2d.prototype.onStart = function() {
@@ -718,28 +720,23 @@ NPEngine.Collision2d.prototype.update = function () {
 
   if (gap < 10000) {
     var data = this.memory[gap];
-    this.curBall1.x = data.ball1_x;
-    this.curBall1.y = data.ball1_y;
-    this.curBall2.x = data.ball2_x;
-    this.curBall2.y = data.ball2_y;
+    this.curBall1.x = this.grid.convertToVectorValueX(data.ball1_x);
+    this.curBall1.y = this.grid.convertToVectorValueY(data.ball1_y);
+    this.curBall2.x = this.grid.convertToVectorValueX(data.ball2_x);
+    this.curBall2.y = this.grid.convertToVectorValueY(data.ball2_y);
   }
 };
 
 NPEngine.Collision2d.prototype.render = function (context) {
-  var convertedBall1 = this.grid.convertToGridPoint(this.curBall1);
-  var convertedBall2 = this.grid.convertToGridPoint(this.curBall2);
-  var convertedDiameter1 = this.grid.convertToGridScalaValue(this.diameter1);
-  var convertedDiameter2 = this.grid.convertToGridScalaValue(this.diameter2);
-
   context.beginPath();
   context.fillStyle = 'black';
-  context.arc(convertedBall1.x, convertedBall1.y, convertedDiameter1, 0, 2*Math.PI, true);
+  context.arc(this.curBall1.x, this.curBall1.y, this.curBallDiameter1, 0, 2*Math.PI, true);
   context.fill();
   context.stroke();
 
   context.beginPath();
   context.fillStyle = 'black';
-  context.arc(convertedBall2.x, convertedBall2.y, convertedDiameter2, 0, 2*Math.PI, true);
+  context.arc(this.curBall2.x, this.curBall2.y, this.curBallDiameter2, 0, 2*Math.PI, true);
   context.fill();
   context.stroke();
 };
@@ -912,7 +909,6 @@ NPEngine.ParabolicMotion.prototype.setAngle = function (value) {
 NPEngine.ParabolicMotion.prototype.setVelocity = function (value) {
   this.velocity = value;   // m/s
 };
-
 NPEngine.Pendulum = function () {
   NPEngine.DisplayObject.call(this);
 
