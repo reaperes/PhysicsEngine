@@ -16,7 +16,7 @@
   engine.ready();
 
   // control module
-  var controlBox = function () {
+  var DefaultValue = function () {
     this.mass1 = 2;
     this.mass2 = 2;
     this.k = 10000;
@@ -34,101 +34,113 @@
   };
 
   window.onload = function () {
-    var box = new controlBox();
+    var defaultValue = new DefaultValue();
     var gui = new dat.GUI();
 
-    var mass1 = gui.add(box, 'mass1', 1, 10);
+    var massFolder = gui.addFolder('질량 (Kg)');
+    massFolder.open();
+    var mass1 = massFolder.add(defaultValue, 'mass1');
     mass1.onChange(function (value) {
       engine.stop();
       collision.setMass1(Math.round(value));
       engine.ready();
     });
 
-    var mass2 = gui.add(box, 'mass2', 1, 10);
+    var mass2 = massFolder.add(defaultValue, 'mass2');
     mass2.onChange(function (value) {
       engine.stop();
       collision.setMass2(Math.round(value));
       engine.ready();
     });
 
-    var k = gui.add(box, 'k', 0, 20000);
+    var kFolder = gui.addFolder('K (N/m)');
+    kFolder.open();
+    var k = kFolder.add(defaultValue, 'k');
     k.onChange(function (value) {
       engine.stop();
       collision.setK(Math.round(value));
       engine.ready();
     });
 
-    var mu = gui.add(box, 'mu', 0, 200);
+    var muFolder = gui.addFolder('Mu (N*s/m)');
+    muFolder.open();
+    var mu = muFolder.add(defaultValue, 'mu');
     mu.onChange(function (value) {
       engine.stop();
       collision.setMu(Math.round(value));
       engine.ready();
     });
 
-    var diameter1 = gui.add(box, 'diameter1', 0.1, 2);
+    var diameterFolder = gui.addFolder('지름 (m)');
+    diameterFolder.open();
+    var diameter1 = diameterFolder.add(defaultValue, 'diameter1');
     diameter1.onChange(function (value) {
       engine.stop();
       collision.setDiameter1(value);
       engine.ready();
     });
 
-    var diameter2 = gui.add(box, 'diameter2', 0.1, 2);
+    var diameter2 = diameterFolder.add(defaultValue, 'diameter2');
     diameter2.onChange(function (value) {
       engine.stop();
       collision.setDiameter2(value);
       engine.ready();
     });
 
-    var ball1_x = gui.add(box, 'ball1_x', -4, 4);
+    var positionFolder = gui.addFolder('공의 초기 위치 (m)');
+    positionFolder.open();
+    var ball1_x = positionFolder.add(defaultValue, 'ball1_x');
     ball1_x.onChange(function (value) {
       engine.stop();
       collision.setBall1_x(value);
       engine.ready();
     });
 
-    var ball1_y = gui.add(box, 'ball1_y', -4, 4);
+    var ball1_y = positionFolder.add(defaultValue, 'ball1_y');
     ball1_y.onChange(function (value) {
       engine.stop();
       collision.setBall1_y(value);
       engine.ready();
     });
 
-    var ball2_x = gui.add(box, 'ball2_x', -4, 4);
+    var ball2_x = positionFolder.add(defaultValue, 'ball2_x');
     ball2_x.onChange(function (value) {
       engine.stop();
       collision.setBall2_x(value);
       engine.ready();
     });
 
-    var ball2_y = gui.add(box, 'ball2_y', -4, 4);
+    var ball2_y = positionFolder.add(defaultValue, 'ball2_y');
     ball2_y.onChange(function (value) {
       engine.stop();
       collision.setBall2_y(value);
       engine.ready();
     });
 
-    var velocity1_x = gui.add(box, 'velocity1_x', -4, 4);
+    var velocityFolder = gui.addFolder('공의 초기 속도 (m/s)');
+    velocityFolder.open();
+    var velocity1_x = velocityFolder.add(defaultValue, 'velocity1_x');
     velocity1_x.onChange(function (value) {
       engine.stop();
       collision.setVelocity1_x(value);
       engine.ready();
     });
 
-    var velocity1_y = gui.add(box, 'velocity1_y', -4, 4);
+    var velocity1_y = velocityFolder.add(defaultValue, 'velocity1_y');
     velocity1_y.onChange(function (value) {
       engine.stop();
       collision.setVelocity1_y(value);
       engine.ready();
     });
 
-    var velocity2_x = gui.add(box, 'velocity2_x', -4, 4);
+    var velocity2_x = velocityFolder.add(defaultValue, 'velocity2_x');
     velocity2_x.onChange(function (value) {
       engine.stop();
       collision.setVelocity2_x(value);
       engine.ready();
     });
 
-    var velocity2_y = gui.add(box, 'velocity2_y', -4, 4);
+    var velocity2_y = velocityFolder.add(defaultValue, 'velocity2_y');
     velocity2_y.onChange(function (value) {
       engine.stop();
       collision.setVelocity2_y(value);
