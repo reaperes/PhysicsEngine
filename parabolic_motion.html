@@ -16,7 +16,8 @@
   engine.addDisplayObject(parabolicMotion);
   engine.ready();
 
-  var controlBox = function () {
+  // default value
+  var DefaultValue = function () {
     this.gravity = 9.8;
     this.mass = 1;
     this.angle = 45;
@@ -24,31 +25,39 @@
   };
 
   window.onload = function () {
-    var control = new controlBox();
+    var defaultValue = new DefaultValue();
     var gui = new dat.GUI();
 
-    var gravity = gui.add(control, 'gravity', 1, 20);
+    var gravityFolder = gui.addFolder('중력 (m/s^2)');
+    gravityFolder.open();
+    var gravity = gravityFolder.add(defaultValue, 'gravity');
     gravity.onChange(function (value) {
       engine.stop();
       parabolicMotion.setGravity(value);
       engine.ready();
     });
 
-    var mass = gui.add(control, 'mass', 1, 100);
+    var massFolder = gui.addFolder('질량 (kg)');
+    massFolder.open();
+    var mass = massFolder.add(defaultValue, 'mass');
     mass.onChange(function (value) {
       engine.stop();
       parabolicMotion.setMass(value);
       engine.ready();
     });
 
-    var angle = gui.add(control, 'angle', 0, 90);
+    var angleFolder = gui.addFolder('각도 (degree)');
+    angleFolder.open();
+    var angle = angleFolder.add(defaultValue, 'angle');
     angle.onChange(function (value) {
       engine.stop();
       parabolicMotion.setAngle(value);
       engine.ready();
     });
 
-    var velocity = gui.add(control, 'velocity', 0, 90);
+    var velocityFolder = gui.addFolder('속도 (m/s)');
+    velocityFolder.open();
+    var velocity = velocityFolder.add(defaultValue, 'velocity');
     velocity.onChange(function (value) {
       engine.stop();
       parabolicMotion.setVelocity(value);

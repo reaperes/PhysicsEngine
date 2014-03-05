@@ -15,8 +15,8 @@
   engine.addDisplayObject(spring);
   engine.ready();
 
-  // control module
-  var controlBox = function () {
+  // default value
+  var DefaultValue = function () {
     this.mass = 2;
     this.k = 100;
     this.gravity = 9.8;
@@ -26,45 +26,57 @@
   };
 
   window.onload = function () {
-    var box = new controlBox();
+    var defaultValue = new DefaultValue();
     var gui = new dat.GUI();
 
-    var mass = gui.add(box, 'mass', 0.1, 5);
+    var massFolder = gui.addFolder('질량 (kg)');
+    massFolder.open();
+    var mass = massFolder.add(defaultValue, 'mass');
     mass.onChange(function (value) {
       engine.stop();
       spring.setMass(value);
       engine.ready();
     });
 
-    var k = gui.add(box, 'k', 10, 1000);
+    var kFolder = gui.addFolder('k (N/m)');
+    kFolder.open();
+    var k = kFolder.add(defaultValue, 'k');
     k.onChange(function (value) {
       engine.stop();
       spring.setK(value);
       engine.ready();
     });
 
-    var gravity = gui.add(box, 'gravity', 1, 100);
+    var gravityFolder = gui.addFolder('중력 (m/s^2)');
+    gravityFolder.open();
+    var gravity = gravityFolder.add(defaultValue, 'gravity');
     gravity.onChange(function (value) {
       engine.stop();
       spring.setGravity(value);
       engine.ready();
     });
 
-    var mu = gui.add(box, 'mu', 0, 30);
+    var muFolder = gui.addFolder('Mu (N s/m)');
+    muFolder.open();
+    var mu = muFolder.add(defaultValue, 'mu');
     mu.onChange(function (value) {
       engine.stop();
       spring.setMu(value);
       engine.ready();
     });
 
-    var x = gui.add(box, 'x', -4, 4);
+    var xFolder = gui.addFolder('초기 위치 (m)');
+    xFolder.open();
+    var x = xFolder.add(defaultValue, 'x');
     x.onChange(function (value) {
       engine.stop();
       spring.setX(value);
       engine.ready();
     });
 
-    var velocity = gui.add(box, 'velocity', -30, 30);
+    var velocityFolder = gui.addFolder('초기 속도 (m/s)');
+    velocityFolder.open();
+    var velocity = velocityFolder.add(defaultValue, 'velocity');
     velocity.onChange(function (value) {
       engine.stop();
       spring.setVelocity(value);

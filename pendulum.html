@@ -13,43 +13,42 @@
   engine.addDisplayObject(pendulum);
   engine.ready();
 
-  // control module
-  var controlBox = function () {
+  // default value
+  var DefaultValue = function () {
     this.mass = 10;
     this.length = 5;
     this.theta0 = 45;
-    this.ΔdeltaT = 0.01;
+    this.deltaT = 0.01;
   };
 
   window.onload = function () {
-    var control = new controlBox();
+    var defaultValue = new DefaultValue();
     var gui = new dat.GUI();
 
-    var mass = gui.add(control, 'mass', 1, 100);
+    var massFolder = gui.addFolder('질량 (Kg)');
+    massFolder.open();
+    var mass = massFolder.add(defaultValue, 'mass');
     mass.onChange(function (value) {
       engine.stop();
       pendulum.setMass(Math.round(value));
       engine.ready();
     });
 
-    var length = gui.add(control, 'length', 1, 10);
+    var lengthFolder = gui.addFolder('선 길이 (m)');
+    lengthFolder.open();
+    var length = lengthFolder.add(defaultValue, 'length');
     length.onChange(function (value) {
       engine.stop();
       pendulum.setLength(Math.round(value));
       engine.ready();
     });
 
-    var theta0 = gui.add(control, 'theta0', -90, 90);
+    var thetaFolder = gui.addFolder('초기 각도 (degree)');
+    thetaFolder.open();
+    var theta0 = thetaFolder.add(defaultValue, 'theta0', -90, 90);
     theta0.onChange(function (value) {
       engine.stop();
       pendulum.setTheta0(Math.round(value));
-      engine.ready();
-    });
-
-    var ΔdeltaT = gui.add(control, 'ΔdeltaT', 0.01, 0.1);
-    ΔdeltaT.onChange(function (value) {
-      engine.stop();
-      pendulum.setDeltaT(value);
       engine.ready();
     });
   };
