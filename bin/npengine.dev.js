@@ -1291,12 +1291,13 @@ NPEngine.Spring.prototype.update = function () {
 
 NPEngine.Spring.prototype.render = function (context) {
   context.beginPath();
-  context.lineWidth = 4;
+  context.lineWidth = 6;
   context.moveTo(this.convertedPivot.x, this.convertedPivot.y);
   context.lineTo(this.convertedBlockPosX, this.convertedBlockPosY);
   context.stroke();
 
   context.beginPath();
+  context.lineWidth = 1;
   context.rect(this.convertedBlockPosX-this.halfOfConvertedBlockWidth, this.convertedBlockPosY-this.halfOfConvertedBlockHeight, this.halfOfConvertedBlockWidth*2, this.halfOfConvertedBlockHeight*2);
   context.fillStyle = 'black';
   context.fill();

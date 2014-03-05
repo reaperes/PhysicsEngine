@@ -113,6 +113,15 @@ NPEngine.Collision2d.prototype.render = function (context) {
   context.arc(this.curBall2.x, this.curBall2.y, this.curBallDiameter2, 0, 2*Math.PI, true);
   context.fill();
   context.stroke();
+
+  context.beginPath();
+  context.font = '34pt Calibri';
+  context.fillStyle = 'white';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.fillText('1', this.curBall1.x, this.curBall1.y);
+  context.fillText('2', this.curBall2.x, this.curBall2.y);
+  context.stroke();
 };
 
 NPEngine.Collision2d.prototype.setMass1 = function(value) {
