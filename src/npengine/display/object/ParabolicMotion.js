@@ -34,6 +34,7 @@ NPEngine.ParabolicMotion.prototype.onAttachedGrid = function (gridObject) {
 };
 
 NPEngine.ParabolicMotion.prototype.compute = function () {
+  this.trace = [];
   this.memory = [];
   var ballX = this.ball.x;
   var ballY = this.ball.y;
@@ -94,10 +95,24 @@ NPEngine.ParabolicMotion.prototype.update = function () {
     }
     this.curBall.x = ballX;
     this.curBall.y = ballY;
+
+    // trace line
+    this.trace.push({
+      x: ballX,
+      y: ballY
+    });
   }
 };
 
 NPEngine.ParabolicMotion.prototype.render = function (context) {
+  // draw trace
+  context.beginPath();
+  context.moveTo(this.grid.convertToVectorValueX(0), this.grid.convertToVectorValueY(0));
+  for (var i=0; i<this.trace.length; i++) {
+    context.lineTo(this.trace[i].x, this.trace[i].y);
+  }
+  context.stroke();
+
   context.beginPath();
   context.arc(this.curBall.x, this.curBall.y, 10, 0, 2*Math.PI, true);
   context.fillStyle = 'black';
