@@ -25,6 +25,8 @@ NPEngine.ParabolicMotion.prototype = Object.create(NPEngine.DisplayObject.protot
 
 NPEngine.ParabolicMotion.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
   this.timeBoard = timeBoard;
+  this.viewWidth = viewWidth;
+  this.viewHeight = viewHeight;
 };
 
 NPEngine.ParabolicMotion.prototype.onAttachedGrid = function (gridObject) {
@@ -83,8 +85,15 @@ NPEngine.ParabolicMotion.prototype.update = function () {
 
   if (gap < 10000) {
     var data = this.memory[gap];
-    this.curBall.x = this.grid.convertToVectorValueX(data.ballX);
-    this.curBall.y = this.grid.convertToVectorValueY(data.ballY);
+    var ballX = this.grid.convertToVectorValueX(data.ballX);
+    var ballY = this.grid.convertToVectorValueY(data.ballY);
+
+    // boundary check
+    if (ballY > this.viewHeight) {
+      return ;
+    }
+    this.curBall.x = ballX;
+    this.curBall.y = ballY;
   }
 };
 

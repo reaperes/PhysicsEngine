@@ -26,6 +26,8 @@ NPEngine.Collision2d.prototype.constructor = NPEngine.Collision2d;
 
 NPEngine.Collision2d.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
   this.timeBoard = timeBoard;
+  this.viewWidth = viewWidth;
+  this.viewHeight = viewHeight;
 };
 
 NPEngine.Collision2d.prototype.onAttachedGrid = function (gridObject) {
@@ -94,10 +96,19 @@ NPEngine.Collision2d.prototype.update = function () {
 
   if (gap < 10000) {
     var data = this.memory[gap];
-    this.curBall1.x = this.grid.convertToVectorValueX(data.ball1_x);
-    this.curBall1.y = this.grid.convertToVectorValueY(data.ball1_y);
-    this.curBall2.x = this.grid.convertToVectorValueX(data.ball2_x);
-    this.curBall2.y = this.grid.convertToVectorValueY(data.ball2_y);
+    var ball1_x = this.grid.convertToVectorValueX(data.ball1_x);
+    var ball1_y = this.grid.convertToVectorValueY(data.ball1_y);
+    var ball2_x = this.grid.convertToVectorValueX(data.ball2_x);
+    var ball2_y = this.grid.convertToVectorValueY(data.ball2_y);
+
+    // boundary check
+    if (ball1_x < 0 || ball1_x > this.viewWidth || ball1_y < 0 || ball1_y > this.viewheight || ball2_x < 0 || ball2_x > this.viewWidth || ball2_y < 0 || ball2_y > this.viewHeight) {
+      return ;
+    }
+    this.curBall1.x = ball1_x;
+    this.curBall1.y = ball1_y;
+    this.curBall2.x = ball2_x;
+    this.curBall2.y = ball2_y;
   }
 };
 
