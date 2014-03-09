@@ -138,6 +138,8 @@ NPEngine.PendulumCollision.prototype.render = function (context) {
   context.stroke();
 };
 
+
+
 NPEngine.PendulumCollision.prototype.setGravity = function (value) {
   this.gravity = value;
 };
