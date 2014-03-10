@@ -223,8 +223,5 @@ NPEngine.PendulumCollision3.prototype.setMu = function (value) {
 };
 
 NPEngine.PendulumCollision3.prototype.setAngleByIndex = function (value, index) {
-//  for (var i=0; i<this.numOfPendulum; i++) {
-//    this['theta'+(i+1)] = 0;
-//  }
   this['theta'+(index+1)] = NPEngine.Convert.toRadians(value);
 };
