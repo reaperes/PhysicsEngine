@@ -2,7 +2,7 @@ NPEngine.PendulumCollision3 = function() {
   NPEngine.DisplayObject.call(this);
 
   // final variables
-  this.deltaTime        = 0.0001;     // second
+  this.deltaTime        = 0.00001;     // second
 
   // initial variables
   this.numOfPendulum    = 3;          // number
@@ -118,7 +118,7 @@ NPEngine.PendulumCollision3.prototype.compute = function () {
   this.memory.push(data);
 
   var memoryFlag = 1;
-  for (var j=0; j<200000; j++) {
+  for (var j=0; j<6000000; j++) {
     for (var i=0; i<this.numOfPendulum-1; i++) {
       impulsiveForce[i] = ((theta[i+1]-theta[i]) < -this.thetaBias) ? -this.k*(theta[i+1]-theta[i]+this.thetaBias)*this.lineLength-this.mu*this.lineLength*(angularVelocity[i+1]-angularVelocity[i]) : 0;
     }
@@ -137,7 +137,7 @@ NPEngine.PendulumCollision3.prototype.compute = function () {
       theta[i] = theta[i]+angularVelocity[i]*this.deltaTime;
     }
 
-    if (memoryFlag==100) {
+    if (memoryFlag==1000) {
       memoryFlag=1;
       var data = {};
       for (var i=0; i<this.numOfPendulum; i++) {
