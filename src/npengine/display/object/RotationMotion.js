@@ -3,13 +3,13 @@ NPEngine.RotationMotion = function() {
 
   this.deltaTime = 0.0002
 
-  this.ballMass = 0.1;        // kg
+  this.ballMass = 0.4;        // kg
   this.gravity = 9.8;         // m/s^2
   this.blockMass = 10;        // kg
   this.k = 200000;            // N/m
 
   this.ballRadius = 0.1;
-  this.blockWidth = 0.1;
+  this.blockWidth = 0.3;
   this.blockHeight = 0.5;
   this.blockDiagonalHeight = Math.sqrt(this.ballRadius*this.ballRadius+this.blockHeight*this.blockHeight);
   this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
@@ -17,7 +17,7 @@ NPEngine.RotationMotion = function() {
 
   this.blockUpperRightPoint = new NPEngine.Point(this.blockWidth, this.blockHeight);
   this.ball = new NPEngine.Point(1.5, 0.5);
-  this.ballVelocityX = -90;
+  this.ballVelocityX = -3;
   this.ballVelocityY = 0;
 
   this.curBall = new NPEngine.Point;
@@ -134,7 +134,7 @@ NPEngine.RotationMotion.prototype.render = function (context) {
   context.save();
   context.beginPath();
   context.translate(this.grid.centerWidth, this.grid.centerHeight);
-  context.rotate(-this.curTheta);
+  context.rotate(-this.curTheta*2);
 //  context.rotate(-NPEngine.Convert.toRadians(30));
   context.translate(-this.grid.centerWidth, -this.grid.centerHeight);
   context.fillRect(this.curBlockUpperLeft.x, this.curBlockUpperLeft.y, this.convertedBlockWidth, this.convertedBlockHeight);

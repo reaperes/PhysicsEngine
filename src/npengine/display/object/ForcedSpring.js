@@ -8,19 +8,19 @@ NPEngine.ForcedSpring = function () {
   this.block.height = 0.4;  // m
 
   // initial variables
-  this.mass = 2;      // kg
-  this.k = 100;       // N/m
+  this.mass = 2;      // kg *
+  this.k = 100;       // N/m *
 
-  this.f0 = 20        // n
+  this.f0 = 20        // n *
   this.angularVelocity0 = Math.sqrt(this.k/this.mass);
-  this.undefined  = 1;
+  this.undefined  = 0.5;
   this.angularVelocity = this.angularVelocity0*this.undefined;
-  this.j = 3.141592;  // radian
+  this.j = 3.141592;  // radian phase 위상 *
 
   this.gravity = 9.8; // m/s^2
-  this.mu = 3;        // N s/m
+  this.mu = 0;        // N s/m *
 
-  this.block.center.x = 0.1;    // m
+  this.block.center.x = 0.1;    // m *
   this.block.center.y = 0;    // m/s
 
   this.velocity = 0;  // m/s
