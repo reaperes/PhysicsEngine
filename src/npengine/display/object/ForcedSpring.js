@@ -13,9 +13,9 @@ NPEngine.ForcedSpring = function () {
 
   this.f0 = 20        // n *
   this.angularVelocity0 = Math.sqrt(this.k/this.mass);
-  this.undefined  = 0.5;
-  this.angularVelocity = this.angularVelocity0*this.undefined;
-  this.j = 3.141592;  // radian phase 위상 *
+  this.ww0  = 0.5;    // w / w0 *
+  this.angularVelocity = this.angularVelocity0*this.ww0;
+  this.phase = 3.141592;  // radian *
 
   this.gravity = 9.8; // m/s^2
   this.mu = 0;        // N s/m *
@@ -46,7 +46,7 @@ NPEngine.ForcedSpring.prototype.compute = function () {
   var blockPosX = this.block.center.x;
   var velocity = this.velocity;
   var angularVelocity = this.angularVelocity;
-  var outerForce = -this.f0*Math.sin(angularVelocity*time+this.j)
+  var outerForce = -this.f0*Math.sin(angularVelocity*time+this.phase)
   var frictionForce = -this.mu*velocity;
   var springForce =  -this.k*blockPosX;
   var acceleration = (outerForce+frictionForce+springForce)/this.mass;
@@ -56,7 +56,7 @@ NPEngine.ForcedSpring.prototype.compute = function () {
     time = time + this.deltaTime;
     velocity = velocity+acceleration*this.deltaTime;
     blockPosX = blockPosX+velocity*this.deltaTime;
-    outerForce = -this.f0*Math.sin(angularVelocity*time+this.j)
+    outerForce = -this.f0*Math.sin(angularVelocity*time+this.phase)
     frictionForce = -this.mu*velocity;
     springForce =  -this.k*blockPosX;
     acceleration = (outerForce+frictionForce+springForce)/this.mass;
@@ -112,8 +112,16 @@ NPEngine.ForcedSpring.prototype.setK = function (value) {
   this.k = value;
 };
 
-NPEngine.ForcedSpring.prototype.setGravity = function (value) {
-  this.gravity = value;
+NPEngine.ForcedSpring.prototype.setF0 = function (value) {
+  this.f0 = value;
+};
+
+NPEngine.ForcedSpring.prototype.setWW0 = function (value) {
+  this.ww0 = value;
+};
+
+NPEngine.ForcedSpring.prototype.setPhase = function (value) {
+  this.phase = value;
 };
 
 NPEngine.ForcedSpring.prototype.setMu = function (value) {
@@ -122,8 +130,4 @@ NPEngine.ForcedSpring.prototype.setMu = function (value) {
 
 NPEngine.ForcedSpring.prototype.setX = function (value) {
   this.block.center.x = value;
-};
-
-NPEngine.ForcedSpring.prototype.setVelocity = function (value) {
-  this.velocity = value;
 };

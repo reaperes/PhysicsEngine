@@ -19,10 +19,11 @@
   var DefaultValue = function () {
     this.mass = 2;
     this.k = 100;
-    this.gravity = 9.8;
-    this.mu = 3;
-    this.x = 1;
-    this.velocity = 0;
+    this.f0 = 20;
+    this.ww0 = 0.5;
+    this.phase = 3.141592;
+    this.mu = 0;
+    this.x = 0.1
   };
 
   window.onload = function () {
@@ -47,16 +48,34 @@
       engine.ready();
     });
 
-    var gravityFolder = gui.addFolder('중력 (m/s^2)');
-    gravityFolder.open();
-    var gravity = gravityFolder.add(defaultValue, 'gravity');
-    gravity.onChange(function (value) {
+    var f0Folder = gui.addFolder('초기 힘 (N)');
+    f0Folder.open();
+    var f0 = f0Folder.add(defaultValue, 'f0');
+    f0.onChange(function (value) {
       engine.stop();
-      spring.setGravity(value);
+      spring.setF0(value);
       engine.ready();
     });
 
-    var muFolder = gui.addFolder('Mu (N s/m)');
+    var ww0Folder = gui.addFolder('w / w0 ( - )');
+    ww0Folder.open();
+    var ww0 = ww0Folder.add(defaultValue, 'ww0');
+    ww0.onChange(function (value) {
+      engine.stop();
+      spring.setWW0(value);
+      engine.ready();
+    });
+
+    var phaseFolder = gui.addFolder('위상 ( - )');
+    phaseFolder.open();
+    var phase = phaseFolder.add(defaultValue, 'phase');
+    phase.onChange(function (value) {
+      engine.stop();
+      spring.setPhase(value);
+      engine.ready();
+    });
+
+    var muFolder = gui.addFolder('mu (N s/m)');
     muFolder.open();
     var mu = muFolder.add(defaultValue, 'mu');
     mu.onChange(function (value) {
@@ -71,15 +90,6 @@
     x.onChange(function (value) {
       engine.stop();
       spring.setX(value);
-      engine.ready();
-    });
-
-    var velocityFolder = gui.addFolder('초기 속도 (m/s)');
-    velocityFolder.open();
-    var velocity = velocityFolder.add(defaultValue, 'velocity');
-    velocity.onChange(function (value) {
-      engine.stop();
-      spring.setVelocity(value);
       engine.ready();
     });
   }
