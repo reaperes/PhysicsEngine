@@ -15,6 +15,79 @@
   engine.addDisplayObject(rotation);
   engine.ready();
 
+  // default value
+  var DefaultValue = function () {
+    this.ballMass = 1.1;
+    this.blockMass = 10;
+    this.k = 200000;
+    this.ballX = 1.5;
+    this.ballRadius = 0.1;
+    this.blockWidth = 0.3;
+    this.blockHeight = 0.5;
+  }
+
+  window.onload = function () {
+    var defaultValue = new DefaultValue();
+    var gui = new dat.GUI();
+
+    var massFolder = gui.addFolder('공, 벽돌의 질량 (kg)');
+    massFolder.open();
+    var ballMass = massFolder.add(defaultValue, 'ballMass');
+    ballMass.onChange(function (value) {
+      engine.stop();
+      rotation.setBallMass(value);
+      engine.ready();
+    });
+
+    var blockMass = massFolder.add(defaultValue, 'blockMass');
+    blockMass.onChange(function (value) {
+      engine.stop();
+      rotation.setBlockMass(value);
+      engine.ready();
+    });
+
+    var kFolder = gui.addFolder('K (N/m)');
+    kFolder.open();
+    var k = kFolder.add(defaultValue, 'k');
+    k.onChange(function (value) {
+      engine.stop();
+      rotation.setK(value);
+      engine.ready();
+    });
+
+    var ballFolder = gui.addFolder('공 위치 설정 (m)');
+    ballFolder.open();
+    var ballX = ballFolder.add(defaultValue, 'ballX');
+    ballX.onChange(function (value) {
+      engine.stop();
+      rotation.setBallX(value);
+      engine.ready();
+    });
+
+    var valueFolder = gui.addFolder('기타 설정 (m)');
+    valueFolder.open();
+    var ballRadius = valueFolder.add(defaultValue, 'ballRadius');
+    ballRadius.onChange(function (value) {
+      engine.stop();
+      rotation.setBallRadius(value);
+      engine.ready();
+    });
+
+    var blockWidth = valueFolder.add(defaultValue, 'blockWidth');
+    blockWidth.onChange(function (value) {
+      engine.stop();
+      rotation.setBlockWidth(value);
+      engine.ready();
+    });
+
+    var blockHeight = valueFolder.add(defaultValue, 'blockHeight');
+    blockHeight.onChange(function (value) {
+      engine.stop();
+      rotation.setBlockHeight(value);
+      engine.ready();
+    });
+  }
+
 
 </script>
 </body>

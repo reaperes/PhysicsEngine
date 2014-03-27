@@ -1,14 +1,19 @@
-NPEngine.CanvasRenderer = function () {
+NPEngine.CanvasRenderer = function (canvas) {
   this.grid = null;
   this.children = [];
 
-  this.view = document.createElement("canvas");
-  this.view.width = 800;
-  this.view.height = 600;
-  document.body.appendChild(this.view);
-
+  if (canvas) {
+    this.view = canvas;
+    this.view.width = canvas.width;
+    this.view.height = canvas.height;
+  }
+  else {
+    this.view = canvas || document.createElement("canvas");
+    this.view.width = 800;
+    this.view.height = 600;
+    document.body.appendChild(this.view);
+  }
   this.context = this.view.getContext("2d");
-
   this.timeBoard = new NPEngine.TimeBoard;
 };
 
@@ -97,3 +102,7 @@ NPEngine.CanvasRenderer.prototype.render = function () {
 
   this.timeBoard.render(this.context);
 };
+
+NPEngine.CanvasRenderer.prototype.setFps = function (flag) {
+
+}

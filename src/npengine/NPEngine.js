@@ -1,4 +1,8 @@
-NPEngine = function() {
+/**
+ @param {HTMLElement} canvas
+ @return {NPEngine}
+ */
+NPEngine = function(canvas) {
   this.fps = new NPEngine.FPS();
   this.state = 'create';    // create, init, ready, start, resume, pause, stop, destroy
 
@@ -23,15 +27,15 @@ NPEngine = function() {
   };
   window.addEventListener("keypress", this.keyHandler, false);
 
-  this.init();
+  this.init(canvas);
 };
 
 NPEngine.prototype.constructor = NPEngine;
 
 
 
-NPEngine.prototype.init = function() {
-  this.renderer = new NPEngine.CanvasRenderer;
+NPEngine.prototype.init = function(canvas) {
+  this.renderer = new NPEngine.CanvasRenderer(canvas);
   this.state = 'init';
 };
 
