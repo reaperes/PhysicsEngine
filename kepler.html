@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Next PhysicsEngine (mini) - Spring</title>
+  <script type="text/javascript" src="bin/npengine.dev.js"></script>
+  <script type="text/javascript" src="lib/dat.gui.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+  var engine = new NPEngine;
+  var grid = new NPEngine.KeplerGrid;
+  var kepler = new NPEngine.Kepler;
+  engine.setGrid(grid);
+  engine.addDisplayObject(kepler);
+  engine.ready();
+
+  var DefaultValue = function () {
+    this.slow = 3;
+    this.factor = 30;
+  }
+
+  window.onload = function () {
+    var defaultValue = new DefaultValue();
+    var gui = new dat.GUI();
+
+    var slowFolder = gui.addFolder('시뮬레이션 속도 조절');
+    slowFolder.open();
+    var slowFactor = slowFolder.add(defaultValue, 'slow', 1, 9).step(1);
+    slowFactor.onFinishChange(function (value) {
+      engine.stop();
+      kepler.setSlowFactor(value);
+      engine.ready();
+    });
+
+    var augmentedFactorFolder = gui.addFolder('AugmentedFactor');
+    augmentedFactorFolder.open();
+    var augmentedFactor = augmentedFactorFolder.add(defaultValue, 'factor');
+    augmentedFactor.onFinishChange(function (value) {
+      engine.stop();
+      kepler.setAugmentedFactor(value);
+      engine.ready();
+    });
+  }
+</script>
+</body>
+</html>
