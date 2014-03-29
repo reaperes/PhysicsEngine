@@ -2,7 +2,7 @@ NPEngine.ParabolicMotion = function() {
   NPEngine.DisplayObject.call(this);
 
   // final variables
-  this.deltaTime  = 0.1;        // second
+  this.deltaTime  = 0.01;        // second
 
   // initial variables
   this.gravity    = 9.8;        // m/s^2
@@ -108,6 +108,7 @@ NPEngine.ParabolicMotion.prototype.render = function (context) {
   // draw trace
   context.beginPath();
   context.moveTo(this.grid.convertToVectorValueX(0), this.grid.convertToVectorValueY(0));
+  context.lineWidth = 1;
   for (var i=0; i<this.trace.length; i++) {
     context.lineTo(this.trace[i].x, this.trace[i].y);
   }
