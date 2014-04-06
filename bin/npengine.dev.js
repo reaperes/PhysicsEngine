@@ -1,4 +1,8 @@
-NPEngine = function() {
+/**
+ @param {HTMLElement} canvas
+ @return {NPEngine}
+ */
+NPEngine = function(canvas) {
   this.fps = new NPEngine.FPS();
   this.state = 'create';    // create, init, ready, start, resume, pause, stop, destroy
 
@@ -23,15 +27,15 @@ NPEngine = function() {
   };
   window.addEventListener("keypress", this.keyHandler, false);
 
-  this.init();
+  this.init(canvas);
 };
 
 NPEngine.prototype.constructor = NPEngine;
 
 
 
-NPEngine.prototype.init = function() {
-  this.renderer = new NPEngine.CanvasRenderer;
+NPEngine.prototype.init = function(canvas) {
+  this.renderer = new NPEngine.CanvasRenderer(canvas);
   this.state = 'init';
 };
 
@@ -530,6 +534,100 @@ NPEngine.Grid.prototype.convertToGridScalaValue = function(value) {
   return value*100;
 };
 
+NPEngine.KeplerGrid = function () {
+  NPEngine.DisplayObject.call(this);
+
+  // initial variables
+  this.width = 0;
+  this.height = 0;
+  this.ratio = 200;
+};
+
+NPEngine.KeplerGrid.prototype = Object.create(NPEngine.DisplayObject.prototype);
+NPEngine.KeplerGrid.prototype.constructor = NPEngine.Grid;
+
+
+
+NPEngine.KeplerGrid.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+  this.width = viewWidth;
+  this.height = viewHeight;
+  this.centerWidth = Math.round(viewWidth/2);
+  this.centerHeight = Math.round(viewHeight/2);
+};
+
+NPEngine.KeplerGrid.prototype.compute = function () {
+};
+
+NPEngine.KeplerGrid.prototype.update = function () {
+};
+
+NPEngine.KeplerGrid.prototype.render = function (context) {
+  context.beginPath();
+  context.lineWidth = 0.5;
+  context.strokeStyle = '#550000';
+
+  // draw left column line
+  for (var i=this.centerWidth-this.ratio; i>0; i-=this.ratio) {
+    context.moveTo(i, 0);
+    context.lineTo(i, this.height);
+  }
+
+  // draw right column line
+  for (var i=this.centerWidth+this.ratio; i<this.width; i+=this.ratio) {
+    context.moveTo(i, 0);
+    context.lineTo(i, this.height);
+  }
+
+  // draw upper row line
+  for (var i=this.centerHeight; i>0; i-=this.ratio) {
+    context.moveTo(0, i);
+    context.lineTo(this.width, i);
+  }
+
+  // draw lower row line
+  for (var i=this.centerHeight; i<this.height; i+=this.ratio) {
+    context.moveTo(0, i);
+    context.lineTo(this.width, i);
+  }
+  context.stroke();
+
+  // draw center line
+  context.beginPath();
+  context.lineWidth = 2;
+  context.strokeStyle = '#550000';
+  context.moveTo(this.centerWidth, 0);
+  context.lineTo(this.centerWidth, this.height);
+  context.moveTo(0, this.centerHeight);
+  context.lineTo(this.width, this.centerHeight);
+  context.stroke();
+};
+
+NPEngine.KeplerGrid.prototype.setWidth = function(width) {
+  this.width = width;
+};
+
+NPEngine.KeplerGrid.prototype.setHeight = function(height) {
+  this.height = height;
+};
+
+NPEngine.KeplerGrid.prototype.convertToGridPoint = function(point) {
+  var convertedX = this.centerWidth + point.x * this.ratio;
+  var convertedY = this.centerHeight + point.y * -this.ratio;
+  return new NPEngine.Point(convertedX, convertedY);
+};
+
+NPEngine.KeplerGrid.prototype.convertToVectorValueX = function(x) {
+  return this.centerWidth + x * this.ratio;
+};
+
+NPEngine.KeplerGrid.prototype.convertToVectorValueY = function(y) {
+  return this.centerHeight + y * -this.ratio;
+};
+
+NPEngine.KeplerGrid.prototype.convertToGridScalaValue = function(value) {
+  return value*this.ratio;
+};
+
 NPEngine.QuadrantGrid = function() {
   NPEngine.DisplayObject.call(this);
   this.ratio = 50;
@@ -622,6 +720,99 @@ NPEngine.QuadrantGrid.prototype.convertToVectorValueY = function(y) {
 
 NPEngine.QuadrantGrid.prototype.convertToGridScalaValue = function(value) {
   return value/this.ratio*80;
+};
+
+NPEngine.RotationGrid = function () {
+  NPEngine.DisplayObject.call(this);
+
+  // initial variables
+  this.width = 0;
+  this.height = 0;
+};
+
+NPEngine.RotationGrid.prototype = Object.create(NPEngine.DisplayObject.prototype);
+NPEngine.RotationGrid.prototype.constructor = NPEngine.RotationGrid;
+
+
+
+NPEngine.RotationGrid.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+  this.width = viewWidth;
+  this.height = viewHeight;
+  this.centerWidth = Math.round(viewWidth/2);
+  this.centerHeight = viewHeight-80;
+};
+
+NPEngine.RotationGrid.prototype.compute = function () {
+};
+
+NPEngine.RotationGrid.prototype.update = function () {
+};
+
+NPEngine.RotationGrid.prototype.render = function (context) {
+  context.beginPath();
+  context.lineWidth = 0.5;
+  context.strokeStyle = '#550000';
+
+  // draw left column line
+  for (var i=this.centerWidth-100; i>0; i-=100) {
+    context.moveTo(i, 0);
+    context.lineTo(i, this.height);
+  }
+
+  // draw right column line
+  for (var i=this.centerWidth+100; i<this.width; i+=100) {
+    context.moveTo(i, 0);
+    context.lineTo(i, this.height);
+  }
+
+  // draw upper row line
+  for (var i=this.centerHeight; i>0; i-=100) {
+    context.moveTo(0, i);
+    context.lineTo(this.width, i);
+  }
+
+  // draw lower row line
+  for (var i=this.centerHeight; i<this.height; i+=100) {
+    context.moveTo(0, i);
+    context.lineTo(this.width, i);
+  }
+  context.stroke();
+
+  // draw center line
+  context.beginPath();
+  context.lineWidth = 2;
+  context.strokeStyle = '#550000';
+  context.moveTo(this.centerWidth, 0);
+  context.lineTo(this.centerWidth, this.height);
+  context.moveTo(0, this.centerHeight);
+  context.lineTo(this.width, this.centerHeight);
+  context.stroke();
+};
+
+NPEngine.RotationGrid.prototype.setWidth = function(width) {
+  this.width = width;
+};
+
+NPEngine.RotationGrid.prototype.setHeight = function(height) {
+  this.height = height;
+};
+
+NPEngine.RotationGrid.prototype.convertToGridPoint = function(point) {
+  var convertedX = this.centerWidth + point.x * 100;
+  var convertedY = this.centerHeight + point.y * -100;
+  return new NPEngine.Point(convertedX, convertedY);
+};
+
+NPEngine.RotationGrid.prototype.convertToVectorValueX = function(x) {
+  return this.centerWidth + x * 100;
+};
+
+NPEngine.RotationGrid.prototype.convertToVectorValueY = function(y) {
+  return this.centerHeight + y * -100;
+};
+
+NPEngine.RotationGrid.prototype.convertToGridScalaValue = function(value) {
+  return value*100;
 };
 
 NPEngine.Collision2d = function () {
@@ -816,11 +1007,309 @@ NPEngine.Collision2d.prototype.setVelocity2_x = function(value) {
 NPEngine.Collision2d.prototype.setVelocity2_y = function(value) {
   this.velocity2_y = value;
 };
+NPEngine.ForcedSpring = function () {
+  NPEngine.DisplayObject.call(this);
+
+  // final variables
+  this.pivot = new NPEngine.Point(-4, 0);
+  this.block = new NPEngine.Rectangle();
+  this.block.width = 1;     // m
+  this.block.height = 0.4;  // m
+
+  // initial variables
+  this.mass = 2;      // kg *
+  this.k = 100;       // N/m *
+
+  this.f0 = 20        // n *
+  this.angularVelocity0 = Math.sqrt(this.k/this.mass);
+  this.ww0  = 0.5;    // w / w0 *
+  this.angularVelocity = this.angularVelocity0*this.ww0;
+  this.phase = 3.141592;  // radian *
+
+  this.gravity = 9.8; // m/s^2
+  this.mu = 0;        // N s/m *
+
+  this.block.center.x = 0.1;    // m *
+  this.block.center.y = 0;    // m/s
+
+  this.velocity = 0;  // m/s
+  this.deltaTime = 0.01;
+};
+
+NPEngine.ForcedSpring.prototype = Object.create(NPEngine.DisplayObject.prototype);
+NPEngine.ForcedSpring.prototype.constructor = NPEngine.ForcedSpring;
+
+
+
+NPEngine.ForcedSpring.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
+  this.timeBoard = timeBoard;
+};
+
+NPEngine.ForcedSpring.prototype.onAttachedGrid = function (gridObject) {
+  this.grid = gridObject;
+};
+
+NPEngine.ForcedSpring.prototype.compute = function () {
+  this.memory = [];
+  var time = 0;
+  var blockPosX = this.block.center.x;
+  var velocity = this.velocity;
+  var angularVelocity = this.angularVelocity;
+  var outerForce = -this.f0*Math.sin(angularVelocity*time+this.phase)
+  var frictionForce = -this.mu*velocity;
+  var springForce =  -this.k*blockPosX;
+  var acceleration = (outerForce+frictionForce+springForce)/this.mass;
+  this.memory.push({blockPosX: blockPosX});
+
+  for (var i= 1, max=(1/this.deltaTime)*100; i<max; i++) {
+    time = time + this.deltaTime;
+    velocity = velocity+acceleration*this.deltaTime;
+    blockPosX = blockPosX+velocity*this.deltaTime;
+    outerForce = -this.f0*Math.sin(angularVelocity*time+this.phase)
+    frictionForce = -this.mu*velocity;
+    springForce =  -this.k*blockPosX;
+    acceleration = (outerForce+frictionForce+springForce)/this.mass;
+    this.memory.push({blockPosX: blockPosX});
+  }
+};
+
+NPEngine.ForcedSpring.prototype.onReady = function() {
+  this.convertedPivot = this.grid.convertToGridPoint(this.pivot);
+  this.halfOfConvertedBlockWidth = parseInt(this.grid.convertToGridScalaValue(this.block.width)/2);
+  this.halfOfConvertedBlockHeight = parseInt(this.grid.convertToGridScalaValue(this.block.height)/2);
+  this.convertedBlockPosY = this.convertedPivot.y;
+  this.convertedBlockPosX = this.grid.convertToVectorValueX(this.memory[0].blockPosX);
+};
+
+NPEngine.ForcedSpring.prototype.onStart = function() {
+  this.convertedPivot = this.grid.convertToGridPoint(this.pivot);
+  this.halfOfConvertedBlockWidth = parseInt(this.grid.convertToGridScalaValue(this.block.width)/2);
+  this.halfOfConvertedBlockHeight = parseInt(this.grid.convertToGridScalaValue(this.block.height)/2);
+  this.convertedBlockPosY = this.convertedPivot.y;
+};
+
+NPEngine.ForcedSpring.prototype.onStop = function() {
+};
+
+NPEngine.ForcedSpring.prototype.update = function () {
+  var gap = Math.round((new Date().getTime()-this.timeBoard.then)/(this.deltaTime/0.001));
+
+  var data = this.memory[gap];
+  this.convertedBlockPosX = this.grid.convertToVectorValueX(data.blockPosX);
+};
+
+NPEngine.ForcedSpring.prototype.render = function (context) {
+  context.beginPath();
+  context.lineWidth = 6;
+  context.moveTo(this.convertedPivot.x, this.convertedPivot.y);
+  context.lineTo(this.convertedBlockPosX, this.convertedBlockPosY);
+  context.stroke();
+
+  context.beginPath();
+  context.lineWidth = 1;
+  context.rect(this.convertedBlockPosX-this.halfOfConvertedBlockWidth, this.convertedBlockPosY-this.halfOfConvertedBlockHeight, this.halfOfConvertedBlockWidth*2, this.halfOfConvertedBlockHeight*2);
+  context.fillStyle = 'black';
+  context.fill();
+  context.stroke();
+};
+
+NPEngine.ForcedSpring.prototype.setMass = function (value) {
+  this.mass = value;
+};
+
+NPEngine.ForcedSpring.prototype.setK = function (value) {
+  this.k = value;
+};
+
+NPEngine.ForcedSpring.prototype.setF0 = function (value) {
+  this.f0 = value;
+};
+
+NPEngine.ForcedSpring.prototype.setWW0 = function (value) {
+  this.ww0 = value;
+};
+
+NPEngine.ForcedSpring.prototype.setPhase = function (value) {
+  this.phase = value;
+};
+
+NPEngine.ForcedSpring.prototype.setMu = function (value) {
+  this.mu = value;
+};
+
+NPEngine.ForcedSpring.prototype.setX = function (value) {
+  this.block.center.x = value;
+};
+
+NPEngine.Kepler = function() {
+  NPEngine.DisplayObject.call(this);
+
+  this.deltaTime = 0.01;   // seconds
+  this.slowFactor = 3;
+
+  this.G = 1.18e-19;
+  this.earthMass = 1;
+  this.sunMass = 332965;
+  this.moonMass = 0.012321;
+
+  this.augmentedFactor = 30;
+  this.earthVelocityX = 0;
+  this.earthVelocityY = 1.95e-7;
+  this.earthX = 1.013333;
+  this.earthY = 0;
+  this.moonVelocityX = 0;
+  this.moonVelocityY = 2.02e-7;
+  this.moonX = 1.015896;
+  this.moonY = 0;
+};
+
+NPEngine.Kepler.prototype.constructor = NPEngine.Kepler;
+NPEngine.Kepler.prototype = Object.create(NPEngine.DisplayObject.prototype);
+
+
+
+NPEngine.Kepler.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
+  this.timeBoard = timeBoard;
+  this.viewWidth = viewWidth;
+  this.viewHeight = viewHeight;
+};
+
+NPEngine.Kepler.prototype.onAttachedGrid = function (gridObject) {
+  this.grid = gridObject;
+};
+
+NPEngine.Kepler.prototype.compute = function () {
+  this.memory = [];
+
+  var earthX = this.earthX;
+  var earthY = this.earthY;
+  var moonX = this.moonX;
+  var moonY = this.moonY;
+  var sunEarthDistance = Math.sqrt(earthX*earthX+earthY*earthY);
+  var sunMoonDistance = Math.sqrt(moonX*moonX+moonY*moonY);
+  var moonEarthDistance = Math.sqrt((moonX-earthX)*(moonX-earthX)+(moonY-earthY)*(moonY-earthY));
+  var earthVelocityX = this.earthVelocityX;
+  var earthVelocityY = this.earthVelocityY;
+  var moonVelocityX = this.moonVelocityX;
+  var moonVelocityY = this.moonVelocityY;
+  var sunEarthForceX = -this.G*this.sunMass*this.earthMass*earthX/(sunEarthDistance*sunEarthDistance*sunEarthDistance);
+  var sunEarthForceY = -this.G*this.sunMass*this.earthMass*earthY/(sunEarthDistance*sunEarthDistance*sunEarthDistance);
+  var earthMoonForceX = -this.G*this.earthMass*this.moonMass*(moonX-earthX)/(moonEarthDistance*moonEarthDistance*moonEarthDistance);
+  var earthMoonForceY = -this.G*this.earthMass*this.moonMass*(moonY-earthY)/(moonEarthDistance*moonEarthDistance*moonEarthDistance);
+  var sunMoonForceX = -this.G*this.sunMass*this.moonMass*moonX/(sunMoonDistance*sunMoonDistance*sunMoonDistance);
+  var sunMoonForceY = -this.G*this.sunMass*this.moonMass*moonY/(sunMoonDistance*sunMoonDistance*sunMoonDistance);
+  var earthForceX = sunEarthForceX-earthMoonForceX;
+  var earthForceY = sunEarthForceY-earthMoonForceY;
+  var moonForceX = sunMoonForceX+earthMoonForceX;
+  var moonForceY = sunMoonForceY+earthMoonForceY;
+
+  var augmentedMoonX = earthX+this.augmentedFactor*(moonX-earthX);
+  var augmentedMoonY = earthY+this.augmentedFactor*(moonY-earthY);
+
+  this.memory.push({
+    earthX: earthX,
+    earthY: earthY,
+    moonX: augmentedMoonX,
+    moonY: augmentedMoonY
+  });
+
+  for (var i= 1; i<10000; i++) {
+    earthVelocityX = earthVelocityX+earthForceX/this.earthMass*1*24*3600;
+    earthVelocityY = earthVelocityY+earthForceY/this.earthMass*1*24*3600;
+    earthX = earthX+earthVelocityX*1*24*3600;
+    earthY = earthY+earthVelocityY*1*24*3600;
+
+    moonVelocityX = moonVelocityX+moonForceX/this.moonMass*1*24*3600;
+    moonVelocityY = moonVelocityY+moonForceY/this.moonMass*1*24*3600;
+    moonX = moonX+moonVelocityX*1*24*3600;
+    moonY = moonY+moonVelocityY*1*24*3600;
+
+    sunEarthDistance = Math.sqrt(earthX*earthX+earthY*earthY);
+    sunMoonDistance = Math.sqrt(moonX*moonX+moonY*moonY);
+    moonEarthDistance = Math.sqrt((moonX-earthX)*(moonX-earthX)+(moonY-earthY)*(moonY-earthY));
+    sunEarthForceX = -this.G*this.sunMass*this.earthMass*earthX/(sunEarthDistance*sunEarthDistance*sunEarthDistance);
+    sunEarthForceY = -this.G*this.sunMass*this.earthMass*earthY/(sunEarthDistance*sunEarthDistance*sunEarthDistance);
+    earthMoonForceX = -this.G*this.earthMass*this.moonMass*(moonX-earthX)/(moonEarthDistance*moonEarthDistance*moonEarthDistance);
+    earthMoonForceY = -this.G*this.earthMass*this.moonMass*(moonY-earthY)/(moonEarthDistance*moonEarthDistance*moonEarthDistance);
+    sunMoonForceX = -this.G*this.sunMass*this.moonMass*moonX/(sunMoonDistance*sunMoonDistance*sunMoonDistance);
+    sunMoonForceY = -this.G*this.sunMass*this.moonMass*moonY/(sunMoonDistance*sunMoonDistance*sunMoonDistance);
+    earthForceX = sunEarthForceX-earthMoonForceX;
+    earthForceY = sunEarthForceY-earthMoonForceY;
+    moonForceX = sunMoonForceX+earthMoonForceX;
+    moonForceY = sunMoonForceY+earthMoonForceY;
+
+    augmentedMoonX = earthX+this.augmentedFactor*(moonX-earthX);
+    augmentedMoonY = earthY+this.augmentedFactor*(moonY-earthY);
+
+    this.memory.push({
+      earthX: earthX,
+      earthY: earthY,
+      moonX: augmentedMoonX,
+      moonY: augmentedMoonY
+    });
+  }
+};
+
+NPEngine.Kepler.prototype.onReady = function() {
+  var data = this.memory[0];
+  this.curEarthX = this.grid.convertToVectorValueX(data.earthX);
+  this.curEarthY = this.grid.convertToVectorValueY(data.earthY);
+  this.curMoonX = this.grid.convertToVectorValueX(data.moonX);
+  this.curMoonY = this.grid.convertToVectorValueY(data.moonY);
+};
+
+NPEngine.Kepler.prototype.onStart = function() {
+};
+
+NPEngine.Kepler.prototype.onResume = function() {
+};
+
+NPEngine.Kepler.prototype.onPause = function() {
+};
+
+NPEngine.Kepler.prototype.onStop = function() {
+};
+
+NPEngine.Kepler.prototype.update = function () {
+  var gap = Math.round((new Date().getTime()-this.timeBoard.then)/(10*this.slowFactor)); // convert millisecond to 0.01 second
+
+  var data = this.memory[gap];
+  this.curEarthX = this.grid.convertToVectorValueX(data.earthX);
+  this.curEarthY = this.grid.convertToVectorValueY(data.earthY);
+  this.curMoonX = this.grid.convertToVectorValueX(data.moonX);
+  this.curMoonY = this.grid.convertToVectorValueY(data.moonY);
+};
+
+NPEngine.Kepler.prototype.render = function (context) {
+  context.beginPath();
+  context.arc(this.grid.convertToVectorValueX(0), this.grid.convertToVectorValueY(0), 20, 0, 2*Math.PI, false);
+  context.fill();
+  context.stroke();
+
+  context.beginPath();
+  context.arc(this.curEarthX, this.curEarthY, 8, 0, 2*Math.PI, false);
+  context.fill();
+  context.stroke();
+
+  context.beginPath();
+  context.arc(this.curMoonX, this.curMoonY, 3, 0, 2*Math.PI, false);
+  context.fill();
+  context.stroke();
+};
+
+NPEngine.Kepler.prototype.setSlowFactor = function(value) {
+  this.slowFactor = value;
+};
+
+NPEngine.Kepler.prototype.setAugmentedFactor = function(value) {
+  this.augmentedFactor = value;
+};
+
 NPEngine.ParabolicMotion = function() {
   NPEngine.DisplayObject.call(this);
 
   // final variables
-  this.deltaTime  = 0.1;        // second
+  this.deltaTime  = 0.01;        // second
 
   // initial variables
   this.gravity    = 9.8;        // m/s^2
@@ -926,6 +1415,7 @@ NPEngine.ParabolicMotion.prototype.render = function (context) {
   // draw trace
   context.beginPath();
   context.moveTo(this.grid.convertToVectorValueX(0), this.grid.convertToVectorValueY(0));
+  context.lineWidth = 1;
   for (var i=0; i<this.trace.length; i++) {
     context.lineTo(this.trace[i].x, this.trace[i].y);
   }
@@ -1266,7 +1756,7 @@ NPEngine.PendulumCollision3 = function() {
   NPEngine.DisplayObject.call(this);
 
   // final variables
-  this.deltaTime        = 0.0001;     // second
+  this.deltaTime        = 0.00001;     // second
 
   // initial variables
   this.numOfPendulum    = 3;          // number
@@ -1382,7 +1872,7 @@ NPEngine.PendulumCollision3.prototype.compute = function () {
   this.memory.push(data);
 
   var memoryFlag = 1;
-  for (var j=0; j<200000; j++) {
+  for (var j=0; j<6000000; j++) {
     for (var i=0; i<this.numOfPendulum-1; i++) {
       impulsiveForce[i] = ((theta[i+1]-theta[i]) < -this.thetaBias) ? -this.k*(theta[i+1]-theta[i]+this.thetaBias)*this.lineLength-this.mu*this.lineLength*(angularVelocity[i+1]-angularVelocity[i]) : 0;
     }
@@ -1401,7 +1891,7 @@ NPEngine.PendulumCollision3.prototype.compute = function () {
       theta[i] = theta[i]+angularVelocity[i]*this.deltaTime;
     }
 
-    if (memoryFlag==100) {
+    if (memoryFlag==1000) {
       memoryFlag=1;
       var data = {};
       for (var i=0; i<this.numOfPendulum; i++) {
@@ -1488,6 +1978,194 @@ NPEngine.PendulumCollision3.prototype.setMu = function (value) {
 
 NPEngine.PendulumCollision3.prototype.setAngleByIndex = function (value, index) {
   this['theta'+(index+1)] = NPEngine.Convert.toRadians(value);
+};
+NPEngine.RotationMotion = function() {
+  NPEngine.DisplayObject.call(this);
+
+  this.deltaTime = 0.0002;
+
+  this.ballMass = 1.1;        // kg
+  this.gravity = 9.8;         // m/s^2
+  this.blockMass = 10;        // kg
+  this.k = 200000;            // N/m
+
+  this.ballRadius = 0.1;      // m
+  this.blockWidth = 0.3;      // m
+  this.blockHeight = 0.5;     // m
+  this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
+  this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
+  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
+
+  this.block = new NPEngine.Point(0, this.blockHeight);
+  this.blockCollisionPoint = new NPEngine.Point(this.blockWidth, this.blockHeight);
+  this.ball = new NPEngine.Point(0.5, this.blockHeight);
+  this.ballVelocityX = -3;      // m/s
+  this.ballVelocityY = 0;       // m/s
+
+  this.curBall = this.ball.clone();
+  this.curBlock = this.block.clone();
+};
+
+NPEngine.RotationMotion.prototype.constructor = NPEngine.RotationMotion;
+NPEngine.RotationMotion.prototype = Object.create(NPEngine.DisplayObject.prototype);
+
+
+
+NPEngine.RotationMotion.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
+  this.timeBoard = timeBoard;
+  this.viewWidth = viewWidth;
+  this.viewHeight = viewHeight;
+};
+
+NPEngine.RotationMotion.prototype.onAttachedGrid = function (gridObject) {
+  this.grid = gridObject;
+};
+
+NPEngine.RotationMotion.prototype.compute = function () {
+  this.memory = [];
+
+  var ball = this.ball.clone();
+  var ballVelocityX = this.ballVelocityX;
+  var ballVelocityY = this.ballVelocityY;
+
+  var theta = -this.theta0;
+  var angularVelocity = 0;
+  var collisionPoint = this.blockCollisionPoint.clone();
+  var distance = Math.sqrt((ball.x-collisionPoint.x)*(ball.x-collisionPoint.x)+(ball.y-collisionPoint.y)*(ball.y-collisionPoint.y));
+  var forceX = distance<this.ballRadius ? this.k*(this.ballRadius-distance)*(collisionPoint.x-ball.x)/distance : 0;
+  var forceY = distance<this.ballRadius ? this.k*(this.ballRadius-distance)*(collisionPoint.y-ball.y)/distance : 0;
+  var torque = collisionPoint.x*forceY-collisionPoint.y*forceX + (theta>-this.theta0 ? 0.5*this.blockMass*this.gravity*this.blockDiagonalHeight*Math.sin(theta) : 0);
+
+  this.memory.push({
+    ballX: ball.x,
+    ballY: ball.y,
+    theta: -(theta+this.theta0)
+  });
+
+  var radian90 = NPEngine.Convert.toRadians(90)-this.theta0;
+  var count = 1;
+  var flag = 0.01/this.deltaTime;
+  for (var i= 1, max=(1/this.deltaTime)*100; i<max; i++) {
+    ballVelocityX = ballVelocityX - forceX / this.ballMass * this.deltaTime;
+    ballVelocityY = ballVelocityY - forceY / this.ballMass * this.deltaTime;
+    ball.x = ball.x + ballVelocityX * this.deltaTime;
+    ball.y = ball.y + ballVelocityY * this.deltaTime;
+
+    angularVelocity = (theta < -this.theta0 || theta > radian90) ? 0 : angularVelocity + torque / this.momentOfInertia * this.deltaTime;
+    theta = theta + angularVelocity * this.deltaTime;
+    collisionPoint.x = this.blockDiagonalHeight*Math.sin(-theta);
+    collisionPoint.y = this.blockDiagonalHeight*Math.cos(theta);
+    distance = Math.sqrt((ball.x - collisionPoint.x) * (ball.x - collisionPoint.x) + (ball.y - collisionPoint.y) * (ball.y - collisionPoint.y));
+    forceX = distance < this.ballRadius ? this.k * (this.ballRadius - distance) * (collisionPoint.x - ball.x) / distance : 0;
+    forceY = distance < this.ballRadius ? this.k * (this.ballRadius - distance) * (collisionPoint.y - ball.y) / distance : 0;
+    torque = collisionPoint.x * forceY - collisionPoint.y * forceX + (theta > -this.theta0 ? 0.5 * this.blockMass * this.gravity * this.blockDiagonalHeight * Math.sin(theta) : 0);
+
+    if (count == flag) {
+      this.memory.push({
+        ballX: ball.x,
+        ballY: ball.y,
+        theta: -(theta+this.theta0)
+    });
+      count = 1;
+    }
+    else {
+      count++;
+    }
+  }
+};
+
+NPEngine.RotationMotion.prototype.onReady = function() {
+  var data = this.memory[0];
+  this.curBall.x = this.grid.convertToVectorValueX(data.ballX);
+  this.curBall.y = this.grid.convertToVectorValueY(data.ballY);
+  this.curTheta = data.theta;
+
+  this.curBlock.x = this.grid.convertToVectorValueX(this.block.x);
+  this.curBlock.y = this.grid.convertToVectorValueY(this.block.y);
+  this.convertedBallRadius = this.grid.convertToGridScalaValue(this.ballRadius);
+  this.convertedBlockWidth = this.grid.convertToGridScalaValue(this.blockWidth);
+  this.convertedBlockHeight = this.grid.convertToGridScalaValue(this.blockHeight);
+};
+
+NPEngine.RotationMotion.prototype.onStart = function() {
+};
+
+NPEngine.RotationMotion.prototype.onResume = function() {
+};
+
+NPEngine.RotationMotion.prototype.onPause = function() {
+};
+
+NPEngine.RotationMotion.prototype.onStop = function() {
+};
+
+NPEngine.RotationMotion.prototype.update = function () {
+  var gap = Math.round((new Date().getTime()-this.timeBoard.then)/10); // convert millisecond to 0.01 second
+
+  var data = this.memory[gap];
+  this.curBall.x = this.grid.convertToVectorValueX(data.ballX);
+  this.curBall.y = this.grid.convertToVectorValueY(data.ballY);
+  this.curTheta = data.theta;
+};
+
+NPEngine.RotationMotion.prototype.render = function (context) {
+  context.beginPath();
+  context.fillStyle = 'black';
+  context.arc(this.curBall.x, this.curBall.y, this.convertedBallRadius, 0, 2*Math.PI, true);
+  context.fill();
+  context.stroke();
+
+  context.save();
+  context.beginPath();
+  context.translate(this.grid.centerWidth, this.grid.centerHeight);
+  context.rotate(this.curTheta);
+  context.translate(-this.grid.centerWidth, -this.grid.centerHeight);
+  context.fillRect(this.curBlock.x, this.curBlock.y, this.convertedBlockWidth, this.convertedBlockHeight);
+  context.stroke();
+  context.restore();
+};
+
+NPEngine.RotationMotion.prototype.setBallMass = function(value) {
+  this.ballMass = value;
+};
+
+NPEngine.RotationMotion.prototype.setBlockMass = function(value) {
+  this.blockMass = value;
+  this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
+};
+
+NPEngine.RotationMotion.prototype.setK = function(value) {
+  this.k = value;
+};
+
+NPEngine.RotationMotion.prototype.setBallRadius = function(value) {
+  this.ballRadius = value;
+};
+
+NPEngine.RotationMotion.prototype.setBlockWidth = function(value) {
+  this.blockWidth = value;
+  this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
+  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
+  this.blockCollisionPoint.x = this.blockWidth;
+};
+
+NPEngine.RotationMotion.prototype.setBlockHeight = function(value) {
+  this.blockHeight = value;
+  this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
+  this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
+  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
+
+  this.block.y = this.blockHeight;
+  this.blockCollisionPoint.y = this.blockHeight;
+  this.ball.y = this.blockHeight;
+};
+
+NPEngine.RotationMotion.prototype.setBallX = function(value) {
+  this.ball.x = value;
+};
+
+NPEngine.RotationMotion.prototype.setBallV = function(value) {
+  this.ballVelocityX = value;
 };
 NPEngine.Spring = function () {
   NPEngine.DisplayObject.call(this);
@@ -1601,17 +2279,22 @@ NPEngine.Spring.prototype.setVelocity = function (value) {
   this.velocity = value;
 };
 
-NPEngine.CanvasRenderer = function () {
+NPEngine.CanvasRenderer = function (canvas) {
   this.grid = null;
   this.children = [];
 
-  this.view = document.createElement("canvas");
-  this.view.width = 800;
-  this.view.height = 600;
-  document.body.appendChild(this.view);
-
+  if (canvas) {
+    this.view = canvas;
+    this.view.width = canvas.width;
+    this.view.height = canvas.height;
+  }
+  else {
+    this.view = canvas || document.createElement("canvas");
+    this.view.width = 800;
+    this.view.height = 600;
+    document.body.appendChild(this.view);
+  }
   this.context = this.view.getContext("2d");
-
   this.timeBoard = new NPEngine.TimeBoard;
 };
 
@@ -1701,6 +2384,9 @@ NPEngine.CanvasRenderer.prototype.render = function () {
   this.timeBoard.render(this.context);
 };
 
+NPEngine.CanvasRenderer.prototype.setFps = function (flag) {
+
+}
 NPEngine.TimeBoard = function () {
   this.visible = true;
   this.init();

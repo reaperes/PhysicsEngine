@@ -21,6 +21,7 @@
     this.blockMass = 10;
     this.k = 200000;
     this.ballX = 1.5;
+    this.ballV = -3;
     this.ballRadius = 0.1;
     this.blockWidth = 0.3;
     this.blockHeight = 0.5;
@@ -63,6 +64,15 @@
       rotation.setBallX(value);
       engine.ready();
     });
+
+    var ballVFolder = gui.addFolder('공 속도 설정 (m/s)');
+    ballVFolder.open();
+    var ballV = ballVFolder.add(defaultValue, 'ballV');
+    ballV.onChange(function (value) {
+      engine.stop();
+      rotation.setBallV(value);
+      engine.ready();
+    })
 
     var valueFolder = gui.addFolder('기타 설정 (m)');
     valueFolder.open();

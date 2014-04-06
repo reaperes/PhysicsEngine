@@ -17,8 +17,8 @@ NPEngine.RotationMotion = function() {
 
   this.block = new NPEngine.Point(0, this.blockHeight);
   this.blockCollisionPoint = new NPEngine.Point(this.blockWidth, this.blockHeight);
-  this.ball = new NPEngine.Point(1.5, this.blockHeight);
-  this.ballVelocityX = -2;      // m/s
+  this.ball = new NPEngine.Point(0.5, this.blockHeight);
+  this.ballVelocityX = -3;      // m/s
   this.ballVelocityY = 0;       // m/s
 
   this.curBall = this.ball.clone();
@@ -65,17 +65,19 @@ NPEngine.RotationMotion.prototype.compute = function () {
   var count = 1;
   var flag = 0.01/this.deltaTime;
   for (var i= 1, max=(1/this.deltaTime)*100; i<max; i++) {
-    ballVelocityX = ballVelocityX - forceX/this.ballMass*this.deltaTime;
-    ballVelocityY = ballVelocityY - forceY/this.ballMass*this.deltaTime;
-    ball.x = ball.x+ballVelocityX*this.deltaTime;
-    ball.y = ball.y+ballVelocityY*this.deltaTime;
+    ballVelocityX = ballVelocityX - forceX / this.ballMass * this.deltaTime;
+    ballVelocityY = ballVelocityY - forceY / this.ballMass * this.deltaTime;
+    ball.x = ball.x + ballVelocityX * this.deltaTime;
+    ball.y = ball.y + ballVelocityY * this.deltaTime;
 
-    angularVelocity = (theta < -this.theta0 || theta > radian90) ? 0 : angularVelocity + torque/this.momentOfInertia*this.deltaTime;
-    theta = theta+angularVelocity*this.deltaTime;
-    distance = Math.sqrt((ball.x-collisionPoint.x)*(ball.x-collisionPoint.x)+(ball.y-collisionPoint.y)*(ball.y-collisionPoint.y));
-    forceX = distance<this.ballRadius ? this.k*(this.ballRadius-distance)*(collisionPoint.x-ball.x)/distance : 0;
-    forceY = distance<this.ballRadius ? this.k*(this.ballRadius-distance)*(collisionPoint.y-ball.y)/distance : 0;
-    torque = collisionPoint.x*forceY-collisionPoint.y*forceX + (theta>-this.theta0 ? 0.5*this.blockMass*this.gravity*this.blockDiagonalHeight*Math.sin(theta) : 0);
+    angularVelocity = (theta < -this.theta0 || theta > radian90) ? 0 : angularVelocity + torque / this.momentOfInertia * this.deltaTime;
+    theta = theta + angularVelocity * this.deltaTime;
+    collisionPoint.x = this.blockDiagonalHeight*Math.sin(-theta);
+    collisionPoint.y = this.blockDiagonalHeight*Math.cos(theta);
+    distance = Math.sqrt((ball.x - collisionPoint.x) * (ball.x - collisionPoint.x) + (ball.y - collisionPoint.y) * (ball.y - collisionPoint.y));
+    forceX = distance < this.ballRadius ? this.k * (this.ballRadius - distance) * (collisionPoint.x - ball.x) / distance : 0;
+    forceY = distance < this.ballRadius ? this.k * (this.ballRadius - distance) * (collisionPoint.y - ball.y) / distance : 0;
+    torque = collisionPoint.x * forceY - collisionPoint.y * forceX + (theta > -this.theta0 ? 0.5 * this.blockMass * this.gravity * this.blockDiagonalHeight * Math.sin(theta) : 0);
 
     if (count == flag) {
       this.memory.push({
@@ -179,4 +181,8 @@ NPEngine.RotationMotion.prototype.setBlockHeight = function(value) {
 
 NPEngine.RotationMotion.prototype.setBallX = function(value) {
   this.ball.x = value;
+};
+
+NPEngine.RotationMotion.prototype.setBallV = function(value) {
+  this.ballVelocityX = value;
 };
