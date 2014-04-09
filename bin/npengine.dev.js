@@ -3,8 +3,16 @@
  @return {NPEngine}
  */
 NPEngine = function(canvas) {
-  this.fps = new NPEngine.FPS();
+  //this.fps = new NPEngine.FPS();
   this.state = 'create';    // create, init, ready, start, resume, pause, stop, destroy
+
+  if (!canvas) {
+    var c = document.createElement("canvas");
+    c.width = 800;
+    c.height = 600;
+    document.body.appendChild(c);
+    canvas = c;
+  }
 
   var that = this;
   this.keyHandler = function(e) {
@@ -26,6 +34,23 @@ NPEngine = function(canvas) {
     }
   };
   window.addEventListener("keypress", this.keyHandler, false);
+
+  var clickHandler = function(e) {
+    if (that.state == 'create' || that.state == 'init' || that.state == 'destroy') {
+      return ;
+    }
+
+    if (that.state=='ready') {
+      that.start();
+    }
+    else if (that.state=='resume') {
+      that.pause();
+    }
+    else if (that.state=='pause') {
+      that.resume();
+    }
+  };
+  canvas.addEventListener('click', clickHandler, false);
 
   this.init(canvas);
 };
@@ -66,9 +91,9 @@ NPEngine.prototype.resume = function() {
     }
     requestAnimationFrame(run);
     that.renderer.update();
-    that.fps.begin();
+    //that.fps.begin();
     that.renderer.render();
-    that.fps.end();
+    //that.fps.end();
   }
 };
 
