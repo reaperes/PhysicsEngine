@@ -3,7 +3,7 @@ NPEngine.RotationMotionPlus = function() {
 
   this.deltaTime = 0.0005;
 
-  this.ballMass = 1.1;        // kg
+  this.ballMass = 1.2;        // kg
   this.gravity = 9.8;         // m/s^2
   this.blockMass = 50;        // kg
   this.k = 1000000;           // N/m
@@ -23,7 +23,7 @@ NPEngine.RotationMotionPlus = function() {
   this.incidenceVelocity = 10;                              // m/s
   this.ballVelocityX = -this.incidenceVelocity * Math.cos(this.incidenceAngle);
   this.ballVelocityY = this.incidenceVelocity * Math.sin(this.incidenceAngle);
-  alert (this.ballVelocityX + ", " + this.ballVelocityY);
+
   this.coefficientOfFrictionBall = 300;         // N s/m
   this.coefficientOfFrictionBlock = 2000;       // N s/m
 
@@ -51,13 +51,12 @@ NPEngine.RotationMotionPlus.prototype.onAttachedGrid = function (gridObject) {
 NPEngine.RotationMotionPlus.prototype.compute = function () {
   this.memory = [];
 
-  var radian90 = NPEngine.Convert.toRadians(90)-this.theta0;
-
   var theta = -this.theta0;
+
   var blockCollisionX = this.blockDiagonalHeight*Math.sin(-theta);
   var blockCollisionY = this.blockDiagonalHeight*Math.cos(theta);
 
-  var blockEndX = -this.blockDiagonalHeight*Math.sin(theta);
+  var blockEndX = this.blockDiagonalHeight*Math.sin(-theta);
   var blockEndY = this.blockDiagonalHeight*Math.cos(theta);
 
   var ballX = this.ballX;
@@ -69,74 +68,100 @@ NPEngine.RotationMotionPlus.prototype.compute = function () {
   var angularVelocity = 0;
   var distance = Math.sqrt((ballX-blockCollisionX)*(ballX-blockCollisionX) + (ballY-blockCollisionY)*(ballY-blockCollisionY));
 
-  var flag = (Math.abs(ballX-blockCollisionX)<this.ballRadius && ballY<=this.blockHeight && ballY>0) ? 1 : 0;
-  var ballFlag = ballY < this.ballRadius ? 1 : 0;
-  var blockFlag = theta > radian90 ? 1 : 0;
+  var flagBallBlock = Math.abs(ballX-blockCollisionX)<this.ballRadius && ballY<this.blockHeight && ballY>0 ? 1 : 0;
+  var flagBlockGround = blockEndY < 0 ? 1 : 0;
+  var flagBlockGravity = theta > -this.theta0 ? 1 : 0;
+  var flagBallGround = ballY < this.ballRadius ? 1: 0;
 
-  var forceBlockX = this.k*(this.ballRadius-distance)*(blockCollisionX-ballX)/distance*flag + (this.k*this.blockHeight*(theta-radian90)*Math.cos(theta)+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity*Math.cos(theta))*blockFlag;
-  var forceBlockY = this.k*(this.ballRadius-distance)*(blockCollisionY-ballY)/distance*flag + (this.k*this.blockHeight*(theta-radian90)*Math.sin(theta)+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity*Math.sin(theta))*blockFlag;
+  var forceBallBlockX = this.k*(this.ballRadius-distance)*(blockCollisionX-ballX)/distance*flagBallBlock;
+  var forceBallBlockY = this.k*(this.ballRadius-distance)*(blockCollisionY-ballY)/distance*flagBallBlock;
+  var forceGroundBlockX = 0;
+  var forceGroundBlockY = (-this.k*blockEndY+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity)*flagBlockGround;
+  var forceGravityBlockX = 0;
+  var forceGravityBlockY = -this.blockMass*this.gravity*flagBlockGravity;
+  var forceGroundGravityBallX = this.coefficientOfFrictionBall*ballVelocityX*flagBallGround;
+  var forceGroundGravityBallY = (this.k*(this.ballRadius-ballY)-this.coefficientOfFrictionBall*ballVelocityY)*flagBallGround-this.ballMass*this.gravity;
 
-  var torqueFlag = theta > -this.theta0 ? 1 : 0;
-  var torque = (blockCollisionX*forceBlockY-blockCollisionY*forceBlockX) + 0.5*this.blockMass*this.gravity*this.blockDiagonalHeight*Math.sin(theta) * torqueFlag;
+  var torque = blockCollisionX*forceBallBlockY-blockCollisionY*forceBallBlockX + -this.blockHeight*forceGroundBlockY + 0.5*(blockEndX*forceGravityBlockY-blockEndY*forceGravityBlockX);
 
-  var forceBallX = -this.k*(this.ballRadius-distance)*(blockCollisionX-ballX)/distance*flag + (-this.coefficientOfFrictionBall*ballVelocityX*ballFlag);
-  var forceBallY = -this.k*(this.ballRadius-distance)*(blockCollisionY-ballY)/distance*flag - this.ballMass*this.gravity + (-this.k*(ballY-this.ballRadius)-this.coefficientOfFrictionBall*ballVelocityY)*ballFlag;
+  var forceBallX = -forceBallBlockX + forceGroundGravityBallX;
+  var forceBallY = -forceBallBlockY + forceGroundGravityBallY;
 
+
+  var ele = document.getElementById("output");
+  var data = ele.innerHTML;
+  data = data + "\n"+blockCollisionX+","+blockCollisionY+","+blockEndX+","+blockEndY+","+ballX+","+ballY+","+theta+","+ballVelocityX+","+ballVelocityY+","+angularVelocity+","+distance
+    +","+forceBallBlockX+","+forceBallBlockY+","+forceGroundBlockX+","+forceGroundBlockY+","+forceGravityBlockX
+    +","+forceGravityBlockY+","+forceGroundGravityBallX+","+forceGroundGravityBallY+","+flagBallBlock+","+flagBlockGround+","+flagBlockGravity+","+flagBallGround+","+torque+","+forceBallX+","+forceBallY;
   this.memory.push({
     ballX: ballX,
     ballY: ballY,
-//    theta: -(theta+this.theta0)
     theta: theta
   });
 
-  var nhk = 1;
-  var ele = document.getElementById("output");
+  var nhk = 2;
   var count = 1;
   var countFlag = 0.01/this.deltaTime;
-  for (var i= 1, max=(1/this.deltaTime)*100; i<max; i++) {
-    angularVelocity = theta < -this.theta0 ? 0 : angularVelocity + torque / this.momentOfInertia * this.deltaTime;
+  for (var i= 2, max=(1/this.deltaTime)*100; i<max; i++) {
+    blockCollisionX = this.blockDiagonalHeight*Math.sin(-theta);
 
-    theta = theta + angularVelocity * this.deltaTime;
-    blockCollisionX = this.blockDiagonalHeight * Math.sin(-theta);
+    ballVelocityY = ballVelocityY + forceBallY/this.ballMass*this.deltaTime;
 
-    ballX = ballX + ballVelocityX * this.deltaTime;
-    ballY = ballY + ballVelocityY * this.deltaTime;
-    flag = (Math.abs(ballX - blockCollisionX) < this.ballRadius && ballY < this.blockHeight && ballY > 0) ? 1 : 0;
-    blockCollisionY = flag == 1 ? ballY : blockCollisionY;
+    ballY = ballY + ballVelocityY*this.deltaTime;
 
-    blockEndX = -this.blockDiagonalHeight * Math.sin(theta);
-    blockEndY = this.blockDiagonalHeight * Math.cos(theta);
+    flagBallBlock = Math.abs(ballX-blockCollisionX)<this.ballRadius && ballY<this.blockHeight && ballY>0 ? 1 : 0;
 
-    ballVelocityX = ballVelocityX + forceBallX / this.ballMass * this.deltaTime;
-    ballVelocityY = ballVelocityY + forceBallY / this.ballMass * this.deltaTime;
+    blockCollisionY = flagBallBlock == 1 ? ballY : blockCollisionY;
 
-    distance = Math.sqrt((ballX - blockCollisionX) * (ballX - blockCollisionX) + (ballY - blockCollisionY) * (ballY - blockCollisionY));
+    blockEndX = this.blockDiagonalHeight*Math.sin(-theta);
+    blockEndY = this.blockDiagonalHeight*Math.cos(theta);
 
-    ballFlag = ballY < this.ballRadius ? 1 : 0;
-    blockFlag = theta > Math.PI/2 ? 1 : 0;
+    ballVelocityX = ballVelocityX + forceBallX/this.ballMass*this.deltaTime;
 
-    forceBlockX = this.k * (this.ballRadius - distance) * (blockCollisionX - ballX) / distance * flag + (this.k * this.blockHeight * (theta - Math.PI/2) * Math.cos(theta) + this.coefficientOfFrictionBlock * this.blockHeight * angularVelocity * Math.cos(theta)) * blockFlag;
-    forceBlockY = this.k * (this.ballRadius - distance) * (blockCollisionY - ballY) / distance * flag + (this.k * this.blockHeight * (theta - Math.PI/2) * Math.sin(theta) + this.coefficientOfFrictionBlock * this.blockHeight * angularVelocity * Math.sin(theta)) * blockFlag;
+    ballX = ballX + ballVelocityX*this.deltaTime;
 
-    torqueFlag = theta > -this.theta0 ? 1 : 0;
-    torque = (blockCollisionX*forceBlockY-blockCollisionY*forceBlockX) + 0.5*this.blockMass*this.gravity*this.blockDiagonalHeight*Math.sin(theta) * torqueFlag;
-  if (nhk == 1984) {
-    debugger;
-    alert(blockCollisionX*forceBlockY-blockCollisionY*forceBlockX);
-  }
-    forceBallX = -this.k*(this.ballRadius-distance)*(blockCollisionX-ballX)/distance*flag + (-this.coefficientOfFrictionBall*ballVelocityX*ballFlag);
-    forceBallY = -this.k*(this.ballRadius-distance)*(blockCollisionY-ballY)/distance*flag - this.ballMass*this.gravity + (-this.k*(ballY-this.ballRadius)-this.coefficientOfFrictionBall*ballVelocityY)*ballFlag;
-////    debugger;
-//    if ( nhk >= 2000 && nhk < 3000) {
-//      var namhoon = ele.innerHTML;
-//      ele.innerHTML = namhoon + "\n" + blockCollisionX + "," + blockCollisionY + "," + ballX + "," + ballY + "," + theta + "," + ballVelocityX + "," + ballVelocityY + "," + angularVelocity + "," + distance + "," + flag + "," + forceBlockX + "," + forceBlockY + "," + torque + "," + forceBallX + "," + forceBallY + "," + ballFlag + "," + blockFlag;
-//    }
+    angularVelocity = theta < -this.theta0 ? 0 : angularVelocity + torque/this.momentOfInertia*this.deltaTime;
+
+    theta = theta + angularVelocity*this.deltaTime;
+
+    distance = Math.sqrt((ballX-blockCollisionX)*(ballX-blockCollisionX) + (ballY-blockCollisionY)*(ballY-blockCollisionY));
+
+    flagBlockGround = theta > Math.PI/2 ? 1 : 0;
+    flagBlockGravity = theta > -this.theta0 ? 1 : 0;
+    flagBallGround = ballY < this.ballRadius ? 1 : 0;
+
+    forceBallBlockX = this.k*(this.ballRadius-distance)*(blockCollisionX-ballX)/distance*flagBallBlock;
+    forceBallBlockY = this.k*(this.ballRadius-distance)*(blockCollisionY-ballY)/distance*flagBallBlock;
+    forceGroundBlockX = 0;
+    forceGroundBlockY = (-this.k*blockEndY+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity)*flagBlockGround;
+    forceGravityBlockX = 0;
+    forceGravityBlockY = -this.blockMass*this.gravity*flagBlockGravity;
+    forceGroundGravityBallX = this.coefficientOfFrictionBall*ballVelocityX*flagBallGround;
+    forceGroundGravityBallY = (this.k*(this.ballRadius-ballY)-this.coefficientOfFrictionBall*ballVelocityY)*flagBallGround-this.ballMass*this.gravity;
+
+    torque = blockCollisionX*forceBallBlockY-blockCollisionY*forceBallBlockX + -this.blockHeight*forceGroundBlockY + 0.5*(blockEndX*forceGravityBlockY-blockEndY*forceGravityBlockX);
+
+    forceBallX = -forceBallBlockX + forceGroundGravityBallX;
+    forceBallY = -forceBallBlockY + forceGroundGravityBallY;
+
+    if (nhk == 1986) {
+      debugger;
+    }
+
+//  if (nhk == 1984) {
+//    debugger;
+//    alert(blockCollisionX*forceBlockY-blockCollisionY*forceBlockX);
+//  }
+
+    data = data + "\n"+blockCollisionX+","+blockCollisionY+","+blockEndX+","+blockEndY+","+ballX+","+ballY+","+theta+","+ballVelocityX+","+ballVelocityY+","+angularVelocity+","+distance
+      +","+forceBallBlockX+","+forceBallBlockY+","+forceGroundBlockX+","+forceGroundBlockY+","+forceGravityBlockX
+      +","+forceGravityBlockY+","+forceGroundGravityBallX+","+forceGroundGravityBallY+","+flagBallBlock+","+flagBlockGround+","+flagBlockGravity+","+flagBallGround+","+torque+","+forceBallX+","+forceBallY;
+
     nhk++;
     if (count == countFlag) {
       this.memory.push({
         ballX: ballX,
         ballY: ballY,
-//        theta: -(theta+this.theta0)
         theta: theta
       });
       count = 1;
@@ -145,6 +170,7 @@ NPEngine.RotationMotionPlus.prototype.compute = function () {
       count++;
     }
   }
+//  ele.innerHTML = data;
 };
 
 NPEngine.RotationMotionPlus.prototype.onReady = function() {
