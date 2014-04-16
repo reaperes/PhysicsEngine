@@ -3,20 +3,20 @@ NPEngine.Collision2d = function () {
 
   // initial variables
   this.deltaTime = 0.001;  //second
-  this.ball1 = new NPEngine.Point(-1, 1);
+  this.ball1 = new NPEngine.Point(-3, 0.5);
   this.ball2 = new NPEngine.Point(1, 0);
   this.curBall1 = new NPEngine.Point;
   this.curBall2 = new NPEngine.Point;
   this.mass1 = 2;         // kg
   this.mass2 = 2;
-  this.diameter1 = 1;   // m
-  this.diameter2 = 1;
-  this.velocity1_x = 1;    // m/s
+  this.diameter1 = 0.4;   // m
+  this.diameter2 = 0.4;
+  this.velocity1_x = 3;    // m/s
   this.velocity1_y = 0;
   this.velocity2_x = 0;
   this.velocity2_y = 0;
   this.k = 10000;         // N/m
-  this.mu = 50;           // N s/m
+  this.mu = 0;           // N s/m
 };
 
 NPEngine.Collision2d.prototype = Object.create(NPEngine.DisplayObject.prototype);

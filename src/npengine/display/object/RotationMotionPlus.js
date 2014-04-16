@@ -79,7 +79,7 @@ NPEngine.RotationMotionPlus.prototype.compute = function () {
   var forceGroundBlockY = (-this.k*blockEndY+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity)*flagBlockGround;
   var forceGravityBlockX = 0;
   var forceGravityBlockY = -this.blockMass*this.gravity*flagBlockGravity;
-  var forceGroundGravityBallX = this.coefficientOfFrictionBall*ballVelocityX*flagBallGround;
+  var forceGroundGravityBallX = -this.coefficientOfFrictionBall*ballVelocityX*flagBallGround;
   var forceGroundGravityBallY = (this.k*(this.ballRadius-ballY)-this.coefficientOfFrictionBall*ballVelocityY)*flagBallGround-this.ballMass*this.gravity;
 
   var torque = blockCollisionX*forceBallBlockY-blockCollisionY*forceBallBlockX + -this.blockHeight*forceGroundBlockY + 0.5*(blockEndX*forceGravityBlockY-blockEndY*forceGravityBlockX);
@@ -87,19 +87,12 @@ NPEngine.RotationMotionPlus.prototype.compute = function () {
   var forceBallX = -forceBallBlockX + forceGroundGravityBallX;
   var forceBallY = -forceBallBlockY + forceGroundGravityBallY;
 
-
-  var ele = document.getElementById("output");
-  var data = ele.innerHTML;
-  data = data + "\n"+blockCollisionX+","+blockCollisionY+","+blockEndX+","+blockEndY+","+ballX+","+ballY+","+theta+","+ballVelocityX+","+ballVelocityY+","+angularVelocity+","+distance
-    +","+forceBallBlockX+","+forceBallBlockY+","+forceGroundBlockX+","+forceGroundBlockY+","+forceGravityBlockX
-    +","+forceGravityBlockY+","+forceGroundGravityBallX+","+forceGroundGravityBallY+","+flagBallBlock+","+flagBlockGround+","+flagBlockGravity+","+flagBallGround+","+torque+","+forceBallX+","+forceBallY;
   this.memory.push({
     ballX: ballX,
     ballY: ballY,
-    theta: theta
+    theta: -(theta+this.theta0)
   });
 
-  var nhk = 2;
   var count = 1;
   var countFlag = 0.01/this.deltaTime;
   for (var i= 2, max=(1/this.deltaTime)*100; i<max; i++) {
@@ -136,7 +129,7 @@ NPEngine.RotationMotionPlus.prototype.compute = function () {
     forceGroundBlockY = (-this.k*blockEndY+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity)*flagBlockGround;
     forceGravityBlockX = 0;
     forceGravityBlockY = -this.blockMass*this.gravity*flagBlockGravity;
-    forceGroundGravityBallX = this.coefficientOfFrictionBall*ballVelocityX*flagBallGround;
+    forceGroundGravityBallX = -this.coefficientOfFrictionBall*ballVelocityX*flagBallGround;
     forceGroundGravityBallY = (this.k*(this.ballRadius-ballY)-this.coefficientOfFrictionBall*ballVelocityY)*flagBallGround-this.ballMass*this.gravity;
 
     torque = blockCollisionX*forceBallBlockY-blockCollisionY*forceBallBlockX + -this.blockHeight*forceGroundBlockY + 0.5*(blockEndX*forceGravityBlockY-blockEndY*forceGravityBlockX);
@@ -144,25 +137,11 @@ NPEngine.RotationMotionPlus.prototype.compute = function () {
     forceBallX = -forceBallBlockX + forceGroundGravityBallX;
     forceBallY = -forceBallBlockY + forceGroundGravityBallY;
 
-    if (nhk == 1986) {
-      debugger;
-    }
-
-//  if (nhk == 1984) {
-//    debugger;
-//    alert(blockCollisionX*forceBlockY-blockCollisionY*forceBlockX);
-//  }
-
-    data = data + "\n"+blockCollisionX+","+blockCollisionY+","+blockEndX+","+blockEndY+","+ballX+","+ballY+","+theta+","+ballVelocityX+","+ballVelocityY+","+angularVelocity+","+distance
-      +","+forceBallBlockX+","+forceBallBlockY+","+forceGroundBlockX+","+forceGroundBlockY+","+forceGravityBlockX
-      +","+forceGravityBlockY+","+forceGroundGravityBallX+","+forceGroundGravityBallY+","+flagBallBlock+","+flagBlockGround+","+flagBlockGravity+","+flagBallGround+","+torque+","+forceBallX+","+forceBallY;
-
-    nhk++;
     if (count == countFlag) {
       this.memory.push({
         ballX: ballX,
         ballY: ballY,
-        theta: theta
+        theta: -(theta+this.theta0)
       });
       count = 1;
     }
@@ -170,7 +149,6 @@ NPEngine.RotationMotionPlus.prototype.compute = function () {
       count++;
     }
   }
-//  ele.innerHTML = data;
 };
 
 NPEngine.RotationMotionPlus.prototype.onReady = function() {

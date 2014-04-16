@@ -935,25 +935,119 @@ NPEngine.RotationPlusGrid.prototype.convertToGridScalaValue = function(value) {
   return value*this.ratio;
 };
 
+NPEngine.SpringGrid = function () {
+  NPEngine.DisplayObject.call(this);
+
+  // initial variables
+  this.width = 0;
+  this.height = 0;
+  this.ratio = 150;
+};
+
+NPEngine.SpringGrid.prototype = Object.create(NPEngine.DisplayObject.prototype);
+NPEngine.SpringGrid.prototype.constructor = NPEngine.SpringGrid;
+
+
+
+NPEngine.SpringGrid.prototype.onAttachedRenderer = function(viewWidth, viewHeight) {
+  this.width = viewWidth;
+  this.height = viewHeight;
+  this.centerWidth = Math.round(viewWidth/2);
+  this.centerHeight = Math.round(viewHeight/2);
+};
+
+NPEngine.SpringGrid.prototype.compute = function () {
+};
+
+NPEngine.SpringGrid.prototype.update = function () {
+};
+
+NPEngine.SpringGrid.prototype.render = function (context) {
+  context.beginPath();
+  context.lineWidth = 0.5;
+  context.strokeStyle = '#550000';
+
+  // draw left column line
+  for (var i=this.centerWidth-this.ratio; i>0; i-=this.ratio) {
+    context.moveTo(i, 0);
+    context.lineTo(i, this.height);
+  }
+
+  // draw right column line
+  for (var i=this.centerWidth+this.ratio; i<this.width; i+=this.ratio) {
+    context.moveTo(i, 0);
+    context.lineTo(i, this.height);
+  }
+
+  // draw upper row line
+  for (var i=this.centerHeight; i>0; i-=this.ratio) {
+    context.moveTo(0, i);
+    context.lineTo(this.width, i);
+  }
+
+  // draw lower row line
+  for (var i=this.centerHeight; i<this.height; i+=this.ratio) {
+    context.moveTo(0, i);
+    context.lineTo(this.width, i);
+  }
+  context.stroke();
+
+  // draw center line
+  context.beginPath();
+  context.lineWidth = 2;
+  context.strokeStyle = '#550000';
+  context.moveTo(this.centerWidth, 0);
+  context.lineTo(this.centerWidth, this.height);
+  context.moveTo(0, this.centerHeight);
+  context.lineTo(this.width, this.centerHeight);
+  context.stroke();
+};
+
+NPEngine.SpringGrid.prototype.setWidth = function(width) {
+  this.width = width;
+};
+
+NPEngine.SpringGrid.prototype.setHeight = function(height) {
+  this.height = height;
+};
+
+NPEngine.SpringGrid.prototype.convertToGridPoint = function(point) {
+  var convertedX = this.centerWidth + point.x * this.ratio;
+  var convertedY = this.centerHeight + point.y * this.ratio;
+  return new NPEngine.Point(convertedX, convertedY);
+};
+
+NPEngine.SpringGrid.prototype.convertToVectorValueX = function(x) {
+  return this.centerWidth + x * this.ratio;
+};
+
+NPEngine.SpringGrid.prototype.convertToVectorValueY = function(y) {
+  return this.centerHeight + y * -this.ratio;
+};
+
+NPEngine.SpringGrid.prototype.convertToGridScalaValue = function(value) {
+  return value*this.ratio;
+};
+
 NPEngine.Collision2d = function () {
   NPEngine.DisplayObject.call(this);
 
   // initial variables
   this.deltaTime = 0.001;  //second
-  this.ball1 = new NPEngine.Point(-1, 1);
+  this.ball1 = new NPEngine.Point(-3, 0.5);
   this.ball2 = new NPEngine.Point(1, 0);
   this.curBall1 = new NPEngine.Point;
   this.curBall2 = new NPEngine.Point;
   this.mass1 = 2;         // kg
   this.mass2 = 2;
-  this.diameter1 = 1;   // m
-  this.diameter2 = 1;
-  this.velocity1_x = 1;    // m/s
+  this.diameter1 = 0.4;   // m
+  this.diameter2 = 0.4;
+  this.velocity1_x = 3;    // m/s
   this.velocity1_y = 0;
   this.velocity2_x = 0;
   this.velocity2_y = 0;
   this.k = 10000;         // N/m
-  this.mu = 50;           // N s/m
+  this.mu = 0;           // N s/m
 };
 
 NPEngine.Collision2d.prototype = Object.create(NPEngine.DisplayObject.prototype);
@@ -1247,6 +1341,7 @@ NPEngine.ForcedSpring.prototype.setF0 = function (value) {
 
 NPEngine.ForcedSpring.prototype.setWW0 = function (value) {
   this.ww0 = value;
+  this.angularVelocity = this.angularVelocity0*this.ww0;
 };
 
 NPEngine.ForcedSpring.prototype.setPhase = function (value) {
@@ -1265,7 +1360,7 @@ NPEngine.Kepler = function() {
   NPEngine.DisplayObject.call(this);
 
   this.deltaTime = 0.01;   // seconds
-  this.slowFactor = 3;
+  this.slowFactor = 7;
 
   this.G = 1.18e-19;
   this.earthMass = 1;
@@ -1517,7 +1612,7 @@ NPEngine.ParabolicMotion.prototype.update = function () {
     var ballY = this.grid.convertToVectorValueY(data.ballY);
 
     // boundary check
-    if (ballY > this.viewHeight) {
+    if (ballY > this.grid.convertToVectorValueY(0)) {
       return ;
     }
     this.curBall.x = ballX;
@@ -1568,9 +1663,9 @@ NPEngine.Pendulum = function () {
 
   // initial variables
   this.mass = 10;
-  this.length = 5;
+  this.length = 2;
   this.gravity = 9.8;
-  this.theta0 = 0.785398;
+  this.theta0 = NPEngine.Convert.toRadians(30);
   this.deltaTime = 0.01;
 
   // initial position
@@ -1673,7 +1768,7 @@ NPEngine.Pendulum.prototype.update = function () {
 };
 
 NPEngine.Pendulum.prototype.render = function (context) {
-  var convertedLength = Math.round(this.length/50)+40;
+  var convertedLength = Math.round(this.length*5)+60;
   var convertedMass = Math.round(this.mass/3)+22;
   context.beginPath();
   context.lineWidth = 2;
@@ -1879,11 +1974,11 @@ NPEngine.PendulumCollision3 = function() {
   this.deltaTime        = 0.00001;     // second
 
   // initial variables
-  this.numOfPendulum    = 3;          // number
+  this.numOfPendulum    = 4;          // number
   this.gravity          = 9.8;        // m/s^2
   this.mass             = 0.5;        // kg
   this.lineLength       = 1;          // m
-  this.k                = 5000000;    // N/m
+  this.k                = 10000000;    // N/m
   this.mu               = 0;          // N s/m
 
   this.diameter         = 0.1;        // m
@@ -2106,19 +2201,19 @@ NPEngine.RotationMotion = function() {
 
   this.ballMass = 1.1;        // kg
   this.gravity = 9.8;         // m/s^2
-  this.blockMass = 10;        // kg
+  this.blockMass = 15;        // kg
   this.k = 200000;            // N/m
 
   this.ballRadius = 0.1;      // m
   this.blockWidth = 0.3;      // m
-  this.blockHeight = 0.5;     // m
+  this.blockHeight = 1;     // m
   this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
   this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
   this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
 
   this.block = new NPEngine.Point(0, this.blockHeight);
   this.blockCollisionPoint = new NPEngine.Point(this.blockWidth, this.blockHeight);
-  this.ball = new NPEngine.Point(0.5, this.blockHeight);
+  this.ball = new NPEngine.Point(3, this.blockHeight);
   this.ballVelocityX = -3;      // m/s
   this.ballVelocityY = 0;       // m/s
 
@@ -2292,7 +2387,7 @@ NPEngine.RotationMotionPlus = function() {
 
   this.deltaTime = 0.0005;
 
-  this.ballMass = 1.1;        // kg
+  this.ballMass = 1.2;        // kg
   this.gravity = 9.8;         // m/s^2
   this.blockMass = 50;        // kg
   this.k = 1000000;           // N/m
@@ -2312,7 +2407,7 @@ NPEngine.RotationMotionPlus = function() {
   this.incidenceVelocity = 10;                              // m/s
   this.ballVelocityX = -this.incidenceVelocity * Math.cos(this.incidenceAngle);
   this.ballVelocityY = this.incidenceVelocity * Math.sin(this.incidenceAngle);
-  alert (this.ballVelocityX + ", " + this.ballVelocityY);
+
   this.coefficientOfFrictionBall = 300;         // N s/m
   this.coefficientOfFrictionBlock = 2000;       // N s/m
 
@@ -2340,13 +2435,12 @@ NPEngine.RotationMotionPlus.prototype.onAttachedGrid = function (gridObject) {
 NPEngine.RotationMotionPlus.prototype.compute = function () {
   this.memory = [];
 
-  var radian90 = NPEngine.Convert.toRadians(90)-this.theta0;
-
   var theta = -this.theta0;
+
   var blockCollisionX = this.blockDiagonalHeight*Math.sin(-theta);
   var blockCollisionY = this.blockDiagonalHeight*Math.cos(theta);
 
-  var blockEndX = -this.blockDiagonalHeight*Math.sin(theta);
+  var blockEndX = this.blockDiagonalHeight*Math.sin(-theta);
   var blockEndY = this.blockDiagonalHeight*Math.cos(theta);
 
   var ballX = this.ballX;
@@ -2358,75 +2452,80 @@ NPEngine.RotationMotionPlus.prototype.compute = function () {
   var angularVelocity = 0;
   var distance = Math.sqrt((ballX-blockCollisionX)*(ballX-blockCollisionX) + (ballY-blockCollisionY)*(ballY-blockCollisionY));
 
-  var flag = (Math.abs(ballX-blockCollisionX)<this.ballRadius && ballY<=this.blockHeight && ballY>0) ? 1 : 0;
-  var ballFlag = ballY < this.ballRadius ? 1 : 0;
-  var blockFlag = theta > radian90 ? 1 : 0;
+  var flagBallBlock = Math.abs(ballX-blockCollisionX)<this.ballRadius && ballY<this.blockHeight && ballY>0 ? 1 : 0;
+  var flagBlockGround = blockEndY < 0 ? 1 : 0;
+  var flagBlockGravity = theta > -this.theta0 ? 1 : 0;
+  var flagBallGround = ballY < this.ballRadius ? 1: 0;
 
-  var forceBlockX = this.k*(this.ballRadius-distance)*(blockCollisionX-ballX)/distance*flag + (this.k*this.blockHeight*(theta-radian90)*Math.cos(theta)+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity*Math.cos(theta))*blockFlag;
-  var forceBlockY = this.k*(this.ballRadius-distance)*(blockCollisionY-ballY)/distance*flag + (this.k*this.blockHeight*(theta-radian90)*Math.sin(theta)+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity*Math.sin(theta))*blockFlag;
+  var forceBallBlockX = this.k*(this.ballRadius-distance)*(blockCollisionX-ballX)/distance*flagBallBlock;
+  var forceBallBlockY = this.k*(this.ballRadius-distance)*(blockCollisionY-ballY)/distance*flagBallBlock;
+  var forceGroundBlockX = 0;
+  var forceGroundBlockY = (-this.k*blockEndY+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity)*flagBlockGround;
+  var forceGravityBlockX = 0;
+  var forceGravityBlockY = -this.blockMass*this.gravity*flagBlockGravity;
+  var forceGroundGravityBallX = -this.coefficientOfFrictionBall*ballVelocityX*flagBallGround;
+  var forceGroundGravityBallY = (this.k*(this.ballRadius-ballY)-this.coefficientOfFrictionBall*ballVelocityY)*flagBallGround-this.ballMass*this.gravity;
 
-  var torqueFlag = theta > -this.theta0 ? 1 : 0;
-  var torque = (blockCollisionX*forceBlockY-blockCollisionY*forceBlockX) + 0.5*this.blockMass*this.gravity*this.blockDiagonalHeight*Math.sin(theta) * torqueFlag;
+  var torque = blockCollisionX*forceBallBlockY-blockCollisionY*forceBallBlockX + -this.blockHeight*forceGroundBlockY + 0.5*(blockEndX*forceGravityBlockY-blockEndY*forceGravityBlockX);
 
-  var forceBallX = -this.k*(this.ballRadius-distance)*(blockCollisionX-ballX)/distance*flag + (-this.coefficientOfFrictionBall*ballVelocityX*ballFlag);
-  var forceBallY = -this.k*(this.ballRadius-distance)*(blockCollisionY-ballY)/distance*flag - this.ballMass*this.gravity + (-this.k*(ballY-this.ballRadius)-this.coefficientOfFrictionBall*ballVelocityY)*ballFlag;
+  var forceBallX = -forceBallBlockX + forceGroundGravityBallX;
+  var forceBallY = -forceBallBlockY + forceGroundGravityBallY;
 
   this.memory.push({
     ballX: ballX,
     ballY: ballY,
-//    theta: -(theta+this.theta0)
-    theta: theta
+    theta: -(theta+this.theta0)
   });
 
-  var nhk = 1;
-  var ele = document.getElementById("output");
   var count = 1;
   var countFlag = 0.01/this.deltaTime;
-  for (var i= 1, max=(1/this.deltaTime)*100; i<max; i++) {
-    angularVelocity = theta < -this.theta0 ? 0 : angularVelocity + torque / this.momentOfInertia * this.deltaTime;
+  for (var i= 2, max=(1/this.deltaTime)*100; i<max; i++) {
+    blockCollisionX = this.blockDiagonalHeight*Math.sin(-theta);
 
-    theta = theta + angularVelocity * this.deltaTime;
-    blockCollisionX = this.blockDiagonalHeight * Math.sin(-theta);
+    ballVelocityY = ballVelocityY + forceBallY/this.ballMass*this.deltaTime;
 
-    ballX = ballX + ballVelocityX * this.deltaTime;
-    ballY = ballY + ballVelocityY * this.deltaTime;
-    flag = (Math.abs(ballX - blockCollisionX) < this.ballRadius && ballY < this.blockHeight && ballY > 0) ? 1 : 0;
-    blockCollisionY = flag == 1 ? ballY : blockCollisionY;
+    ballY = ballY + ballVelocityY*this.deltaTime;
 
-    blockEndX = -this.blockDiagonalHeight * Math.sin(theta);
-    blockEndY = this.blockDiagonalHeight * Math.cos(theta);
+    flagBallBlock = Math.abs(ballX-blockCollisionX)<this.ballRadius && ballY<this.blockHeight && ballY>0 ? 1 : 0;
 
-    ballVelocityX = ballVelocityX + forceBallX / this.ballMass * this.deltaTime;
-    ballVelocityY = ballVelocityY + forceBallY / this.ballMass * this.deltaTime;
+    blockCollisionY = flagBallBlock == 1 ? ballY : blockCollisionY;
 
-    distance = Math.sqrt((ballX - blockCollisionX) * (ballX - blockCollisionX) + (ballY - blockCollisionY) * (ballY - blockCollisionY));
+    blockEndX = this.blockDiagonalHeight*Math.sin(-theta);
+    blockEndY = this.blockDiagonalHeight*Math.cos(theta);
 
-    ballFlag = ballY < this.ballRadius ? 1 : 0;
-    blockFlag = theta > Math.PI/2 ? 1 : 0;
+    ballVelocityX = ballVelocityX + forceBallX/this.ballMass*this.deltaTime;
 
-    forceBlockX = this.k * (this.ballRadius - distance) * (blockCollisionX - ballX) / distance * flag + (this.k * this.blockHeight * (theta - Math.PI/2) * Math.cos(theta) + this.coefficientOfFrictionBlock * this.blockHeight * angularVelocity * Math.cos(theta)) * blockFlag;
-    forceBlockY = this.k * (this.ballRadius - distance) * (blockCollisionY - ballY) / distance * flag + (this.k * this.blockHeight * (theta - Math.PI/2) * Math.sin(theta) + this.coefficientOfFrictionBlock * this.blockHeight * angularVelocity * Math.sin(theta)) * blockFlag;
+    ballX = ballX + ballVelocityX*this.deltaTime;
 
-    torqueFlag = theta > -this.theta0 ? 1 : 0;
-    torque = (blockCollisionX*forceBlockY-blockCollisionY*forceBlockX) + 0.5*this.blockMass*this.gravity*this.blockDiagonalHeight*Math.sin(theta) * torqueFlag;
-  if (nhk == 1984) {
-    debugger;
-    alert(blockCollisionX*forceBlockY-blockCollisionY*forceBlockX);
-  }
-    forceBallX = -this.k*(this.ballRadius-distance)*(blockCollisionX-ballX)/distance*flag + (-this.coefficientOfFrictionBall*ballVelocityX*ballFlag);
-    forceBallY = -this.k*(this.ballRadius-distance)*(blockCollisionY-ballY)/distance*flag - this.ballMass*this.gravity + (-this.k*(ballY-this.ballRadius)-this.coefficientOfFrictionBall*ballVelocityY)*ballFlag;
-////    debugger;
-//    if ( nhk >= 2000 && nhk < 3000) {
-//      var namhoon = ele.innerHTML;
-//      ele.innerHTML = namhoon + "\n" + blockCollisionX + "," + blockCollisionY + "," + ballX + "," + ballY + "," + theta + "," + ballVelocityX + "," + ballVelocityY + "," + angularVelocity + "," + distance + "," + flag + "," + forceBlockX + "," + forceBlockY + "," + torque + "," + forceBallX + "," + forceBallY + "," + ballFlag + "," + blockFlag;
-//    }
-    nhk++;
+    angularVelocity = theta < -this.theta0 ? 0 : angularVelocity + torque/this.momentOfInertia*this.deltaTime;
+
+    theta = theta + angularVelocity*this.deltaTime;
+
+    distance = Math.sqrt((ballX-blockCollisionX)*(ballX-blockCollisionX) + (ballY-blockCollisionY)*(ballY-blockCollisionY));
+
+    flagBlockGround = theta > Math.PI/2 ? 1 : 0;
+    flagBlockGravity = theta > -this.theta0 ? 1 : 0;
+    flagBallGround = ballY < this.ballRadius ? 1 : 0;
+
+    forceBallBlockX = this.k*(this.ballRadius-distance)*(blockCollisionX-ballX)/distance*flagBallBlock;
+    forceBallBlockY = this.k*(this.ballRadius-distance)*(blockCollisionY-ballY)/distance*flagBallBlock;
+    forceGroundBlockX = 0;
+    forceGroundBlockY = (-this.k*blockEndY+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity)*flagBlockGround;
+    forceGravityBlockX = 0;
+    forceGravityBlockY = -this.blockMass*this.gravity*flagBlockGravity;
+    forceGroundGravityBallX = -this.coefficientOfFrictionBall*ballVelocityX*flagBallGround;
+    forceGroundGravityBallY = (this.k*(this.ballRadius-ballY)-this.coefficientOfFrictionBall*ballVelocityY)*flagBallGround-this.ballMass*this.gravity;
+
+    torque = blockCollisionX*forceBallBlockY-blockCollisionY*forceBallBlockX + -this.blockHeight*forceGroundBlockY + 0.5*(blockEndX*forceGravityBlockY-blockEndY*forceGravityBlockX);
+
+    forceBallX = -forceBallBlockX + forceGroundGravityBallX;
+    forceBallY = -forceBallBlockY + forceGroundGravityBallY;
+
     if (count == countFlag) {
       this.memory.push({
         ballX: ballX,
         ballY: ballY,
-//        theta: -(theta+this.theta0)
-        theta: theta
+        theta: -(theta+this.theta0)
       });
       count = 1;
     }
@@ -2542,7 +2641,7 @@ NPEngine.Spring = function () {
   this.mass = 2;      // kg
   this.k = 100;       // N/m
   this.gravity = 9.8; // m/s^2
-  this.mu = 3;        // N s/m
+  this.mu = 0;        // N s/m
   this.block.center.x = 1;    // m
   this.block.center.y = 0;    // m/s
   this.velocity = 0;  // m/s
@@ -2615,6 +2714,10 @@ NPEngine.Spring.prototype.render = function (context) {
   context.fillStyle = 'black';
   context.fill();
   context.stroke();
+
+  // temp code period
+  context.font = "20px Arial";
+  context.fillText("주기: " + (2*Math.PI*Math.sqrt(this.mass/this.k)).toFixed(2) + "초", 0, 52);
 };
 
 NPEngine.Spring.prototype.setMass = function (value) {

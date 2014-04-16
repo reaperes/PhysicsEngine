@@ -3,9 +3,9 @@ NPEngine.Pendulum = function () {
 
   // initial variables
   this.mass = 10;
-  this.length = 5;
+  this.length = 2;
   this.gravity = 9.8;
-  this.theta0 = 0.785398;
+  this.theta0 = NPEngine.Convert.toRadians(30);
   this.deltaTime = 0.01;
 
   // initial position
@@ -108,7 +108,7 @@ NPEngine.Pendulum.prototype.update = function () {
 };
 
 NPEngine.Pendulum.prototype.render = function (context) {
-  var convertedLength = Math.round(this.length/50)+40;
+  var convertedLength = Math.round(this.length*5)+60;
   var convertedMass = Math.round(this.mass/3)+22;
   context.beginPath();
   context.lineWidth = 2;

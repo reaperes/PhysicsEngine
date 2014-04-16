@@ -5,19 +5,19 @@ NPEngine.RotationMotion = function() {
 
   this.ballMass = 1.1;        // kg
   this.gravity = 9.8;         // m/s^2
-  this.blockMass = 10;        // kg
+  this.blockMass = 15;        // kg
   this.k = 200000;            // N/m
 
   this.ballRadius = 0.1;      // m
   this.blockWidth = 0.3;      // m
-  this.blockHeight = 0.5;     // m
+  this.blockHeight = 1;     // m
   this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
   this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
   this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
 
   this.block = new NPEngine.Point(0, this.blockHeight);
   this.blockCollisionPoint = new NPEngine.Point(this.blockWidth, this.blockHeight);
-  this.ball = new NPEngine.Point(0.5, this.blockHeight);
+  this.ball = new NPEngine.Point(3, this.blockHeight);
   this.ballVelocityX = -3;      // m/s
   this.ballVelocityY = 0;       // m/s
 

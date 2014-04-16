@@ -11,7 +11,7 @@ NPEngine.ForcedSpring = function () {
   this.mass = 2;      // kg *
   this.k = 100;       // N/m *
 
-  this.f0 = 20        // n *
+  this.f0 = 20;       // n *
   this.angularVelocity0 = Math.sqrt(this.k/this.mass);
   this.ww0  = 0.5;    // w / w0 *
   this.angularVelocity = this.angularVelocity0*this.ww0;
@@ -118,6 +118,7 @@ NPEngine.ForcedSpring.prototype.setF0 = function (value) {
 
 NPEngine.ForcedSpring.prototype.setWW0 = function (value) {
   this.ww0 = value;
+  this.angularVelocity = this.angularVelocity0*this.ww0;
 };
 
 NPEngine.ForcedSpring.prototype.setPhase = function (value) {

@@ -5,11 +5,11 @@ NPEngine.PendulumCollision3 = function() {
   this.deltaTime        = 0.00001;     // second
 
   // initial variables
-  this.numOfPendulum    = 3;          // number
+  this.numOfPendulum    = 4;          // number
   this.gravity          = 9.8;        // m/s^2
   this.mass             = 0.5;        // kg
   this.lineLength       = 1;          // m
-  this.k                = 5000000;    // N/m
+  this.k                = 10000000;    // N/m
   this.mu               = 0;          // N s/m
 
   this.diameter         = 0.1;        // m

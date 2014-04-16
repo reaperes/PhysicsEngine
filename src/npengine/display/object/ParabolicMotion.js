@@ -90,7 +90,7 @@ NPEngine.ParabolicMotion.prototype.update = function () {
     var ballY = this.grid.convertToVectorValueY(data.ballY);
 
     // boundary check
-    if (ballY > this.viewHeight) {
+    if (ballY > this.grid.convertToVectorValueY(0)) {
       return ;
     }
     this.curBall.x = ballX;

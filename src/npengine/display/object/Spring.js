@@ -11,7 +11,7 @@ NPEngine.Spring = function () {
   this.mass = 2;      // kg
   this.k = 100;       // N/m
   this.gravity = 9.8; // m/s^2
-  this.mu = 3;        // N s/m
+  this.mu = 0;        // N s/m
   this.block.center.x = 1;    // m
   this.block.center.y = 0;    // m/s
   this.velocity = 0;  // m/s
@@ -84,6 +84,10 @@ NPEngine.Spring.prototype.render = function (context) {
   context.fillStyle = 'black';
   context.fill();
   context.stroke();
+
+  // temp code period
+  context.font = "20px Arial";
+  context.fillText("주기: " + (2*Math.PI*Math.sqrt(this.mass/this.k)).toFixed(2) + "초", 0, 52);
 };
 
 NPEngine.Spring.prototype.setMass = function (value) {

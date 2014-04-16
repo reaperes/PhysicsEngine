@@ -2,7 +2,7 @@ NPEngine.Kepler = function() {
   NPEngine.DisplayObject.call(this);
 
   this.deltaTime = 0.01;   // seconds
-  this.slowFactor = 3;
+  this.slowFactor = 7;
 
   this.G = 1.18e-19;
   this.earthMass = 1;
