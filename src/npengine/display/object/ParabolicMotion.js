@@ -8,8 +8,8 @@ NPEngine.ParabolicMotion = function() {
   this.gravity    = 9.8;        // m/s^2
   this.mass       = 1;          // kg
   this.theta      = 0.785398;   // rad
-  this.velocity   = 70;         // m/s
-  this.mu         = 0.1;        // friction constant
+  this.velocity   = 60;         // m/s
+  this.mu         = 0;        // friction constant
 
   // initial positions
   this.ball = new NPEngine.Point(0, 0);
@@ -127,6 +127,10 @@ NPEngine.ParabolicMotion.prototype.setGravity = function (value) {
 
 NPEngine.ParabolicMotion.prototype.setMass = function (value) {
   this.mass = value;
+};
+
+NPEngine.ParabolicMotion.prototype.setMu = function (value) {
+  this.mu = value;
 };
 
 NPEngine.ParabolicMotion.prototype.setAngle = function (value) {

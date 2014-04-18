@@ -1,6 +1,6 @@
 NPEngine.QuadrantGrid = function() {
   NPEngine.DisplayObject.call(this);
-  this.ratio = 50;
+  this.ratio = 80;
 };
 
 NPEngine.QuadrantGrid.prototype.constructor = NPEngine.QuadrantGrid;
@@ -13,8 +13,8 @@ NPEngine.QuadrantGrid.prototype.onAttachedRenderer = function(viewWidth, viewHei
   this.height = viewHeight;
 
   // 80 is default default interval
-  this.centerX = 80;
-  this.centerY = viewHeight-80;
+  this.centerX = this.ratio;
+  this.centerY = viewHeight-this.ratio;
 };
 
 NPEngine.QuadrantGrid.prototype.onAttachedGrid = function (gridObject) {
@@ -47,13 +47,13 @@ NPEngine.QuadrantGrid.prototype.render = function (context) {
   context.strokeStyle = '#550000';
 
   // draw right column line
-  for (var i=this.centerX+80; i<this.width; i+=80) {
+  for (var i=this.centerX+this.ratio; i<this.width; i+=this.ratio) {
     context.moveTo(i, 0);
     context.lineTo(i, this.height);
   }
 
   // draw upper row line
-  for (var i=this.centerY; i>0; i-=80) {
+  for (var i=this.centerY; i>0; i-=this.ratio) {
     context.moveTo(0, i);
     context.lineTo(this.width, i);
   }
@@ -75,19 +75,19 @@ NPEngine.QuadrantGrid.prototype.setRatio = function(value) {
 };
 
 NPEngine.QuadrantGrid.prototype.convertToGridPoint = function(point) {
-  var convertedX = this.centerX+point.x/this.ratio*80;
-  var convertedY = this.centerY+point.y/this.ratio*-80;
+  var convertedX = this.centerX+point.x/this.ratio*this.ratio;
+  var convertedY = this.centerY+point.y/this.ratio*-this.ratio;
   return new NPEngine.Point(convertedX, convertedY);
 };
 
 NPEngine.QuadrantGrid.prototype.convertToVectorValueX = function(x) {
-  return this.centerX + x/this.ratio * 80;
+  return this.centerX + x/this.ratio * this.ratio;
 };
 
 NPEngine.QuadrantGrid.prototype.convertToVectorValueY = function(y) {
-  return this.centerY + y/this.ratio * -80;
+  return this.centerY + y/this.ratio * -this.ratio;
 };
 
 NPEngine.QuadrantGrid.prototype.convertToGridScalaValue = function(value) {
-  return value/this.ratio*80;
+  return value/this.ratio*this.ratio;
 };

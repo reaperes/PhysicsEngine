@@ -16,8 +16,8 @@ NPEngine.RotationMotionPlus = function() {
   this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
   this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
 
-  this.ballX = 8;             // m
-  this.ballY = 0.1;           // m
+  this.ballX = 8;                          // m
+  this.ballY = this.ballRadius;           // m
 
   this.incidenceAngle = NPEngine.Convert.toRadians(40);     // rad
   this.incidenceVelocity = 10;                              // m/s
@@ -69,14 +69,14 @@ NPEngine.RotationMotionPlus.prototype.compute = function () {
   var distance = Math.sqrt((ballX-blockCollisionX)*(ballX-blockCollisionX) + (ballY-blockCollisionY)*(ballY-blockCollisionY));
 
   var flagBallBlock = Math.abs(ballX-blockCollisionX)<this.ballRadius && ballY<this.blockHeight && ballY>0 ? 1 : 0;
-  var flagBlockGround = blockEndY < 0 ? 1 : 0;
+  var flagBlockGround = blockEndY < this.blockWidth ? 1 : 0;
   var flagBlockGravity = theta > -this.theta0 ? 1 : 0;
   var flagBallGround = ballY < this.ballRadius ? 1: 0;
 
   var forceBallBlockX = this.k*(this.ballRadius-distance)*(blockCollisionX-ballX)/distance*flagBallBlock;
   var forceBallBlockY = this.k*(this.ballRadius-distance)*(blockCollisionY-ballY)/distance*flagBallBlock;
   var forceGroundBlockX = 0;
-  var forceGroundBlockY = (-this.k*blockEndY+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity)*flagBlockGround;
+  var forceGroundBlockY = (-this.k*(blockEndY-this.blockWidth)+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity)*flagBlockGround;
   var forceGravityBlockX = 0;
   var forceGravityBlockY = -this.blockMass*this.gravity*flagBlockGravity;
   var forceGroundGravityBallX = -this.coefficientOfFrictionBall*ballVelocityX*flagBallGround;
@@ -119,14 +119,14 @@ NPEngine.RotationMotionPlus.prototype.compute = function () {
 
     distance = Math.sqrt((ballX-blockCollisionX)*(ballX-blockCollisionX) + (ballY-blockCollisionY)*(ballY-blockCollisionY));
 
-    flagBlockGround = theta > Math.PI/2 ? 1 : 0;
+    flagBlockGround = blockEndY < this.blockWidth ? 1 : 0;
     flagBlockGravity = theta > -this.theta0 ? 1 : 0;
     flagBallGround = ballY < this.ballRadius ? 1 : 0;
 
     forceBallBlockX = this.k*(this.ballRadius-distance)*(blockCollisionX-ballX)/distance*flagBallBlock;
     forceBallBlockY = this.k*(this.ballRadius-distance)*(blockCollisionY-ballY)/distance*flagBallBlock;
     forceGroundBlockX = 0;
-    forceGroundBlockY = (-this.k*blockEndY+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity)*flagBlockGround;
+    forceGroundBlockY = (-this.k*(blockEndY-this.blockWidth)+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity)*flagBlockGround;
     forceGravityBlockX = 0;
     forceGravityBlockY = -this.blockMass*this.gravity*flagBlockGravity;
     forceGroundGravityBallX = -this.coefficientOfFrictionBall*ballVelocityX*flagBallGround;
@@ -202,45 +202,58 @@ NPEngine.RotationMotionPlus.prototype.render = function (context) {
   context.restore();
 };
 
-NPEngine.RotationMotionPlus.prototype.setBallMass = function(value) {
-  this.ballMass = value;
+NPEngine.RotationMotionPlus.prototype.setK = function (value) {
+  this.k = value;
 };
 
-NPEngine.RotationMotionPlus.prototype.setBlockMass = function(value) {
+NPEngine.RotationMotionPlus.prototype.setCoefficientOfFrictionBall = function (value) {
+  this.coefficientOfFrictionBall = value;
+};
+
+NPEngine.RotationMotionPlus.prototype.setCoefficientOfFrictionBlock = function (value) {
+  this.coefficientOfFrictionBlock = value;
+};
+
+NPEngine.RotationMotionPlus.prototype.setBlockMass = function (value) {
   this.blockMass = value;
   this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
 };
 
-NPEngine.RotationMotionPlus.prototype.setK = function(value) {
-  this.k = value;
-};
-
-NPEngine.RotationMotionPlus.prototype.setBallRadius = function(value) {
-  this.ballRadius = value;
-};
-
-NPEngine.RotationMotionPlus.prototype.setBlockWidth = function(value) {
+NPEngine.RotationMotionPlus.prototype.setBlockWidth = function (value) {
   this.blockWidth = value;
   this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
-  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
-  this.blockCollisionPoint.x = this.blockWidth;
+  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);
 };
 
-NPEngine.RotationMotionPlus.prototype.setBlockHeight = function(value) {
+NPEngine.RotationMotionPlus.prototype.setBlockHeight = function (value) {
   this.blockHeight = value;
   this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
   this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
-  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
-
-  this.block.y = this.blockHeight;
-  this.blockCollisionPoint.y = this.blockHeight;
-  this.ball.y = this.blockHeight;
+  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);
+  this.block = new NPEngine.Point(0, this.blockHeight);
 };
 
-NPEngine.RotationMotionPlus.prototype.setBallX = function(value) {
-  this.ball.x = value;
+NPEngine.RotationMotionPlus.prototype.setBallMass = function (value) {
+  this.ballMass = value;
 };
 
-NPEngine.RotationMotionPlus.prototype.setBallV = function(value) {
-  this.ballVelocityX = value;
+NPEngine.RotationMotionPlus.prototype.setBallRadius = function (value) {
+  this.ballRadius = value;
+  this.ballY = this.ballRadius;
+};
+
+NPEngine.RotationMotionPlus.prototype.setBallX = function (value) {
+  this.ballX = value;
+};
+
+NPEngine.RotationMotionPlus.prototype.setIncidenceAngle = function (value) {
+  this.incidenceAngle = NPEngine.Convert.toRadians(value);
+  this.ballVelocityX = -this.incidenceVelocity * Math.cos(this.incidenceAngle);
+  this.ballVelocityY = this.incidenceVelocity * Math.sin(this.incidenceAngle);
+};
+
+NPEngine.RotationMotionPlus.prototype.setIncidenceVelocity = function (value) {
+  this.incidenceVelocity = value;
+  this.ballVelocityX = -this.incidenceVelocity * Math.cos(this.incidenceAngle);
+  this.ballVelocityY = this.incidenceVelocity * Math.sin(this.incidenceAngle);
 };

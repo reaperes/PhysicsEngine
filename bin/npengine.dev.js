@@ -655,7 +655,7 @@ NPEngine.KeplerGrid.prototype.convertToGridScalaValue = function(value) {
 
 NPEngine.QuadrantGrid = function() {
   NPEngine.DisplayObject.call(this);
-  this.ratio = 50;
+  this.ratio = 80;
 };
 
 NPEngine.QuadrantGrid.prototype.constructor = NPEngine.QuadrantGrid;
@@ -668,8 +668,8 @@ NPEngine.QuadrantGrid.prototype.onAttachedRenderer = function(viewWidth, viewHei
   this.height = viewHeight;
 
   // 80 is default default interval
-  this.centerX = 80;
-  this.centerY = viewHeight-80;
+  this.centerX = this.ratio;
+  this.centerY = viewHeight-this.ratio;
 };
 
 NPEngine.QuadrantGrid.prototype.onAttachedGrid = function (gridObject) {
@@ -702,13 +702,13 @@ NPEngine.QuadrantGrid.prototype.render = function (context) {
   context.strokeStyle = '#550000';
 
   // draw right column line
-  for (var i=this.centerX+80; i<this.width; i+=80) {
+  for (var i=this.centerX+this.ratio; i<this.width; i+=this.ratio) {
     context.moveTo(i, 0);
     context.lineTo(i, this.height);
   }
 
   // draw upper row line
-  for (var i=this.centerY; i>0; i-=80) {
+  for (var i=this.centerY; i>0; i-=this.ratio) {
     context.moveTo(0, i);
     context.lineTo(this.width, i);
   }
@@ -730,21 +730,21 @@ NPEngine.QuadrantGrid.prototype.setRatio = function(value) {
 };
 
 NPEngine.QuadrantGrid.prototype.convertToGridPoint = function(point) {
-  var convertedX = this.centerX+point.x/this.ratio*80;
-  var convertedY = this.centerY+point.y/this.ratio*-80;
+  var convertedX = this.centerX+point.x/this.ratio*this.ratio;
+  var convertedY = this.centerY+point.y/this.ratio*-this.ratio;
   return new NPEngine.Point(convertedX, convertedY);
 };
 
 NPEngine.QuadrantGrid.prototype.convertToVectorValueX = function(x) {
-  return this.centerX + x/this.ratio * 80;
+  return this.centerX + x/this.ratio * this.ratio;
 };
 
 NPEngine.QuadrantGrid.prototype.convertToVectorValueY = function(y) {
-  return this.centerY + y/this.ratio * -80;
+  return this.centerY + y/this.ratio * -this.ratio;
 };
 
 NPEngine.QuadrantGrid.prototype.convertToGridScalaValue = function(value) {
-  return value/this.ratio*80;
+  return value/this.ratio*this.ratio;
 };
 
 NPEngine.RotationGrid = function () {
@@ -1234,7 +1234,7 @@ NPEngine.ForcedSpring = function () {
   this.mass = 2;      // kg *
   this.k = 100;       // N/m *
 
-  this.f0 = 20        // n *
+  this.f0 = 20;       // n *
   this.angularVelocity0 = Math.sqrt(this.k/this.mass);
   this.ww0  = 0.5;    // w / w0 *
   this.angularVelocity = this.angularVelocity0*this.ww0;
@@ -1368,12 +1368,16 @@ NPEngine.Kepler = function() {
   this.moonMass = 0.012321;
 
   this.augmentedFactor = 30;
+  this.dampingFactor = 1;
+
+  this.earthFarVelocity = 29304.64558;    // m/s
+
   this.earthVelocityX = 0;
-  this.earthVelocityY = 1.95e-7;
+  this.earthVelocityY = this.earthFarVelocity/1.50e+11*this.dampingFactor;
   this.earthX = 1.013333;
   this.earthY = 0;
   this.moonVelocityX = 0;
-  this.moonVelocityY = 2.02e-7;
+  this.moonVelocityY = this.earthVelocityY+1018.326257/1.50E+11;
   this.moonX = 1.015896;
   this.moonY = 0;
 };
@@ -1520,6 +1524,12 @@ NPEngine.Kepler.prototype.setAugmentedFactor = function(value) {
   this.augmentedFactor = value;
 };
 
+NPEngine.Kepler.prototype.setDampingFactor = function(value) {
+  this.dampingFactor = value;
+  this.earthVelocityY = this.earthFarVelocity/1.50e+11*this.dampingFactor;
+  this.moonVelocityY = this.earthVelocityY+1018.326257/1.50E+11;
+};
+
 NPEngine.ParabolicMotion = function() {
   NPEngine.DisplayObject.call(this);
 
@@ -1530,8 +1540,8 @@ NPEngine.ParabolicMotion = function() {
   this.gravity    = 9.8;        // m/s^2
   this.mass       = 1;          // kg
   this.theta      = 0.785398;   // rad
-  this.velocity   = 70;         // m/s
-  this.mu         = 0.1;        // friction constant
+  this.velocity   = 60;         // m/s
+  this.mu         = 0;        // friction constant
 
   // initial positions
   this.ball = new NPEngine.Point(0, 0);
@@ -1651,6 +1661,10 @@ NPEngine.ParabolicMotion.prototype.setMass = function (value) {
   this.mass = value;
 };
 
+NPEngine.ParabolicMotion.prototype.setMu = function (value) {
+  this.mu = value;
+};
+
 NPEngine.ParabolicMotion.prototype.setAngle = function (value) {
   this.theta = NPEngine.Convert.toRadians(value);
 };
@@ -1658,6 +1672,7 @@ NPEngine.ParabolicMotion.prototype.setAngle = function (value) {
 NPEngine.ParabolicMotion.prototype.setVelocity = function (value) {
   this.velocity = value;   // m/s
 };
+
 NPEngine.Pendulum = function () {
   NPEngine.DisplayObject.call(this);
 
@@ -2400,8 +2415,8 @@ NPEngine.RotationMotionPlus = function() {
   this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
   this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
 
-  this.ballX = 8;             // m
-  this.ballY = 0.1;           // m
+  this.ballX = 8;                          // m
+  this.ballY = this.ballRadius;           // m
 
   this.incidenceAngle = NPEngine.Convert.toRadians(40);     // rad
   this.incidenceVelocity = 10;                              // m/s
@@ -2453,14 +2468,14 @@ NPEngine.RotationMotionPlus.prototype.compute = function () {
   var distance = Math.sqrt((ballX-blockCollisionX)*(ballX-blockCollisionX) + (ballY-blockCollisionY)*(ballY-blockCollisionY));
 
   var flagBallBlock = Math.abs(ballX-blockCollisionX)<this.ballRadius && ballY<this.blockHeight && ballY>0 ? 1 : 0;
-  var flagBlockGround = blockEndY < 0 ? 1 : 0;
+  var flagBlockGround = blockEndY < this.blockWidth ? 1 : 0;
   var flagBlockGravity = theta > -this.theta0 ? 1 : 0;
   var flagBallGround = ballY < this.ballRadius ? 1: 0;
 
   var forceBallBlockX = this.k*(this.ballRadius-distance)*(blockCollisionX-ballX)/distance*flagBallBlock;
   var forceBallBlockY = this.k*(this.ballRadius-distance)*(blockCollisionY-ballY)/distance*flagBallBlock;
   var forceGroundBlockX = 0;
-  var forceGroundBlockY = (-this.k*blockEndY+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity)*flagBlockGround;
+  var forceGroundBlockY = (-this.k*(blockEndY-this.blockWidth)+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity)*flagBlockGround;
   var forceGravityBlockX = 0;
   var forceGravityBlockY = -this.blockMass*this.gravity*flagBlockGravity;
   var forceGroundGravityBallX = -this.coefficientOfFrictionBall*ballVelocityX*flagBallGround;
@@ -2503,14 +2518,14 @@ NPEngine.RotationMotionPlus.prototype.compute = function () {
 
     distance = Math.sqrt((ballX-blockCollisionX)*(ballX-blockCollisionX) + (ballY-blockCollisionY)*(ballY-blockCollisionY));
 
-    flagBlockGround = theta > Math.PI/2 ? 1 : 0;
+    flagBlockGround = blockEndY < this.blockWidth ? 1 : 0;
     flagBlockGravity = theta > -this.theta0 ? 1 : 0;
     flagBallGround = ballY < this.ballRadius ? 1 : 0;
 
     forceBallBlockX = this.k*(this.ballRadius-distance)*(blockCollisionX-ballX)/distance*flagBallBlock;
     forceBallBlockY = this.k*(this.ballRadius-distance)*(blockCollisionY-ballY)/distance*flagBallBlock;
     forceGroundBlockX = 0;
-    forceGroundBlockY = (-this.k*blockEndY+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity)*flagBlockGround;
+    forceGroundBlockY = (-this.k*(blockEndY-this.blockWidth)+this.coefficientOfFrictionBlock*this.blockHeight*angularVelocity)*flagBlockGround;
     forceGravityBlockX = 0;
     forceGravityBlockY = -this.blockMass*this.gravity*flagBlockGravity;
     forceGroundGravityBallX = -this.coefficientOfFrictionBall*ballVelocityX*flagBallGround;
@@ -2586,48 +2601,62 @@ NPEngine.RotationMotionPlus.prototype.render = function (context) {
   context.restore();
 };
 
-NPEngine.RotationMotionPlus.prototype.setBallMass = function(value) {
-  this.ballMass = value;
+NPEngine.RotationMotionPlus.prototype.setK = function (value) {
+  this.k = value;
 };
 
-NPEngine.RotationMotionPlus.prototype.setBlockMass = function(value) {
+NPEngine.RotationMotionPlus.prototype.setCoefficientOfFrictionBall = function (value) {
+  this.coefficientOfFrictionBall = value;
+};
+
+NPEngine.RotationMotionPlus.prototype.setCoefficientOfFrictionBlock = function (value) {
+  this.coefficientOfFrictionBlock = value;
+};
+
+NPEngine.RotationMotionPlus.prototype.setBlockMass = function (value) {
   this.blockMass = value;
   this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
 };
 
-NPEngine.RotationMotionPlus.prototype.setK = function(value) {
-  this.k = value;
-};
-
-NPEngine.RotationMotionPlus.prototype.setBallRadius = function(value) {
-  this.ballRadius = value;
-};
-
-NPEngine.RotationMotionPlus.prototype.setBlockWidth = function(value) {
+NPEngine.RotationMotionPlus.prototype.setBlockWidth = function (value) {
   this.blockWidth = value;
   this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
-  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
-  this.blockCollisionPoint.x = this.blockWidth;
+  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);
 };
 
-NPEngine.RotationMotionPlus.prototype.setBlockHeight = function(value) {
+NPEngine.RotationMotionPlus.prototype.setBlockHeight = function (value) {
   this.blockHeight = value;
   this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
   this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
-  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
-
-  this.block.y = this.blockHeight;
-  this.blockCollisionPoint.y = this.blockHeight;
-  this.ball.y = this.blockHeight;
+  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);
+  this.block = new NPEngine.Point(0, this.blockHeight);
 };
 
-NPEngine.RotationMotionPlus.prototype.setBallX = function(value) {
-  this.ball.x = value;
+NPEngine.RotationMotionPlus.prototype.setBallMass = function (value) {
+  this.ballMass = value;
 };
 
-NPEngine.RotationMotionPlus.prototype.setBallV = function(value) {
-  this.ballVelocityX = value;
+NPEngine.RotationMotionPlus.prototype.setBallRadius = function (value) {
+  this.ballRadius = value;
+  this.ballY = this.ballRadius;
 };
+
+NPEngine.RotationMotionPlus.prototype.setBallX = function (value) {
+  this.ballX = value;
+};
+
+NPEngine.RotationMotionPlus.prototype.setIncidenceAngle = function (value) {
+  this.incidenceAngle = NPEngine.Convert.toRadians(value);
+  this.ballVelocityX = -this.incidenceVelocity * Math.cos(this.incidenceAngle);
+  this.ballVelocityY = this.incidenceVelocity * Math.sin(this.incidenceAngle);
+};
+
+NPEngine.RotationMotionPlus.prototype.setIncidenceVelocity = function (value) {
+  this.incidenceVelocity = value;
+  this.ballVelocityX = -this.incidenceVelocity * Math.cos(this.incidenceAngle);
+  this.ballVelocityY = this.incidenceVelocity * Math.sin(this.incidenceAngle);
+};
+
 NPEngine.Spring = function () {
   NPEngine.DisplayObject.call(this);
 
@@ -2642,7 +2671,7 @@ NPEngine.Spring = function () {
   this.k = 100;       // N/m
   this.gravity = 9.8; // m/s^2
   this.mu = 0;        // N s/m
-  this.block.center.x = 1;    // m
+  this.block.center.x = 2;    // m
   this.block.center.y = 0;    // m/s
   this.velocity = 0;  // m/s
   this.deltaTime = 0.01;

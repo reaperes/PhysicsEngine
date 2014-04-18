@@ -10,12 +10,16 @@ NPEngine.Kepler = function() {
   this.moonMass = 0.012321;
 
   this.augmentedFactor = 30;
+  this.dampingFactor = 1;
+
+  this.earthFarVelocity = 29304.64558;    // m/s
+
   this.earthVelocityX = 0;
-  this.earthVelocityY = 1.95e-7;
+  this.earthVelocityY = this.earthFarVelocity/1.50e+11*this.dampingFactor;
   this.earthX = 1.013333;
   this.earthY = 0;
   this.moonVelocityX = 0;
-  this.moonVelocityY = 2.02e-7;
+  this.moonVelocityY = this.earthVelocityY+1018.326257/1.50E+11;
   this.moonX = 1.015896;
   this.moonY = 0;
 };
@@ -160,4 +164,10 @@ NPEngine.Kepler.prototype.setSlowFactor = function(value) {
 
 NPEngine.Kepler.prototype.setAugmentedFactor = function(value) {
   this.augmentedFactor = value;
+};
+
+NPEngine.Kepler.prototype.setDampingFactor = function(value) {
+  this.dampingFactor = value;
+  this.earthVelocityY = this.earthFarVelocity/1.50e+11*this.dampingFactor;
+  this.moonVelocityY = this.earthVelocityY+1018.326257/1.50E+11;
 };
