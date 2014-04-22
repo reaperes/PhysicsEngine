@@ -15,6 +15,13 @@ NPEngine.CanvasRenderer = function (canvas) {
   }
   this.context = this.view.getContext("2d");
   this.timeBoard = new NPEngine.TimeBoard;
+
+  // for double buffering
+  var backCanvas = document.createElement('canvas');
+  backCanvas.width = canvas.width;
+  backCanvas.height = canvas.height;
+  this.backContext = backCanvas.getContext('2d');
+
 };
 
 NPEngine.CanvasRenderer.prototype.constructor = NPEngine.CanvasRenderer;
@@ -88,21 +95,54 @@ NPEngine.CanvasRenderer.prototype.update = function () {
 }
 
 NPEngine.CanvasRenderer.prototype.render = function () {
+
+
+//  context.globalCompositeOperation = "source-over";
+//  context.fillRect(qWidth, qHeight, hWidth, hHeight);
+
   // clear
-  this.context.clearRect(0, 0, this.view.width, this.view.height);
+//  this.context.clearRect(0, 0, this.view.width, this.view.height);
+  this.backContext.fillStyle="black";
+//  this.context.clearRect(0, 0, this.view.width, this.view.height);
+  this.backContext.fillRect(0, 0, this.view.width, this.view.height);
+//  this.context.globalCompositeOperation = 'xor';
+  this.backContext.globalAlpha = 0.8;
 
   // render
   var length = this.children.length;
   if (this.grid != null) {
-    this.grid.render(this.context);
+    this.grid.render(this.backContext);
   }
   for (var i = 0; i < length; i++) {
-    this.children[i].render(this.context);
+    this.children[i].render(this.backContext);
   }
 
-  this.timeBoard.render(this.context);
+  this.timeBoard.render(this.backContext);
+
+  this.context.putImageData(this.backContext.getImageData(0, 0, this.view.width, this.view.height), 0, 0);
+
+  // no double buffering
+//    context.globalCompositeOperation = "source-over";
+//  context.fillRect(qWidth, qHeight, hWidth, hHeight);
+
+  // clear
+////  this.context.clearRect(0, 0, this.view.width, this.view.height);
+//  this.context.save();
+//  this.context.fillStyle="black";
+////  this.context.clearRect(0, 0, this.view.width, this.view.height);
+//  this.context.fillRect(0, 0, this.view.width, this.view.height);
+////  this.context.globalCompositeOperation = 'xor';
+//  this.context.globalAlpha = 0.8;
+//
+//  // render
+//  var length = this.children.length;
+//  if (this.grid != null) {
+//    this.grid.render(this.context);
+//  }
+//  for (var i = 0; i < length; i++) {
+//    this.children[i].render(this.context);
+//  }
+//
+//  this.timeBoard.render(this.context);
+//  this.context.restore();
 };
-
-NPEngine.CanvasRenderer.prototype.setFps = function (flag) {
-
-}
