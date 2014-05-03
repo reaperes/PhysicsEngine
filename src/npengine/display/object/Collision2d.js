@@ -1,22 +1,33 @@
-NPEngine.Collision2d = function () {
+NPEngine.Collision2d = function (options) {
   NPEngine.DisplayObject.call(this);
 
-  // initial variables
+  options = options || {};
+
   this.deltaTime = 0.001;  //second
-  this.ball1 = new NPEngine.Point(-3, 0.5);
-  this.ball2 = new NPEngine.Point(1, 0);
+
+  // initial variables
+  this.k = options.k !== undefined ? options.k : 10000;             // N/m
+  this.mu = options.mu !== undefined ? options.mu : 0;              // N s/m
+  this.mass1 = options.mass1 !== undefined ? options.mass1 : 2;     // kg
+  this.mass2 = options.mass2 !== undefined ? options.mass2 : 2;     // kg
+
+  var ball1X = options.ball1X !== undefined ? options.ball1X : -3;  // m
+  var ball1Y = options.ball1Y !== undefined ? options.ball1Y : 0.5; // m
+  this.diameter1 = options.diameter1 !== undefined ? options.diameter1 : 0.4;         // m
+  this.velocity1_x = options.velocity1_x !== undefined ? options.velocity1_x : 3;     // m/s
+  this.velocity1_y = options.velocity1_y !== undefined ? options.velocity1_y : 0;     // m/s
+
+  var ball2X = options.ball2X !== undefined ? options.ball2X : 1;  // m
+  var ball2Y = options.ball2Y !== undefined ? options.ball2Y : 0; // m
+  this.diameter2 = options.diameter2 !== undefined ? options.diameter2 : 0.4;         // m
+  this.velocity2_x = options.velocity2_x !== undefined ? options.velocity2_x : 0;     // m/s
+  this.velocity2_y = options.velocity2_y !== undefined ? options.velocity2_y : 0;     // m/s
+
+  // other variables
+  this.ball1 = new NPEngine.Point(ball1X, ball1Y);
+  this.ball2 = new NPEngine.Point(ball2X, ball2Y);
   this.curBall1 = new NPEngine.Point;
   this.curBall2 = new NPEngine.Point;
-  this.mass1 = 2;         // kg
-  this.mass2 = 2;
-  this.diameter1 = 0.4;   // m
-  this.diameter2 = 0.4;
-  this.velocity1_x = 3;    // m/s
-  this.velocity1_y = 0;
-  this.velocity2_x = 0;
-  this.velocity2_y = 0;
-  this.k = 10000;         // N/m
-  this.mu = 0;           // N s/m
 };
 
 NPEngine.Collision2d.prototype = Object.create(NPEngine.DisplayObject.prototype);
@@ -113,80 +124,56 @@ NPEngine.Collision2d.prototype.update = function () {
 };
 
 NPEngine.Collision2d.prototype.render = function (context) {
-  context.beginPath();
-  context.fillStyle = 'black';
-  context.arc(this.curBall1.x, this.curBall1.y, this.curBallDiameter1, 0, 2*Math.PI, true);
-  context.fill();
-  context.stroke();
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
 
   context.beginPath();
-  context.fillStyle = 'black';
-  context.arc(this.curBall2.x, this.curBall2.y, this.curBallDiameter2, 0, 2*Math.PI, true);
+  context.arc(this.curBall1.x, this.curBall1.y, this.curBallDiameter1, 0, 2*Math.PI, true);
+  context.fillStyle = fill;
   context.fill();
   context.stroke();
+  context.closePath();
+
+  context.beginPath();
+  context.arc(this.curBall2.x, this.curBall2.y, this.curBallDiameter2, 0, 2*Math.PI, true);
+  context.fillStyle = fill;
+  context.fill();
+  context.stroke();
+  context.closePath();
 
   context.beginPath();
   context.font = '34pt Calibri';
-  context.fillStyle = 'white';
   context.textAlign = 'center';
   context.textBaseline = 'middle';
+  context.fillStyle = text;
   context.fillText('1', this.curBall1.x, this.curBall1.y);
   context.fillText('2', this.curBall2.x, this.curBall2.y);
-  context.stroke();
+  context.closePath();
 };
 
-NPEngine.Collision2d.prototype.setMass1 = function(value) {
-  this.mass1 = value;
-};
+NPEngine.Collision2d.prototype.setVariables = function (options) {
+  options = options || {};
 
-NPEngine.Collision2d.prototype.setMass2 = function(value) {
-  this.mass2 = value;
-};
+  // initial variables
+  this.k = options.k !== undefined ? options.k : 10000;             // N/m
+  this.mu = options.mu !== undefined ? options.mu : 0;              // N s/m
+  this.mass1 = options.mass1 !== undefined ? options.mass1 : 2;     // kg
+  this.mass2 = options.mass2 !== undefined ? options.mass2 : 2;     // kg
 
-NPEngine.Collision2d.prototype.setK = function(value) {
-  this.k = value;
-};
+  var ball1X = options.ball1X !== undefined ? options.ball1X : -3;  // m
+  var ball1Y = options.ball1Y !== undefined ? options.ball1Y : 0.5; // m
+  this.diameter1 = options.diameter1 !== undefined ? options.diameter1 : 0.4;         // m
+  this.velocity1_x = options.velocity1_x !== undefined ? options.velocity1_x : 3;     // m/s
+  this.velocity1_y = options.velocity1_y !== undefined ? options.velocity1_y : 0;     // m/s
 
-NPEngine.Collision2d.prototype.setMu = function(value) {
-  this.mu = value;
-};
+  var ball2X = options.ball2X !== undefined ? options.ball2X : 1;  // m
+  var ball2Y = options.ball2Y !== undefined ? options.ball2Y : 0; // m
+  this.diameter2 = options.diameter2 !== undefined ? options.diameter2 : 0.4;         // m
+  this.velocity2_x = options.velocity2_x !== undefined ? options.velocity2_x : 0;     // m/s
+  this.velocity2_y = options.velocity2_y !== undefined ? options.velocity2_y : 0;     // m/s
 
-NPEngine.Collision2d.prototype.setDiameter1 = function(value) {
-  this.diameter1 = value;
-};
-
-NPEngine.Collision2d.prototype.setDiameter2 = function(value) {
-  this.diameter2 = value;
-};
-
-NPEngine.Collision2d.prototype.setBall1_x = function(value) {
-  this.ball1.x = value;
-};
-
-NPEngine.Collision2d.prototype.setBall1_y = function(value) {
-  this.ball1.y = value;
-};
-
-NPEngine.Collision2d.prototype.setBall2_x = function(value) {
-  this.ball2.x = value;
-};
-
-NPEngine.Collision2d.prototype.setBall2_y = function(value) {
-  this.ball2.y = value;
-};
-
-NPEngine.Collision2d.prototype.setVelocity1_x = function(value) {
-  this.velocity1_x = value;
-};
-
-NPEngine.Collision2d.prototype.setVelocity1_y = function(value) {
-  this.velocity1_y = value;
-};
-
-NPEngine.Collision2d.prototype.setVelocity2_x = function(value) {
-  this.velocity2_x = value;
-};
-
-NPEngine.Collision2d.prototype.setVelocity2_y = function(value) {
-  this.velocity2_y = value;
+  // other variables
+  this.ball1 = new NPEngine.Point(ball1X, ball1Y);
+  this.ball2 = new NPEngine.Point(ball2X, ball2Y);
 };

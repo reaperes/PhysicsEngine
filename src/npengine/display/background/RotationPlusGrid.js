@@ -27,9 +27,14 @@ NPEngine.RotationPlusGrid.prototype.update = function () {
 };
 
 NPEngine.RotationPlusGrid.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.strokeStyle = stroke;
+
   context.beginPath();
   context.lineWidth = 0.5;
-  context.strokeStyle = '#550000';
 
   // draw left column line
   for (var i=this.centerWidth-this.ratio; i>0; i-=this.ratio) {
@@ -55,16 +60,17 @@ NPEngine.RotationPlusGrid.prototype.render = function (context) {
     context.lineTo(this.width, i);
   }
   context.stroke();
+  context.closePath();
 
   // draw center line
   context.beginPath();
   context.lineWidth = 2;
-  context.strokeStyle = '#550000';
   context.moveTo(this.centerWidth, 0);
   context.lineTo(this.centerWidth, this.height);
   context.moveTo(0, this.centerHeight);
   context.lineTo(this.width, this.centerHeight);
   context.stroke();
+  context.closePath();
 };
 
 NPEngine.RotationPlusGrid.prototype.setWidth = function(width) {

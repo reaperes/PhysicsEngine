@@ -3,7 +3,7 @@
  @return {NPEngine}
  */
 NPEngine = function(canvas) {
-  //this.fps = new NPEngine.FPS();
+  this.fps = new NPEngine.FPS();
   this.state = 'create';    // create, init, ready, start, resume, pause, stop, destroy
 
   if (!canvas) {
@@ -91,9 +91,9 @@ NPEngine.prototype.resume = function() {
     }
     requestAnimationFrame(run);
     that.renderer.update();
-    //that.fps.begin();
+    that.fps.begin();
     that.renderer.render();
-    //that.fps.end();
+    that.fps.end();
   }
 };
 
@@ -493,44 +493,49 @@ NPEngine.Grid.prototype.update = function () {
 };
 
 NPEngine.Grid.prototype.render = function (context) {
+  var stroke = 'rgba(255, 255, 255, 0.7)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
   context.beginPath();
-  context.lineWidth = 0.5;
-  context.strokeStyle = '#550000';
+    context.lineWidth = 0.5;
+    context.strokeStyle = stroke;
 
-  // draw left column line
-  for (var i=this.centerWidth-100; i>0; i-=100) {
-    context.moveTo(i, 0);
-    context.lineTo(i, this.height);
-  }
+    // draw left column line
+    for (var i=this.centerWidth-100; i>0; i-=100) {
+      context.moveTo(i, 0);
+      context.lineTo(i, this.height);
+    }
 
-  // draw right column line
-  for (var i=this.centerWidth+100; i<this.width; i+=100) {
-    context.moveTo(i, 0);
-    context.lineTo(i, this.height);
-  }
+    // draw right column line
+    for (var i=this.centerWidth+100; i<this.width; i+=100) {
+      context.moveTo(i, 0);
+      context.lineTo(i, this.height);
+    }
 
-  // draw upper row line
-  for (var i=this.centerHeight; i>0; i-=100) {
-    context.moveTo(0, i);
-    context.lineTo(this.width, i);
-  }
+    // draw upper row line
+    for (var i=this.centerHeight; i>0; i-=100) {
+      context.moveTo(0, i);
+      context.lineTo(this.width, i);
+    }
 
-  // draw lower row line
-  for (var i=this.centerHeight; i<this.height; i+=100) {
-    context.moveTo(0, i);
-    context.lineTo(this.width, i);
-  }
-  context.stroke();
+    // draw lower row line
+    for (var i=this.centerHeight; i<this.height; i+=100) {
+      context.moveTo(0, i);
+      context.lineTo(this.width, i);
+    }
+    context.stroke();
+  context.closePath();
 
   // draw center line
   context.beginPath();
-  context.lineWidth = 2;
-  context.strokeStyle = '#550000';
-  context.moveTo(this.centerWidth, 0);
-  context.lineTo(this.centerWidth, this.height);
-  context.moveTo(0, this.centerHeight);
-  context.lineTo(this.width, this.centerHeight);
-  context.stroke();
+    context.lineWidth = 2;
+    context.moveTo(this.centerWidth, 0);
+    context.lineTo(this.centerWidth, this.height);
+    context.moveTo(0, this.centerHeight);
+    context.lineTo(this.width, this.centerHeight);
+    context.strokeStyle = stroke;
+    context.stroke();
+  context.closePath();
 };
 
 NPEngine.Grid.prototype.setWidth = function(width) {
@@ -587,9 +592,13 @@ NPEngine.KeplerGrid.prototype.update = function () {
 };
 
 NPEngine.KeplerGrid.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
   context.beginPath();
   context.lineWidth = 0.5;
-  context.strokeStyle = '#550000';
+  context.strokeStyle = stroke;
 
   // draw left column line
   for (var i=this.centerWidth-this.ratio; i>0; i-=this.ratio) {
@@ -615,16 +624,17 @@ NPEngine.KeplerGrid.prototype.render = function (context) {
     context.lineTo(this.width, i);
   }
   context.stroke();
+  context.closePath();
 
   // draw center line
   context.beginPath();
   context.lineWidth = 2;
-  context.strokeStyle = '#550000';
   context.moveTo(this.centerWidth, 0);
   context.lineTo(this.centerWidth, this.height);
   context.moveTo(0, this.centerHeight);
   context.lineTo(this.width, this.centerHeight);
   context.stroke();
+  context.closePath();
 };
 
 NPEngine.KeplerGrid.prototype.setWidth = function(width) {
@@ -697,9 +707,14 @@ NPEngine.QuadrantGrid.prototype.update = function () {
 };
 
 NPEngine.QuadrantGrid.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.6)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.strokeStyle = stroke;
+
   context.beginPath();
   context.lineWidth = 0.4;
-  context.strokeStyle = '#550000';
 
   // draw right column line
   for (var i=this.centerX+this.ratio; i<this.width; i+=this.ratio) {
@@ -713,16 +728,17 @@ NPEngine.QuadrantGrid.prototype.render = function (context) {
     context.lineTo(this.width, i);
   }
   context.stroke();
+  context.closePath();
 
   // draw center line
   context.beginPath();
-  context.lineWidth = 2;
-  context.strokeStyle = '#550000';
+  context.lineWidth = 1;
   context.moveTo(this.centerX, 0);
   context.lineTo(this.centerX, this.height);
   context.moveTo(0, this.centerY);
   context.lineTo(this.width, this.centerY);
   context.stroke();
+  context.closePath();
 };
 
 NPEngine.QuadrantGrid.prototype.setRatio = function(value) {
@@ -774,10 +790,14 @@ NPEngine.RotationGrid.prototype.update = function () {
 };
 
 NPEngine.RotationGrid.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.strokeStyle = stroke;
+
   context.beginPath();
   context.lineWidth = 0.5;
-  context.strokeStyle = '#550000';
-
   // draw left column line
   for (var i=this.centerWidth-100; i>0; i-=100) {
     context.moveTo(i, 0);
@@ -802,16 +822,16 @@ NPEngine.RotationGrid.prototype.render = function (context) {
     context.lineTo(this.width, i);
   }
   context.stroke();
+  context.closePath();
 
   // draw center line
   context.beginPath();
-  context.lineWidth = 2;
-  context.strokeStyle = '#550000';
   context.moveTo(this.centerWidth, 0);
   context.lineTo(this.centerWidth, this.height);
   context.moveTo(0, this.centerHeight);
   context.lineTo(this.width, this.centerHeight);
   context.stroke();
+  context.closePath();
 };
 
 NPEngine.RotationGrid.prototype.setWidth = function(width) {
@@ -869,9 +889,14 @@ NPEngine.RotationPlusGrid.prototype.update = function () {
 };
 
 NPEngine.RotationPlusGrid.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.strokeStyle = stroke;
+
   context.beginPath();
   context.lineWidth = 0.5;
-  context.strokeStyle = '#550000';
 
   // draw left column line
   for (var i=this.centerWidth-this.ratio; i>0; i-=this.ratio) {
@@ -897,16 +922,17 @@ NPEngine.RotationPlusGrid.prototype.render = function (context) {
     context.lineTo(this.width, i);
   }
   context.stroke();
+  context.closePath();
 
   // draw center line
   context.beginPath();
   context.lineWidth = 2;
-  context.strokeStyle = '#550000';
   context.moveTo(this.centerWidth, 0);
   context.lineTo(this.centerWidth, this.height);
   context.moveTo(0, this.centerHeight);
   context.lineTo(this.width, this.centerHeight);
   context.stroke();
+  context.closePath();
 };
 
 NPEngine.RotationPlusGrid.prototype.setWidth = function(width) {
@@ -1029,25 +1055,36 @@ NPEngine.SpringGrid.prototype.convertToGridScalaValue = function(value) {
   return value*this.ratio;
 };
 
-NPEngine.Collision2d = function () {
+NPEngine.Collision2d = function (options) {
   NPEngine.DisplayObject.call(this);
 
-  // initial variables
+  options = options || {};
+
   this.deltaTime = 0.001;  //second
-  this.ball1 = new NPEngine.Point(-3, 0.5);
-  this.ball2 = new NPEngine.Point(1, 0);
+
+  // initial variables
+  this.k = options.k !== undefined ? options.k : 10000;             // N/m
+  this.mu = options.mu !== undefined ? options.mu : 0;              // N s/m
+  this.mass1 = options.mass1 !== undefined ? options.mass1 : 2;     // kg
+  this.mass2 = options.mass2 !== undefined ? options.mass2 : 2;     // kg
+
+  var ball1X = options.ball1X !== undefined ? options.ball1X : -3;  // m
+  var ball1Y = options.ball1Y !== undefined ? options.ball1Y : 0.5; // m
+  this.diameter1 = options.diameter1 !== undefined ? options.diameter1 : 0.4;         // m
+  this.velocity1_x = options.velocity1_x !== undefined ? options.velocity1_x : 3;     // m/s
+  this.velocity1_y = options.velocity1_y !== undefined ? options.velocity1_y : 0;     // m/s
+
+  var ball2X = options.ball2X !== undefined ? options.ball2X : 1;  // m
+  var ball2Y = options.ball2Y !== undefined ? options.ball2Y : 0; // m
+  this.diameter2 = options.diameter2 !== undefined ? options.diameter2 : 0.4;         // m
+  this.velocity2_x = options.velocity2_x !== undefined ? options.velocity2_x : 0;     // m/s
+  this.velocity2_y = options.velocity2_y !== undefined ? options.velocity2_y : 0;     // m/s
+
+  // other variables
+  this.ball1 = new NPEngine.Point(ball1X, ball1Y);
+  this.ball2 = new NPEngine.Point(ball2X, ball2Y);
   this.curBall1 = new NPEngine.Point;
   this.curBall2 = new NPEngine.Point;
-  this.mass1 = 2;         // kg
-  this.mass2 = 2;
-  this.diameter1 = 0.4;   // m
-  this.diameter2 = 0.4;
-  this.velocity1_x = 3;    // m/s
-  this.velocity1_y = 0;
-  this.velocity2_x = 0;
-  this.velocity2_y = 0;
-  this.k = 10000;         // N/m
-  this.mu = 0;           // N s/m
 };
 
 NPEngine.Collision2d.prototype = Object.create(NPEngine.DisplayObject.prototype);
@@ -1144,110 +1181,88 @@ NPEngine.Collision2d.prototype.update = function () {
 };
 
 NPEngine.Collision2d.prototype.render = function (context) {
-  context.beginPath();
-  context.fillStyle = 'black';
-  context.arc(this.curBall1.x, this.curBall1.y, this.curBallDiameter1, 0, 2*Math.PI, true);
-  context.fill();
-  context.stroke();
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
 
   context.beginPath();
-  context.fillStyle = 'black';
-  context.arc(this.curBall2.x, this.curBall2.y, this.curBallDiameter2, 0, 2*Math.PI, true);
+  context.arc(this.curBall1.x, this.curBall1.y, this.curBallDiameter1, 0, 2*Math.PI, true);
+  context.fillStyle = fill;
   context.fill();
   context.stroke();
+  context.closePath();
+
+  context.beginPath();
+  context.arc(this.curBall2.x, this.curBall2.y, this.curBallDiameter2, 0, 2*Math.PI, true);
+  context.fillStyle = fill;
+  context.fill();
+  context.stroke();
+  context.closePath();
 
   context.beginPath();
   context.font = '34pt Calibri';
-  context.fillStyle = 'white';
   context.textAlign = 'center';
   context.textBaseline = 'middle';
+  context.fillStyle = text;
   context.fillText('1', this.curBall1.x, this.curBall1.y);
   context.fillText('2', this.curBall2.x, this.curBall2.y);
-  context.stroke();
+  context.closePath();
 };
 
-NPEngine.Collision2d.prototype.setMass1 = function(value) {
-  this.mass1 = value;
-};
+NPEngine.Collision2d.prototype.setVariables = function (options) {
+  options = options || {};
 
-NPEngine.Collision2d.prototype.setMass2 = function(value) {
-  this.mass2 = value;
-};
+  // initial variables
+  this.k = options.k !== undefined ? options.k : 10000;             // N/m
+  this.mu = options.mu !== undefined ? options.mu : 0;              // N s/m
+  this.mass1 = options.mass1 !== undefined ? options.mass1 : 2;     // kg
+  this.mass2 = options.mass2 !== undefined ? options.mass2 : 2;     // kg
 
-NPEngine.Collision2d.prototype.setK = function(value) {
-  this.k = value;
-};
+  var ball1X = options.ball1X !== undefined ? options.ball1X : -3;  // m
+  var ball1Y = options.ball1Y !== undefined ? options.ball1Y : 0.5; // m
+  this.diameter1 = options.diameter1 !== undefined ? options.diameter1 : 0.4;         // m
+  this.velocity1_x = options.velocity1_x !== undefined ? options.velocity1_x : 3;     // m/s
+  this.velocity1_y = options.velocity1_y !== undefined ? options.velocity1_y : 0;     // m/s
 
-NPEngine.Collision2d.prototype.setMu = function(value) {
-  this.mu = value;
-};
+  var ball2X = options.ball2X !== undefined ? options.ball2X : 1;  // m
+  var ball2Y = options.ball2Y !== undefined ? options.ball2Y : 0; // m
+  this.diameter2 = options.diameter2 !== undefined ? options.diameter2 : 0.4;         // m
+  this.velocity2_x = options.velocity2_x !== undefined ? options.velocity2_x : 0;     // m/s
+  this.velocity2_y = options.velocity2_y !== undefined ? options.velocity2_y : 0;     // m/s
 
-NPEngine.Collision2d.prototype.setDiameter1 = function(value) {
-  this.diameter1 = value;
+  // other variables
+  this.ball1 = new NPEngine.Point(ball1X, ball1Y);
+  this.ball2 = new NPEngine.Point(ball2X, ball2Y);
 };
-
-NPEngine.Collision2d.prototype.setDiameter2 = function(value) {
-  this.diameter2 = value;
-};
-
-NPEngine.Collision2d.prototype.setBall1_x = function(value) {
-  this.ball1.x = value;
-};
-
-NPEngine.Collision2d.prototype.setBall1_y = function(value) {
-  this.ball1.y = value;
-};
-
-NPEngine.Collision2d.prototype.setBall2_x = function(value) {
-  this.ball2.x = value;
-};
-
-NPEngine.Collision2d.prototype.setBall2_y = function(value) {
-  this.ball2.y = value;
-};
-
-NPEngine.Collision2d.prototype.setVelocity1_x = function(value) {
-  this.velocity1_x = value;
-};
-
-NPEngine.Collision2d.prototype.setVelocity1_y = function(value) {
-  this.velocity1_y = value;
-};
-
-NPEngine.Collision2d.prototype.setVelocity2_x = function(value) {
-  this.velocity2_x = value;
-};
-
-NPEngine.Collision2d.prototype.setVelocity2_y = function(value) {
-  this.velocity2_y = value;
-};
-NPEngine.ForcedSpring = function () {
+NPEngine.ForcedSpring = function (options) {
   NPEngine.DisplayObject.call(this);
+
+  options = options || {};
+
+  // final variables
+  this.deltaTime = 0.01;
 
   // final variables
   this.pivot = new NPEngine.Point(-4, 0);
-  this.block = new NPEngine.Rectangle();
+  this.block = new NPEngine.Rectangle;
   this.block.width = 1;     // m
   this.block.height = 0.4;  // m
 
   // initial variables
-  this.mass = 2;      // kg *
-  this.k = 100;       // N/m *
+  this.k = options.k !== undefined ? options.k : 100;             // N/m
+  this.mu = options.mu !== undefined ? options.mu : 0;            // N s/m
 
-  this.f0 = 20;       // n *
-  this.angularVelocity0 = Math.sqrt(this.k/this.mass);
-  this.ww0  = 0.5;    // w / w0 *
-  this.angularVelocity = this.angularVelocity0*this.ww0;
-  this.phase = 3.141592;  // radian *
-
-  this.gravity = 9.8; // m/s^2
-  this.mu = 0;        // N s/m *
-
-  this.block.center.x = 0.1;    // m *
+  this.mass = options.mass !== undefined ? options.mass : 2;      // kg
+  this.block.center.x = options.blockX0 !== undefined ? options.blockX0 : 0.1; // m
   this.block.center.y = 0;    // m/s
+  this.f0 = options.f0 !== undefined ? options.f0 : 20;           // N
+  this.frequency = options.ww0 !== undefined ? options.ww0 : 0.5;       // w / w0
+  this.phase = options.phase !== undefined ? options.phase : 3.141592;  // rad
 
+  this.angularVelocity0 = Math.sqrt(this.k/this.mass);
+  this.angularVelocity = this.angularVelocity0*this.frequency;
+  this.gravity = 9.8; // m/s^2
   this.velocity = 0;  // m/s
-  this.deltaTime = 0.01;
 };
 
 NPEngine.ForcedSpring.prototype = Object.create(NPEngine.DisplayObject.prototype);
@@ -1269,7 +1284,7 @@ NPEngine.ForcedSpring.prototype.compute = function () {
   var blockPosX = this.block.center.x;
   var velocity = this.velocity;
   var angularVelocity = this.angularVelocity;
-  var outerForce = -this.f0*Math.sin(angularVelocity*time+this.phase)
+  var outerForce = -this.f0*Math.sin(angularVelocity*time+this.phase);
   var frictionForce = -this.mu*velocity;
   var springForce =  -this.k*blockPosX;
   var acceleration = (outerForce+frictionForce+springForce)/this.mass;
@@ -1279,7 +1294,7 @@ NPEngine.ForcedSpring.prototype.compute = function () {
     time = time + this.deltaTime;
     velocity = velocity+acceleration*this.deltaTime;
     blockPosX = blockPosX+velocity*this.deltaTime;
-    outerForce = -this.f0*Math.sin(angularVelocity*time+this.phase)
+    outerForce = -this.f0*Math.sin(angularVelocity*time+this.phase);
     frictionForce = -this.mu*velocity;
     springForce =  -this.k*blockPosX;
     acceleration = (outerForce+frictionForce+springForce)/this.mass;
@@ -1313,62 +1328,67 @@ NPEngine.ForcedSpring.prototype.update = function () {
 };
 
 NPEngine.ForcedSpring.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.strokeStyle = stroke;
+  context.fillStyle = fill;
+
   context.beginPath();
   context.lineWidth = 6;
   context.moveTo(this.convertedPivot.x, this.convertedPivot.y);
   context.lineTo(this.convertedBlockPosX, this.convertedBlockPosY);
   context.stroke();
+  context.closePath();
 
   context.beginPath();
   context.lineWidth = 1;
-  context.rect(this.convertedBlockPosX-this.halfOfConvertedBlockWidth, this.convertedBlockPosY-this.halfOfConvertedBlockHeight, this.halfOfConvertedBlockWidth*2, this.halfOfConvertedBlockHeight*2);
-  context.fillStyle = 'black';
-  context.fill();
+  context.fillRect(this.convertedBlockPosX-this.halfOfConvertedBlockWidth, this.convertedBlockPosY-this.halfOfConvertedBlockHeight, this.halfOfConvertedBlockWidth*2, this.halfOfConvertedBlockHeight*2);
   context.stroke();
+  context.closePath();
 };
 
-NPEngine.ForcedSpring.prototype.setMass = function (value) {
-  this.mass = value;
-};
+NPEngine.ForcedSpring.prototype.setVariables = function(options) {
+  options = options || {};
 
-NPEngine.ForcedSpring.prototype.setK = function (value) {
-  this.k = value;
-};
+  this.k = options.k !== undefined ? options.k : 100;             // N/m
+  this.mu = options.mu !== undefined ? options.mu : 0;            // N s/m
 
-NPEngine.ForcedSpring.prototype.setF0 = function (value) {
-  this.f0 = value;
-};
+  this.mass = options.mass !== undefined ? options.mass : 2;      // kg
+  this.block.center.x = options.blockX0 !== undefined ? options.blockX0 : 0.1; // m
+  this.f0 = options.f0 !== undefined ? options.f0 : 20;           // N
+  this.frequency = options.ww0 !== undefined ? options.ww0 : 0.5;       // w / w0
+  this.phase = options.phase !== undefined ? options.phase : 3.141592;  // rad
 
-NPEngine.ForcedSpring.prototype.setWW0 = function (value) {
-  this.ww0 = value;
-  this.angularVelocity = this.angularVelocity0*this.ww0;
-};
-
-NPEngine.ForcedSpring.prototype.setPhase = function (value) {
-  this.phase = value;
-};
-
-NPEngine.ForcedSpring.prototype.setMu = function (value) {
-  this.mu = value;
-};
-
-NPEngine.ForcedSpring.prototype.setX = function (value) {
-  this.block.center.x = value;
-};
-
-NPEngine.Kepler = function() {
+  this.angularVelocity0 = Math.sqrt(this.k/this.mass);
+  this.angularVelocity = this.angularVelocity0*this.frequency;
+}
+NPEngine.Kepler = function(options) {
   NPEngine.DisplayObject.call(this);
 
+  options = options || {};
+
   this.deltaTime = 0.01;   // seconds
-  this.slowFactor = 7;
+
+  // exception
+  if (options.speed !== undefined) {
+    options.speed = options.speed < 1 ? 1 : options.speed;
+    options.speed = options.speed > 10 ? 10 : options.speed;
+  }
+
+  // init variables
+  var speed = options.speed !== undefined ? options.speed : 5;
+  this.augmentedFactor = options.augmentedFactor !== undefined ? options.augmentedFactor : 30;
+  this.dampingFactor = options.dampingFactor !== undefined ? options.dampingFactor : 1;
+
+
+  this.slowFactor = 10 - speed;
 
   this.G = 1.18e-19;
   this.earthMass = 1;
   this.sunMass = 332965;
   this.moonMass = 0.012321;
-
-  this.augmentedFactor = 30;
-  this.dampingFactor = 1;
 
   this.earthFarVelocity = 29304.64558;    // m/s
 
@@ -1433,15 +1453,15 @@ NPEngine.Kepler.prototype.compute = function () {
   });
 
   for (var i= 1; i<10000; i++) {
-    earthVelocityX = earthVelocityX+earthForceX/this.earthMass*1*24*3600;
-    earthVelocityY = earthVelocityY+earthForceY/this.earthMass*1*24*3600;
-    earthX = earthX+earthVelocityX*1*24*3600;
-    earthY = earthY+earthVelocityY*1*24*3600;
+    earthVelocityX = earthVelocityX+earthForceX/this.earthMass*24*3600;
+    earthVelocityY = earthVelocityY+earthForceY/this.earthMass*24*3600;
+    earthX = earthX+earthVelocityX*24*3600;
+    earthY = earthY+earthVelocityY*24*3600;
 
-    moonVelocityX = moonVelocityX+moonForceX/this.moonMass*1*24*3600;
-    moonVelocityY = moonVelocityY+moonForceY/this.moonMass*1*24*3600;
-    moonX = moonX+moonVelocityX*1*24*3600;
-    moonY = moonY+moonVelocityY*1*24*3600;
+    moonVelocityX = moonVelocityX+moonForceX/this.moonMass*24*3600;
+    moonVelocityY = moonVelocityY+moonForceY/this.moonMass*24*3600;
+    moonX = moonX+moonVelocityX*24*3600;
+    moonY = moonY+moonVelocityY*24*3600;
 
     sunEarthDistance = Math.sqrt(earthX*earthX+earthY*earthY);
     sunMoonDistance = Math.sqrt(moonX*moonX+moonY*moonY);
@@ -1500,48 +1520,63 @@ NPEngine.Kepler.prototype.update = function () {
 };
 
 NPEngine.Kepler.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.fillStyle = fill;
+
   context.beginPath();
   context.arc(this.grid.convertToVectorValueX(0), this.grid.convertToVectorValueY(0), 20, 0, 2*Math.PI, false);
   context.fill();
   context.stroke();
+  context.closePath();
 
   context.beginPath();
   context.arc(this.curEarthX, this.curEarthY, 8, 0, 2*Math.PI, false);
   context.fill();
   context.stroke();
+  context.closePath();
 
   context.beginPath();
   context.arc(this.curMoonX, this.curMoonY, 3, 0, 2*Math.PI, false);
   context.fill();
   context.stroke();
+  context.closePath();
 };
 
-NPEngine.Kepler.prototype.setSlowFactor = function(value) {
-  this.slowFactor = value;
-};
+NPEngine.Kepler.prototype.setVariables = function(options) {
+  options = options || {};
 
-NPEngine.Kepler.prototype.setAugmentedFactor = function(value) {
-  this.augmentedFactor = value;
-};
+  // exception
+  if (options.speed !== undefined) {
+    options.speed = options.speed < 0 ? 0 : options.speed;
+    options.speed = options.speed > 10 ? 10 : options.speed;
+  }
 
-NPEngine.Kepler.prototype.setDampingFactor = function(value) {
-  this.dampingFactor = value;
+  // init variables
+  var speed = options.speed !== undefined ? options.speed : 5;
+  this.augmentedFactor = options.augmentedFactor !== undefined ? options.augmentedFactor : 30;
+  this.dampingFactor = options.dampingFactor !== undefined ? options.dampingFactor : 1;
+
+  this.slowFactor = 10 - speed;
   this.earthVelocityY = this.earthFarVelocity/1.50e+11*this.dampingFactor;
   this.moonVelocityY = this.earthVelocityY+1018.326257/1.50E+11;
 };
-
-NPEngine.ParabolicMotion = function() {
+NPEngine.ParabolicMotion = function(options) {
   NPEngine.DisplayObject.call(this);
+
+  options = options || {};
 
   // final variables
   this.deltaTime  = 0.01;        // second
 
   // initial variables
-  this.gravity    = 9.8;        // m/s^2
-  this.mass       = 1;          // kg
-  this.theta      = 0.785398;   // rad
-  this.velocity   = 60;         // m/s
-  this.mu         = 0;        // friction constant
+  this.gravity = options.gravity !== undefined ? options.gravity : 9.8;   // m/s^2
+  this.mu = options.mu !== undefined ? options.mu : 0;                    // friction constant
+  this.mass = options.mass !== undefined ? options.mass : 1;              // kg
+  this.theta = options.theta !== undefined ? NPEngine.Convert.toRadians(options.theta) : 0.785398;   // rad
+  this.velocity = options.velocity !== undefined ? options.velocity : 60;                            // m/s
 
   // initial positions
   this.ball = new NPEngine.Point(0, 0);
@@ -1637,6 +1672,13 @@ NPEngine.ParabolicMotion.prototype.update = function () {
 };
 
 NPEngine.ParabolicMotion.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.strokeStyle = stroke;
+  context.fillStyle = fill;
+
   // draw trace
   context.beginPath();
   context.moveTo(this.grid.convertToVectorValueX(0), this.grid.convertToVectorValueY(0));
@@ -1645,43 +1687,38 @@ NPEngine.ParabolicMotion.prototype.render = function (context) {
     context.lineTo(this.trace[i].x, this.trace[i].y);
   }
   context.stroke();
+  context.closePath();
 
   context.beginPath();
   context.arc(this.curBall.x, this.curBall.y, 10, 0, 2*Math.PI, true);
-  context.fillStyle = 'black';
   context.fill();
   context.stroke();
+  context.closePath();
 };
 
-NPEngine.ParabolicMotion.prototype.setGravity = function (value) {
-  this.gravity = value;
-};
-
-NPEngine.ParabolicMotion.prototype.setMass = function (value) {
-  this.mass = value;
-};
-
-NPEngine.ParabolicMotion.prototype.setMu = function (value) {
-  this.mu = value;
-};
-
-NPEngine.ParabolicMotion.prototype.setAngle = function (value) {
-  this.theta = NPEngine.Convert.toRadians(value);
-};
-
-NPEngine.ParabolicMotion.prototype.setVelocity = function (value) {
-  this.velocity = value;   // m/s
-};
-
-NPEngine.Pendulum = function () {
-  NPEngine.DisplayObject.call(this);
+NPEngine.ParabolicMotion.prototype.setVariables = function (options) {
+  options = options || {};
 
   // initial variables
-  this.mass = 10;
-  this.length = 2;
-  this.gravity = 9.8;
-  this.theta0 = NPEngine.Convert.toRadians(30);
+  this.gravity = options.gravity !== undefined ? options.gravity : 9.8;   // m/s^2
+  this.mu = options.mu !== undefined ? options.mu : 0;                    // friction constant
+  this.mass = options.mass !== undefined ? options.mass : 1;              // kg
+  this.theta = options.theta !== undefined ? NPEngine.Convert.toRadians(options.theta) : 0.785398;   // rad
+  this.velocity = options.velocity !== undefined ? options.velocity : 60;                            // m/s
+};
+
+NPEngine.Pendulum = function (options) {
+  NPEngine.DisplayObject.call(this);
+
+  options = options || {};
+
   this.deltaTime = 0.01;
+
+  // initial variables
+  this.mass = options.mass !== undefined ? options.mass : 10;
+  this.lineLength = options.lineLength !== undefined ? options.lineLength : 2;
+  this.gravity = options.gravity !== undefined ? options. gravity : 9.8;
+  this.theta0 = options.theta0 !== undefined ? NPEngine.Convert.toRadians(options.theta0) : NPEngine.Convert.toRadians(30);
 
   // initial position
   this.pivot = new NPEngine.Point;
@@ -1702,16 +1739,16 @@ NPEngine.Pendulum.prototype.onAttachedRenderer = function(viewWidth, viewHeight,
 NPEngine.Pendulum.prototype.compute = function () {
   this.memory = [];
   if (this.theta0 < 0.5) { /* theta0 is less than about 30 degrees */
-    this.period = Math.round((2 * Math.PI * Math.sqrt(this.length/this.gravity))*(1/this.deltaTime));
+    this.period = Math.round((2 * Math.PI * Math.sqrt(this.lineLength/this.gravity))*(1/this.deltaTime));
     var velocity = 0;
-    var circumference = this.length * this.theta0;
+    var circumference = this.lineLength * this.theta0;
 
     for (var i=0; i<this.period; i++) {
-      velocity = velocity+(-this.gravity*Math.sin(circumference/this.length))*this.deltaTime;
+      velocity = velocity+(-this.gravity*Math.sin(circumference/this.lineLength))*this.deltaTime;
       circumference = circumference+velocity*this.deltaTime;
-      var thetaValue = circumference/this.length;
-      var xValue = this.length*Math.sin(thetaValue).toFixed(6);
-      var yValue = this.length*Math.cos(thetaValue).toFixed(6);
+      var thetaValue = circumference/this.lineLength;
+      var xValue = this.lineLength*Math.sin(thetaValue).toFixed(6);
+      var yValue = this.lineLength*Math.cos(thetaValue).toFixed(6);
       this.memory.push({time: i, theta: thetaValue, x: xValue, y: yValue});
     }
   }
@@ -1724,16 +1761,16 @@ NPEngine.Pendulum.prototype.compute = function () {
     }
 
     var velocity = 0;
-    var circumference = this.length * this.theta0;
+    var circumference = this.lineLength * this.theta0;
     var firstCircumference = circumference;
     var lastGap = Number.MAX_VALUE;
 
     for (var i=0; ; i++) {
-      velocity = velocity+(-this.gravity*Math.sin(circumference/this.length))*this.deltaTime;
+      velocity = velocity+(-this.gravity*Math.sin(circumference/this.lineLength))*this.deltaTime;
       circumference = circumference+velocity*this.deltaTime;
-      var thetaValue = circumference/this.length;
-      var xValue = this.length*Math.sin(thetaValue).toFixed(6);
-      var yValue = this.length*Math.cos(thetaValue).toFixed(6);
+      var thetaValue = circumference/this.lineLength;
+      var xValue = this.lineLength*Math.sin(thetaValue).toFixed(6);
+      var yValue = this.lineLength*Math.cos(thetaValue).toFixed(6);
       this.memory.push({time: i, theta: thetaValue, x: xValue, y: yValue});
 
       if (flag == false) {
@@ -1783,54 +1820,49 @@ NPEngine.Pendulum.prototype.update = function () {
 };
 
 NPEngine.Pendulum.prototype.render = function (context) {
-  var convertedLength = Math.round(this.length*5)+60;
+  var convertedLineLength = Math.round(this.lineLength*5)+60;
   var convertedMass = Math.round(this.mass/3)+22;
+
   context.beginPath();
-  context.lineWidth = 2;
+  context.lineWidth = 4;
   context.moveTo(this.pivot.x, this.pivot.y);
-  context.lineTo(this.pivot.x + this.curCircle.x * convertedLength, this.pivot.y + this.curCircle.y * convertedLength);
+  context.lineTo(this.pivot.x + this.curCircle.x * convertedLineLength, this.pivot.y + this.curCircle.y * convertedLineLength);
+  context.strokeStyle = 'rgba(255, 255, 255, 0.8)';
   context.stroke();
 
   context.beginPath();
-  context.arc(this.pivot.x + this.curCircle.x * convertedLength, this.pivot.y + this.curCircle.y * convertedLength, convertedMass, 0, 2 * Math.PI, true);
-  context.fillStyle = 'black';
-  context.fill();
+  context.arc(this.pivot.x + this.curCircle.x * convertedLineLength, this.pivot.y + this.curCircle.y * convertedLineLength, convertedMass, 0, 2 * Math.PI, true);
   context.stroke();
 };
 
-NPEngine.Pendulum.prototype.setMass = function (value) {
-  this.mass = value;
-};
+NPEngine.Pendulum.prototype.setVariables = function (options) {
+  options = options || {};
 
-NPEngine.Pendulum.prototype.setLength = function (value) {
-  this.length = value;
+  this.mass = options.mass !== undefined ? options.mass : this.mass;
+  this.lineLength = options.lineLength !== undefined ? options.lineLength : this.lineLength;
+  this.gravity = options.gravity !== undefined ? options. gravity : this.gravity;
+  this.theta0 = options.theta0 !== undefined ? NPEngine.Convert.toRadians(options.theta0) : NPEngine.Convert.toRadians(this.theta0);
 };
-
-NPEngine.Pendulum.prototype.setTheta0 = function (degree) {
-  this.theta0 = NPEngine.Convert.toRadians(degree);
-};
-
-NPEngine.Pendulum.prototype.setDeltaT = function (value) {
-  this.deltaTime = value;
-};
-NPEngine.PendulumCollision = function() {
+NPEngine.PendulumCollision = function(options) {
   NPEngine.DisplayObject.call(this);
+
+  options = options || {};
 
   // final variables
   this.deltaTime  = 0.0005;        // second
 
   // initial variables
+  this.k = options.k !== undefined ? options.k : 1000000;    // N/m
+  this.mu = options.mu !== undefined ? options.mu : 10;      // N s/m
+  this.theta1 = options.theta1 !== undefined ? NPEngine.Convert.toRadians(options.theta1) : 0;    // rad
+  this.theta2 = options.theta2 !== undefined ? NPEngine.Convert.toRadians(options.theta2) : NPEngine.Convert.toRadians(45);   // rad
+
+  // other variables
   this.gravity          = 9.8;        // m/s^2
   this.mass             = 0.5;        // kg
   this.lineLength       = 1;          // m
-  this.k                = 1000000;    // N/m
-  this.mu               = 10;         // N s/m
   this.diameter1        = 0.1;        // m
   this.diameter2        = 0.1;        // m
-  this.theta1           = 0;          // rad
-  this.theta2           = NPEngine.Convert.toRadians(45);   // rad
-//  this.circumference1   = this.lineLength*this.theta1;          // m
-//  this.circumference2   = this.lineLength*this.theta2;          // m
   this.angularVelocity1 = 0;
   this.angularVelocity2 = 0;
 
@@ -1928,101 +1960,97 @@ NPEngine.PendulumCollision.prototype.update = function () {
 };
 
 NPEngine.PendulumCollision.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.lineWidth = 4;
+  context.strokeStyle = stroke;
+  context.fillStyle = fill;
+
   context.beginPath();
-  context.lineWidth = 2;
   context.moveTo(this.pivot1.x, this.pivot1.y);
   context.lineTo(this.pivot1.x+this.ratio*this.ball1.x, this.pivot1.y+this.ratio*this.ball1.y);
   context.stroke();
+  context.closePath();
 
   context.beginPath();
   context.arc(this.pivot1.x+this.ratio*this.ball1.x, this.pivot1.y+this.ratio*this.ball1.y, this.ratio*this.diameter1, 0, 2*Math.PI, true);
   context.fillStyle = 'black';
-  context.fill();
   context.stroke();
+  context.closePath();
 
   context.beginPath();
-  context.lineWidth = 2;
   context.moveTo(this.pivot2.x, this.pivot2.y);
   context.lineTo(this.pivot2.x+this.ratio*this.ball2.x, this.pivot2.y+this.ratio*this.ball2.y);
   context.stroke();
+  context.closePath();
 
   context.beginPath();
   context.arc(this.pivot2.x+this.ratio*this.ball2.x, this.pivot2.y+this.ratio*this.ball2.y, this.ratio*this.diameter2, 0, 2*Math.PI, true);
   context.fillStyle = 'black';
-  context.fill();
   context.stroke();
+  context.closePath();
 };
 
+NPEngine.PendulumCollision.prototype.setVariables = function (options) {
+  options = options || {};
 
-
-NPEngine.PendulumCollision.prototype.setGravity = function (value) {
-  this.gravity = value;
+  // initial variables
+  this.k = options.k !== undefined ? options.k : 1000000;    // N/m
+  this.mu = options.mu !== undefined ? options.mu : 10;      // N s/m
+  this.theta1 = options.theta1 !== undefined ? NPEngine.Convert.toRadians(options.theta1) : 0;    // rad
+  this.theta2 = options.theta2 !== undefined ? NPEngine.Convert.toRadians(options.theta2) : NPEngine.Convert.toRadians(45);   // rad
 };
-
-NPEngine.PendulumCollision.prototype.setK = function (value) {
-  this.k = value;
-};
-
-NPEngine.PendulumCollision.prototype.setMu = function (value) {
-  this.mu = value;
-};
-
-NPEngine.PendulumCollision.prototype.setDiameter1 = function (value) {
-  this.diameter1 = value;
-};
-
-NPEngine.PendulumCollision.prototype.setDiameter2 = function (value) {
-  this.diameter2 = value;
-};
-
-NPEngine.PendulumCollision.prototype.setAngle1 = function (value) {
-  this.theta1 = NPEngine.Convert.toRadians(value);
-};
-
-NPEngine.PendulumCollision.prototype.setAngle2 = function (value) {
-  this.theta2 = NPEngine.Convert.toRadians(value);
-};
-NPEngine.PendulumCollision3 = function() {
+NPEngine.PendulumCollisionPlus = function(options) {
   NPEngine.DisplayObject.call(this);
 
+  options = options || {};
+  
   // final variables
   this.deltaTime        = 0.00001;     // second
 
+  // exception
+  options.num !== undefined && options.num < 3 ? options.num = 3 : options.num;
+
   // initial variables
-  this.numOfPendulum    = 4;          // number
+  this.num = options.num !== undefined ? options.num : 4;      // number
+  this.k = options.k !== undefined ? options.k : 10000000;     // N/m
+  this.mu = options.mu !== undefined ? options.mu : 0;         // N s/m
+
+  this.theta = [];
+  for (var i=1; i<=this.num; i++) {
+    this['theta'+i] = options['theta'+i] !== undefined ? NPEngine.Convert.toRadians(options['theta'+i]) : 0;
+  }
+
+  // other variables
   this.gravity          = 9.8;        // m/s^2
   this.mass             = 0.5;        // kg
   this.lineLength       = 1;          // m
-  this.k                = 10000000;    // N/m
-  this.mu               = 0;          // N s/m
-
   this.diameter         = 0.1;        // m
-  this.theta            = [];         // radian
   this.thetaBias        = 0.002;      // radian
   this.angularVelocity  = [];         // m/s
   this.pivot            = [];         // point
   this.ball = [];
-  this['theta'+(this.numOfPendulum)] = NPEngine.Convert.toRadians(45);
-
   this.ratio = Math.pow(2, 8);
 };
 
-NPEngine.PendulumCollision3.prototype.constructor = NPEngine.PendulumCollision3;
-NPEngine.PendulumCollision3.prototype = Object.create(NPEngine.DisplayObject.prototype);
+NPEngine.PendulumCollisionPlus.prototype.constructor = NPEngine.PendulumCollisionPlus;
+NPEngine.PendulumCollisionPlus.prototype = Object.create(NPEngine.DisplayObject.prototype);
 
 
 
-NPEngine.PendulumCollision3.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
+NPEngine.PendulumCollisionPlus.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
   this.width = viewWidth;
   this.height = viewHeight;
   this.timeBoard = timeBoard;
 };
 
-NPEngine.PendulumCollision3.prototype.onAttachedGrid = function (gridObject) {
+NPEngine.PendulumCollisionPlus.prototype.onAttachedGrid = function (gridObject) {
   this.grid = gridObject;
 };
 
-NPEngine.PendulumCollision3.prototype.compute = function () {
+NPEngine.PendulumCollisionPlus.prototype.compute = function () {
   this.memory = [];
 
   // init values
@@ -2030,7 +2058,7 @@ NPEngine.PendulumCollision3.prototype.compute = function () {
   this.angularVelocity  = [];
   this.pivot            = [];
   this.ball             = [];
-  for (var i=0, theta=0; i<this.numOfPendulum; i++) {
+  for (var i=0, theta=0; i<this.num; i++) {
     if (this.hasOwnProperty('theta'+(i+1)))
       this.theta.push(this['theta'+(i+1)]);
     else
@@ -2040,7 +2068,7 @@ NPEngine.PendulumCollision3.prototype.compute = function () {
     this.ball.push(new NPEngine.Point);
   }
 
-  for (var i=0; i<this.numOfPendulum; i++) {
+  for (var i=0; i<this.num; i++) {
     if (this.hasOwnProperty('theta'+(i+1))) {
       this.theta[i] = this['theta'+(i+1)];
     }
@@ -2048,35 +2076,35 @@ NPEngine.PendulumCollision3.prototype.compute = function () {
 
   // compute values
   var centerWidth = this.width/2;
-  if (this.numOfPendulum%2 == 0) {
-    this.pivot[(this.numOfPendulum/2)-1].x = centerWidth-this.ratio*this.diameter;
-    this.pivot[this.numOfPendulum/2].x = centerWidth+this.ratio*this.diameter;
-    if (this.numOfPendulum > 2) {
-      this.pivot[(this.numOfPendulum/2)-1].x = centerWidth-this.ratio*this.diameter;
-      for (var i=0; i<this.numOfPendulum/2-1; i++) {
-        this.pivot[(this.numOfPendulum/2)-2-i].x = centerWidth-(this.ratio*this.diameter*2*(i+1))-this.ratio*this.diameter;
+  if (this.num%2 == 0) {
+    this.pivot[(this.num/2)-1].x = centerWidth-this.ratio*this.diameter;
+    this.pivot[this.num/2].x = centerWidth+this.ratio*this.diameter;
+    if (this.num > 2) {
+      this.pivot[(this.num/2)-1].x = centerWidth-this.ratio*this.diameter;
+      for (var i=0; i<this.num/2-1; i++) {
+        this.pivot[(this.num/2)-2-i].x = centerWidth-(this.ratio*this.diameter*2*(i+1))-this.ratio*this.diameter;
       }
-      this.pivot[(this.numOfPendulum/2)].x = centerWidth+this.ratio*this.diameter;
-      for (var i=0; i<this.numOfPendulum/2-1; i++) {
-        this.pivot[(this.numOfPendulum/2)+1+i].x = centerWidth+(this.ratio*this.diameter*2*(i+1))+this.ratio*this.diameter;
+      this.pivot[(this.num/2)].x = centerWidth+this.ratio*this.diameter;
+      for (var i=0; i<this.num/2-1; i++) {
+        this.pivot[(this.num/2)+1+i].x = centerWidth+(this.ratio*this.diameter*2*(i+1))+this.ratio*this.diameter;
       }
     }
   }
   else {
-    this.pivot[(this.numOfPendulum-1)/2].x = centerWidth;
-    if (this.numOfPendulum >= 3) {
-      this.pivot[(this.numOfPendulum-1)/2-1].x = centerWidth-(this.ratio*this.diameter*2);
-      this.pivot[(this.numOfPendulum-1)/2+1].x = centerWidth+(this.ratio*this.diameter*2);
+    this.pivot[(this.num-1)/2].x = centerWidth;
+    if (this.num >= 3) {
+      this.pivot[(this.num-1)/2-1].x = centerWidth-(this.ratio*this.diameter*2);
+      this.pivot[(this.num-1)/2+1].x = centerWidth+(this.ratio*this.diameter*2);
     }
-    if (this.numOfPendulum >=5) {
-      for (var i=0; i<(this.numOfPendulum-1)/2-1; i++) {
-        this.pivot[(this.numOfPendulum-1)/2-2-i].x = centerWidth-(this.ratio*this.diameter*(2*i+4));
-        this.pivot[(this.numOfPendulum-1)/2+2+i].x = centerWidth+(this.ratio*this.diameter*(2*i+4));
+    if (this.num >=5) {
+      for (i=0; i<(this.num-1)/2-1; i++) {
+        this.pivot[(this.num-1)/2-2-i].x = centerWidth-(this.ratio*this.diameter*(2*i+4));
+        this.pivot[(this.num-1)/2+2+i].x = centerWidth+(this.ratio*this.diameter*(2*i+4));
       }
     }
   }
 
-  for (var i=0; i<this.numOfPendulum; i++) {
+  for (i=0; i<this.num; i++) {
     this.pivot[i].y = 0;
   }
 
@@ -2084,47 +2112,47 @@ NPEngine.PendulumCollision3.prototype.compute = function () {
   var theta = this.theta.slice(0);
   var angularVelocity = this.angularVelocity.slice(0);
   var impulsiveForce = [];
-  for (var i=0; i<this.numOfPendulum-1; i++) {
+  for (i=0; i<this.num-1; i++) {
     impulsiveForce[i] = ((theta[i+1]-theta[i]) < -this.thetaBias) ? -this.k*(theta[i+1]-theta[i]+this.thetaBias)*this.lineLength-this.mu*this.lineLength*(angularVelocity[i+1]-angularVelocity[i]) : 0;
   }
 
   var torque = [];
   torque[0] = -this.mass*this.gravity*this.lineLength*Math.sin(theta[0])-this.lineLength*impulsiveForce[0];
-  for (var i=1; i<this.numOfPendulum-1; i++) {
+  for (i=1; i<this.num-1; i++) {
     torque[i] = -this.mass*this.gravity*this.lineLength*Math.sin(theta[i])-this.lineLength*(impulsiveForce[i]-impulsiveForce[i-1]);
   }
-  torque[this.numOfPendulum-1] = -this.mass*this.gravity*this.lineLength*Math.sin(theta[this.numOfPendulum-1])+this.lineLength*impulsiveForce[this.numOfPendulum-2];
+  torque[this.num-1] = -this.mass*this.gravity*this.lineLength*Math.sin(theta[this.num-1])+this.lineLength*impulsiveForce[this.num-2];
 
   var data = {};
-  for (var i=0; i<this.numOfPendulum; i++) {
+  for (i=0; i<this.num; i++) {
     data['theta'+(i+1)] = theta[i];
   }
   this.memory.push(data);
 
   var memoryFlag = 1;
   for (var j=0; j<6000000; j++) {
-    for (var i=0; i<this.numOfPendulum-1; i++) {
+    for (i=0; i<this.num-1; i++) {
       impulsiveForce[i] = ((theta[i+1]-theta[i]) < -this.thetaBias) ? -this.k*(theta[i+1]-theta[i]+this.thetaBias)*this.lineLength-this.mu*this.lineLength*(angularVelocity[i+1]-angularVelocity[i]) : 0;
     }
 
     torque[0] = -this.mass*this.gravity*this.lineLength*Math.sin(theta[0])-this.lineLength*impulsiveForce[0];
-    for (var i=1; i<this.numOfPendulum-1; i++) {
+    for (i=1; i<this.num-1; i++) {
       torque[i] = -this.mass*this.gravity*this.lineLength*Math.sin(theta[i])-this.lineLength*(impulsiveForce[i]-impulsiveForce[i-1]);
     }
-    torque[this.numOfPendulum-1] = -this.mass*this.gravity*this.lineLength*Math.sin(theta[this.numOfPendulum-1])+this.lineLength*impulsiveForce[this.numOfPendulum-2];
+    torque[this.num-1] = -this.mass*this.gravity*this.lineLength*Math.sin(theta[this.num-1])+this.lineLength*impulsiveForce[this.num-2];
 
-    for (var i=0; i<this.numOfPendulum; i++) {
+    for (i=0; i<this.num; i++) {
       angularVelocity[i] = angularVelocity[i]+torque[i]/inertia*this.deltaTime;
     }
 
-    for (var i=0; i<this.numOfPendulum; i++) {
+    for (i=0; i<this.num; i++) {
       theta[i] = theta[i]+angularVelocity[i]*this.deltaTime;
     }
 
     if (memoryFlag==1000) {
       memoryFlag=1;
-      var data = {};
-      for (var i=0; i<this.numOfPendulum; i++) {
+      data = {};
+      for (i=0; i<this.num; i++) {
         data['theta'+(i+1)] = theta[i];
       }
       this.memory.push(data);
@@ -2135,93 +2163,104 @@ NPEngine.PendulumCollision3.prototype.compute = function () {
   }
 };
 
-NPEngine.PendulumCollision3.prototype.onReady = function() {
-  for (var i=0; i<this.numOfPendulum; i++) {
+NPEngine.PendulumCollisionPlus.prototype.onReady = function() {
+  for (var i=0; i<this.num; i++) {
     this.ball[i].x = this.lineLength*Math.sin(this.theta[i]);
     this.ball[i].y = this.lineLength*Math.cos(this.theta[i]);
   }
 };
 
-NPEngine.PendulumCollision3.prototype.onStart = function() {
+NPEngine.PendulumCollisionPlus.prototype.onStart = function() {
 };
 
-NPEngine.PendulumCollision3.prototype.onResume = function() {
+NPEngine.PendulumCollisionPlus.prototype.onResume = function() {
 };
 
-NPEngine.PendulumCollision3.prototype.onPause = function() {
+NPEngine.PendulumCollisionPlus.prototype.onPause = function() {
 };
 
-NPEngine.PendulumCollision3.prototype.onStop = function() {
+NPEngine.PendulumCollisionPlus.prototype.onStop = function() {
 };
 
-NPEngine.PendulumCollision3.prototype.update = function () {
+NPEngine.PendulumCollisionPlus.prototype.update = function () {
   var gap = Math.round((new Date().getTime()-this.timeBoard.then)/10);
 
-  for (var i=0; i<this.numOfPendulum; i++) {
+  for (var i=0; i<this.num; i++) {
     this.ball[i].x = this.lineLength*Math.sin(this.memory[gap]['theta'+(i+1)]);
     this.ball[i].y = this.lineLength*Math.cos(this.memory[gap]['theta'+(i+1)]);
   }
 };
 
-NPEngine.PendulumCollision3.prototype.render = function (context) {
-  for (var i=0; i<this.numOfPendulum; i++) {
+NPEngine.PendulumCollisionPlus.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.lineWidth = 2;
+  context.strokeStyle = stroke;
+  context.fillStyle = fill;
+
+  for (var i=0; i<this.num; i++) {
     context.beginPath();
-    context.lineWidth = 2;
     context.moveTo(this.pivot[i].x, this.pivot[i].y);
     context.lineTo(this.pivot[i].x+this.ratio*this.ball[i].x, this.pivot[i].y+this.ratio*this.ball[i].y);
     context.stroke();
+    context.closePath();
 
     context.beginPath();
     context.arc(this.pivot[i].x+this.ratio*this.ball[i].x, this.pivot[i].y+this.ratio*this.ball[i].y, this.ratio*this.diameter, 0, 2*Math.PI, true);
-    context.fillStyle = 'black';
     context.fill();
-    context.stroke();
+    context.closePath();
   }
 
   // draw pendulum number
   context.beginPath();
   context.font = '34pt Calibri';
-  context.fillStyle = 'white';
+  context.fillStyle = text;
   context.textAlign = 'center';
   context.textBaseline = 'middle';
-  for (var i=0; i<this.numOfPendulum; i++) {
+  for (var i=0; i<this.num; i++) {
     context.fillText(String(i+1), this.pivot[i].x+this.ratio*this.ball[i].x, this.pivot[i].y+this.ratio*this.ball[i].y);
   }
   context.stroke();
+  context.closePath();
 };
 
-NPEngine.PendulumCollision3.prototype.setNumOfPendulum = function (value) {
-  this.numOfPendulum = value;
-};
+NPEngine.PendulumCollisionPlus.prototype.setVariables = function (options) {
+  options = options || {};
 
-NPEngine.PendulumCollision3.prototype.setGravity = function (value) {
-  this.gravity = value;
-};
+  // exception
+  options.num !== undefined && options.num < 3 ? options.num = 3 : options.num;
 
-NPEngine.PendulumCollision3.prototype.setK = function (value) {
-  this.k = value;
-};
+  // initial variables
+  this.num = options.num !== undefined ? options.num : 4;      // number
+  this.k = options.k !== undefined ? options.k : 10000000;     // N/m
+  this.mu = options.mu !== undefined ? options.mu : 0;         // N s/m
 
-NPEngine.PendulumCollision3.prototype.setMu = function (value) {
-  this.mu = value;
+  this.theta = [];
+  for (var i = 1; i <= this.num; i++) {
+    this['theta'+i] = options['theta'+i] !== undefined ? NPEngine.Convert.toRadians(options['theta'+i]) : 0;
+  }
 };
-
-NPEngine.PendulumCollision3.prototype.setAngleByIndex = function (value, index) {
-  this['theta'+(index+1)] = NPEngine.Convert.toRadians(value);
-};
-NPEngine.RotationMotion = function() {
+NPEngine.RotationMotion = function(options) {
   NPEngine.DisplayObject.call(this);
+
+  options = options || {};
 
   this.deltaTime = 0.0002;
 
-  this.ballMass = 1.1;        // kg
-  this.gravity = 9.8;         // m/s^2
-  this.blockMass = 15;        // kg
-  this.k = 200000;            // N/m
+  this.k = options.k !== undefined ? options.k : 200000;            // N/m
 
-  this.ballRadius = 0.1;      // m
-  this.blockWidth = 0.3;      // m
-  this.blockHeight = 1;     // m
+  this.ballMass = options.ballMass !== undefined ? options.ballMass : 1.1;          // kg
+  this.ballRadius = options.ballRadius !== undefined ? options.ballRadius : 0.1;    // m
+  var ballVelocity = options.ballVelocity !== undefined ? options.ballVelocity : 3; // m/s
+
+  this.blockMass = options.blockMass !== undefined ? options.blockMass : 15;        // kg
+  this.blockWidth = options.blockWidth !== undefined ? options.blockWidth : 0.3;    // m
+  this.blockHeight = options.blockHeight !== undefined ? options.blockHeight : 1;   // m
+
+  this.gravity = 9.8;  // m/s^2
+
   this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
   this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
   this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
@@ -2229,8 +2268,8 @@ NPEngine.RotationMotion = function() {
   this.block = new NPEngine.Point(0, this.blockHeight);
   this.blockCollisionPoint = new NPEngine.Point(this.blockWidth, this.blockHeight);
   this.ball = new NPEngine.Point(3, this.blockHeight);
-  this.ballVelocityX = -3;      // m/s
-  this.ballVelocityY = 0;       // m/s
+  this.ballVelocityX = -ballVelocity;   // m/s
+  this.ballVelocityY = 0;               // m/s
 
   this.curBall = this.ball.clone();
   this.curBlock = this.block.clone();
@@ -2339,11 +2378,18 @@ NPEngine.RotationMotion.prototype.update = function () {
 };
 
 NPEngine.RotationMotion.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.fillStyle = fill;
+  context.strokeStyle = stroke;
+
   context.beginPath();
-  context.fillStyle = 'black';
   context.arc(this.curBall.x, this.curBall.y, this.convertedBallRadius, 0, 2*Math.PI, true);
   context.fill();
   context.stroke();
+  context.closePath();
 
   context.save();
   context.beginPath();
@@ -2352,74 +2398,65 @@ NPEngine.RotationMotion.prototype.render = function (context) {
   context.translate(-this.grid.centerWidth, -this.grid.centerHeight);
   context.fillRect(this.curBlock.x, this.curBlock.y, this.convertedBlockWidth, this.convertedBlockHeight);
   context.stroke();
+  context.closePath();
   context.restore();
 };
 
-NPEngine.RotationMotion.prototype.setBallMass = function(value) {
-  this.ballMass = value;
-};
+NPEngine.RotationMotion.prototype.setVariables = function (options) {
 
-NPEngine.RotationMotion.prototype.setBlockMass = function(value) {
-  this.blockMass = value;
-  this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
-};
+  options = options || {};
 
-NPEngine.RotationMotion.prototype.setK = function(value) {
-  this.k = value;
-};
+  this.k = options.k !== undefined ? options.k : 200000;            // N/m
 
-NPEngine.RotationMotion.prototype.setBallRadius = function(value) {
-  this.ballRadius = value;
-};
+  this.ballMass = options.ballMass !== undefined ? options.ballMass : 1.1;          // kg
+  this.ballRadius = options.ballRadius !== undefined ? options.ballRadius : 0.1;    // m
+  var ballVelocity = options.ballVelocity !== undefined ? options.ballVelocity : 3; // m/s
 
-NPEngine.RotationMotion.prototype.setBlockWidth = function(value) {
-  this.blockWidth = value;
-  this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
-  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
-  this.blockCollisionPoint.x = this.blockWidth;
-};
+  this.blockMass = options.blockMass !== undefined ? options.blockMass : 15;        // kg
+  this.blockWidth = options.blockWidth !== undefined ? options.blockWidth : 0.3;    // m
+  this.blockHeight = options.blockHeight !== undefined ? options.blockHeight : 1;   // m
 
-NPEngine.RotationMotion.prototype.setBlockHeight = function(value) {
-  this.blockHeight = value;
   this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
   this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
   this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
 
-  this.block.y = this.blockHeight;
-  this.blockCollisionPoint.y = this.blockHeight;
-  this.ball.y = this.blockHeight;
-};
+  this.block = new NPEngine.Point(0, this.blockHeight);
+  this.blockCollisionPoint = new NPEngine.Point(this.blockWidth, this.blockHeight);
+  this.ball = new NPEngine.Point(3, this.blockHeight);
+  this.ballVelocityX = -ballVelocity;   // m/s
 
-NPEngine.RotationMotion.prototype.setBallX = function(value) {
-  this.ball.x = value;
+  this.curBall = this.ball.clone();
+  this.curBlock = this.block.clone();
 };
-
-NPEngine.RotationMotion.prototype.setBallV = function(value) {
-  this.ballVelocityX = value;
-};
-NPEngine.RotationMotionPlus = function() {
+NPEngine.RotationMotionPlus = function(options) {
   NPEngine.DisplayObject.call(this);
+
+  options = options || {};
 
   this.deltaTime = 0.0005;
 
-  this.ballMass = 1.2;        // kg
-  this.gravity = 9.8;         // m/s^2
-  this.blockMass = 50;        // kg
-  this.k = 1000000;           // N/m
+  this.k = options.k !== undefined ? options.k : 1000000;            // N/m
 
-  this.ballRadius = 0.1;      // m
-  this.blockWidth = 0.3;      // m
-  this.blockHeight = 2;       // m
+  this.ballMass = options.ballMass !== undefined ? options.ballMass : 1.1;          // kg
+  this.ballRadius = options.ballRadius !== undefined ? options.ballRadius : 0.1;    // m
+  this.ballX = options.ballX !== undefined ? options.ballX : 8;                     // m
+  this.incidenceAngle = options.ballAngle !== undefined ? NPEngine.Convert.toRadians(options.ballAngle) : NPEngine.Convert.toRadians(40);     // rad
+  this.incidenceVelocity = options.ballVelocity !== undefined ? options.ballVelocity : 10;   // m/s
+
+  this.blockMass = options.blockMass !== undefined ? options.blockMass : 50;        // kg
+  this.blockWidth = options.blockWidth !== undefined ? options.blockWidth : 0.3;    // m
+  this.blockHeight = options.blockHeight !== undefined ? options.blockHeight : 2;   // m
+
+
+  this.gravity = 9.8;         // m/s^2
+
   this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
 
   this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
   this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
 
-  this.ballX = 8;                          // m
   this.ballY = this.ballRadius;           // m
 
-  this.incidenceAngle = NPEngine.Convert.toRadians(40);     // rad
-  this.incidenceVelocity = 10;                              // m/s
   this.ballVelocityX = -this.incidenceVelocity * Math.cos(this.incidenceAngle);
   this.ballVelocityY = this.incidenceVelocity * Math.sin(this.incidenceAngle);
 
@@ -2585,11 +2622,18 @@ NPEngine.RotationMotionPlus.prototype.update = function () {
 };
 
 NPEngine.RotationMotionPlus.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.strokeStyle = stroke;
+  context.fillStyle = fill;
+
   context.beginPath();
-  context.fillStyle = 'black';
   context.arc(this.curBall.x, this.curBall.y, this.convertedBallRadius, 0, 2*Math.PI, true);
   context.fill();
   context.stroke();
+  context.closePath();
 
   context.save();
   context.beginPath();
@@ -2597,68 +2641,51 @@ NPEngine.RotationMotionPlus.prototype.render = function (context) {
   context.rotate(this.curTheta);
   context.translate(-this.grid.centerWidth, -this.grid.centerHeight);
   context.fillRect(this.curBlock.x, this.curBlock.y, this.convertedBlockWidth, this.convertedBlockHeight);
-  context.stroke();
+  context.closePath();
   context.restore();
 };
 
-NPEngine.RotationMotionPlus.prototype.setK = function (value) {
-  this.k = value;
-};
+NPEngine.RotationMotionPlus.prototype.setVariables = function(options) {
+  options = options || {};
 
-NPEngine.RotationMotionPlus.prototype.setCoefficientOfFrictionBall = function (value) {
-  this.coefficientOfFrictionBall = value;
-};
+  this.k = options.k !== undefined ? options.k : 1000000;            // N/m
 
-NPEngine.RotationMotionPlus.prototype.setCoefficientOfFrictionBlock = function (value) {
-  this.coefficientOfFrictionBlock = value;
-};
+  this.ballMass = options.ballMass !== undefined ? options.ballMass : 1.1;          // kg
+  this.ballRadius = options.ballRadius !== undefined ? options.ballRadius : 0.1;    // m
+  this.ballX = options.ballX !== undefined ? options.ballX : 8;                     // m
+  this.incidenceAngle = options.ballAngle !== undefined ? NPEngine.Convert.toRadians(options.ballAngle) : NPEngine.Convert.toRadians(40);     // rad
+  this.incidenceVelocity = options.ballVelocity !== undefined ? options.ballVelocity : 10;   // m/s
 
-NPEngine.RotationMotionPlus.prototype.setBlockMass = function (value) {
-  this.blockMass = value;
-  this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
-};
+  this.blockMass = options.blockMass !== undefined ? options.blockMass : 50;        // kg
+  this.blockWidth = options.blockWidth !== undefined ? options.blockWidth : 0.3;    // m
+  this.blockHeight = options.blockHeight !== undefined ? options.blockHeight : 2;   // m
 
-NPEngine.RotationMotionPlus.prototype.setBlockWidth = function (value) {
-  this.blockWidth = value;
   this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
-  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);
-};
 
-NPEngine.RotationMotionPlus.prototype.setBlockHeight = function (value) {
-  this.blockHeight = value;
-  this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
   this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
-  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);
+  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
+
+  this.ballY = this.ballRadius;           // m
+
+  this.ballVelocityX = -this.incidenceVelocity * Math.cos(this.incidenceAngle);
+  this.ballVelocityY = this.incidenceVelocity * Math.sin(this.incidenceAngle);
+
   this.block = new NPEngine.Point(0, this.blockHeight);
+  this.curBall = new NPEngine.Point(this.ballX, this.ballY);
+  this.curBlock = this.block.clone();
 };
-
-NPEngine.RotationMotionPlus.prototype.setBallMass = function (value) {
-  this.ballMass = value;
-};
-
-NPEngine.RotationMotionPlus.prototype.setBallRadius = function (value) {
-  this.ballRadius = value;
-  this.ballY = this.ballRadius;
-};
-
-NPEngine.RotationMotionPlus.prototype.setBallX = function (value) {
-  this.ballX = value;
-};
-
-NPEngine.RotationMotionPlus.prototype.setIncidenceAngle = function (value) {
-  this.incidenceAngle = NPEngine.Convert.toRadians(value);
-  this.ballVelocityX = -this.incidenceVelocity * Math.cos(this.incidenceAngle);
-  this.ballVelocityY = this.incidenceVelocity * Math.sin(this.incidenceAngle);
-};
-
-NPEngine.RotationMotionPlus.prototype.setIncidenceVelocity = function (value) {
-  this.incidenceVelocity = value;
-  this.ballVelocityX = -this.incidenceVelocity * Math.cos(this.incidenceAngle);
-  this.ballVelocityY = this.incidenceVelocity * Math.sin(this.incidenceAngle);
-};
-
-NPEngine.Spring = function () {
+NPEngine.Spring = function (options) {
   NPEngine.DisplayObject.call(this);
+
+  options = options || {};
+
+  // compute variable
+  this.deltaTime = 0.01;
+
+  // initial variables
+  this.mass = options.mass !== undefined ? options.mass : 2;  // kg
+  this.k = options.k !== undefined ? options.k : 100;         // N/m
+  this.mu = options.mu !== undefined ? options.mu : 0;        // N s/m
 
   // final variables
   this.pivot = new NPEngine.Point(-4, 0);
@@ -2666,15 +2693,11 @@ NPEngine.Spring = function () {
   this.block.width = 1;     // m
   this.block.height = 0.4;  // m
 
-  // initial variables
-  this.mass = 2;      // kg
-  this.k = 100;       // N/m
-  this.gravity = 9.8; // m/s^2
-  this.mu = 0;        // N s/m
+  // extend variables
+  this.gravity = 9.8;         // m/s^2
   this.block.center.x = 2;    // m
   this.block.center.y = 0;    // m/s
-  this.velocity = 0;  // m/s
-  this.deltaTime = 0.01;
+  this.velocity = 0;          // m/s
 };
 
 NPEngine.Spring.prototype = Object.create(NPEngine.DisplayObject.prototype);
@@ -2731,46 +2754,36 @@ NPEngine.Spring.prototype.update = function () {
 };
 
 NPEngine.Spring.prototype.render = function (context) {
-  context.beginPath();
-  context.lineWidth = 6;
-  context.moveTo(this.convertedPivot.x, this.convertedPivot.y);
-  context.lineTo(this.convertedBlockPosX, this.convertedBlockPosY);
-  context.stroke();
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
 
   context.beginPath();
-  context.lineWidth = 1;
-  context.rect(this.convertedBlockPosX-this.halfOfConvertedBlockWidth, this.convertedBlockPosY-this.halfOfConvertedBlockHeight, this.halfOfConvertedBlockWidth*2, this.halfOfConvertedBlockHeight*2);
-  context.fillStyle = 'black';
-  context.fill();
-  context.stroke();
+    context.lineWidth = 6;
+    context.moveTo(this.convertedPivot.x, this.convertedPivot.y);
+    context.lineTo(this.convertedBlockPosX, this.convertedBlockPosY);
+    context.strokeStyle = stroke;
+    context.stroke();
+  context.closePath();
+
+  context.beginPath();
+    context.lineWidth = 1;
+    context.rect(this.convertedBlockPosX-this.halfOfConvertedBlockWidth, this.convertedBlockPosY-this.halfOfConvertedBlockHeight, this.halfOfConvertedBlockWidth*2, this.halfOfConvertedBlockHeight*2);
+    context.fillStyle = 'black';
+    context.fillStyle = fill;
+    context.fill();
+  context.closePath();
 
   // temp code period
   context.font = "20px Arial";
   context.fillText("주기: " + (2*Math.PI*Math.sqrt(this.mass/this.k)).toFixed(2) + "초", 0, 52);
 };
 
-NPEngine.Spring.prototype.setMass = function (value) {
-  this.mass = value;
-};
+NPEngine.Spring.prototype.setVariables = function (options) {
+  options = options || {};
 
-NPEngine.Spring.prototype.setK = function (value) {
-  this.k = value;
-};
-
-NPEngine.Spring.prototype.setGravity = function (value) {
-  this.gravity = value;
-};
-
-NPEngine.Spring.prototype.setMu = function (value) {
-  this.mu = value;
-};
-
-NPEngine.Spring.prototype.setX = function (value) {
-  this.block.center.x = value;
-};
-
-NPEngine.Spring.prototype.setVelocity = function (value) {
-  this.velocity = value;
+  this.mass = options.mass !== undefined ? options.mass : 2;  // kg
+  this.k = options.k !== undefined ? options.k : 100;         // N/m
+  this.mu = options.mu !== undefined ? options.mu : 0;        // N s/m
 };
 
 NPEngine.CanvasRenderer = function (canvas) {
@@ -2790,6 +2803,12 @@ NPEngine.CanvasRenderer = function (canvas) {
   }
   this.context = this.view.getContext("2d");
   this.timeBoard = new NPEngine.TimeBoard;
+
+  // for double buffering
+  this.backCanvas = document.createElement('canvas');
+  this.backCanvas.width = canvas.width;
+  this.backCanvas.height = canvas.height;
+  this.backContext = this.backCanvas.getContext('2d');
 };
 
 NPEngine.CanvasRenderer.prototype.constructor = NPEngine.CanvasRenderer;
@@ -2864,23 +2883,23 @@ NPEngine.CanvasRenderer.prototype.update = function () {
 
 NPEngine.CanvasRenderer.prototype.render = function () {
   // clear
-  this.context.clearRect(0, 0, this.view.width, this.view.height);
+  this.backContext.fillStyle='rgb(0, 0, 0)';
+  this.backContext.fillRect(0, 0, this.view.width, this.view.height);
+//  this.context.globalCompositeOperation = 'xor';
 
   // render
   var length = this.children.length;
   if (this.grid != null) {
-    this.grid.render(this.context);
+    this.grid.render(this.backContext);
   }
   for (var i = 0; i < length; i++) {
-    this.children[i].render(this.context);
+    this.children[i].render(this.backContext);
   }
 
-  this.timeBoard.render(this.context);
+  this.timeBoard.render(this.backContext);
+
+  this.context.drawImage(this.backCanvas, 0, 0);
 };
-
-NPEngine.CanvasRenderer.prototype.setFps = function (flag) {
-
-}
 NPEngine.TimeBoard = function () {
   this.visible = true;
   this.init();

@@ -1,15 +1,17 @@
-NPEngine.ParabolicMotion = function() {
+NPEngine.ParabolicMotion = function(options) {
   NPEngine.DisplayObject.call(this);
+
+  options = options || {};
 
   // final variables
   this.deltaTime  = 0.01;        // second
 
   // initial variables
-  this.gravity    = 9.8;        // m/s^2
-  this.mass       = 1;          // kg
-  this.theta      = 0.785398;   // rad
-  this.velocity   = 60;         // m/s
-  this.mu         = 0;        // friction constant
+  this.gravity = options.gravity !== undefined ? options.gravity : 9.8;   // m/s^2
+  this.mu = options.mu !== undefined ? options.mu : 0;                    // friction constant
+  this.mass = options.mass !== undefined ? options.mass : 1;              // kg
+  this.theta = options.theta !== undefined ? NPEngine.Convert.toRadians(options.theta) : 0.785398;   // rad
+  this.velocity = options.velocity !== undefined ? options.velocity : 60;                            // m/s
 
   // initial positions
   this.ball = new NPEngine.Point(0, 0);
@@ -105,6 +107,13 @@ NPEngine.ParabolicMotion.prototype.update = function () {
 };
 
 NPEngine.ParabolicMotion.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.strokeStyle = stroke;
+  context.fillStyle = fill;
+
   // draw trace
   context.beginPath();
   context.moveTo(this.grid.convertToVectorValueX(0), this.grid.convertToVectorValueY(0));
@@ -113,30 +122,22 @@ NPEngine.ParabolicMotion.prototype.render = function (context) {
     context.lineTo(this.trace[i].x, this.trace[i].y);
   }
   context.stroke();
+  context.closePath();
 
   context.beginPath();
   context.arc(this.curBall.x, this.curBall.y, 10, 0, 2*Math.PI, true);
-  context.fillStyle = 'black';
   context.fill();
   context.stroke();
+  context.closePath();
 };
 
-NPEngine.ParabolicMotion.prototype.setGravity = function (value) {
-  this.gravity = value;
-};
+NPEngine.ParabolicMotion.prototype.setVariables = function (options) {
+  options = options || {};
 
-NPEngine.ParabolicMotion.prototype.setMass = function (value) {
-  this.mass = value;
-};
-
-NPEngine.ParabolicMotion.prototype.setMu = function (value) {
-  this.mu = value;
-};
-
-NPEngine.ParabolicMotion.prototype.setAngle = function (value) {
-  this.theta = NPEngine.Convert.toRadians(value);
-};
-
-NPEngine.ParabolicMotion.prototype.setVelocity = function (value) {
-  this.velocity = value;   // m/s
+  // initial variables
+  this.gravity = options.gravity !== undefined ? options.gravity : 9.8;   // m/s^2
+  this.mu = options.mu !== undefined ? options.mu : 0;                    // friction constant
+  this.mass = options.mass !== undefined ? options.mass : 1;              // kg
+  this.theta = options.theta !== undefined ? NPEngine.Convert.toRadians(options.theta) : 0.785398;   // rad
+  this.velocity = options.velocity !== undefined ? options.velocity : 60;                            // m/s
 };

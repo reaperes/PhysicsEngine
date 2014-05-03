@@ -1,16 +1,22 @@
-NPEngine.RotationMotion = function() {
+NPEngine.RotationMotion = function(options) {
   NPEngine.DisplayObject.call(this);
+
+  options = options || {};
 
   this.deltaTime = 0.0002;
 
-  this.ballMass = 1.1;        // kg
-  this.gravity = 9.8;         // m/s^2
-  this.blockMass = 15;        // kg
-  this.k = 200000;            // N/m
+  this.k = options.k !== undefined ? options.k : 200000;            // N/m
 
-  this.ballRadius = 0.1;      // m
-  this.blockWidth = 0.3;      // m
-  this.blockHeight = 1;     // m
+  this.ballMass = options.ballMass !== undefined ? options.ballMass : 1.1;          // kg
+  this.ballRadius = options.ballRadius !== undefined ? options.ballRadius : 0.1;    // m
+  var ballVelocity = options.ballVelocity !== undefined ? options.ballVelocity : 3; // m/s
+
+  this.blockMass = options.blockMass !== undefined ? options.blockMass : 15;        // kg
+  this.blockWidth = options.blockWidth !== undefined ? options.blockWidth : 0.3;    // m
+  this.blockHeight = options.blockHeight !== undefined ? options.blockHeight : 1;   // m
+
+  this.gravity = 9.8;  // m/s^2
+
   this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
   this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
   this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
@@ -18,8 +24,8 @@ NPEngine.RotationMotion = function() {
   this.block = new NPEngine.Point(0, this.blockHeight);
   this.blockCollisionPoint = new NPEngine.Point(this.blockWidth, this.blockHeight);
   this.ball = new NPEngine.Point(3, this.blockHeight);
-  this.ballVelocityX = -3;      // m/s
-  this.ballVelocityY = 0;       // m/s
+  this.ballVelocityX = -ballVelocity;   // m/s
+  this.ballVelocityY = 0;               // m/s
 
   this.curBall = this.ball.clone();
   this.curBlock = this.block.clone();
@@ -128,11 +134,18 @@ NPEngine.RotationMotion.prototype.update = function () {
 };
 
 NPEngine.RotationMotion.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.fillStyle = fill;
+  context.strokeStyle = stroke;
+
   context.beginPath();
-  context.fillStyle = 'black';
   context.arc(this.curBall.x, this.curBall.y, this.convertedBallRadius, 0, 2*Math.PI, true);
   context.fill();
   context.stroke();
+  context.closePath();
 
   context.save();
   context.beginPath();
@@ -141,48 +154,33 @@ NPEngine.RotationMotion.prototype.render = function (context) {
   context.translate(-this.grid.centerWidth, -this.grid.centerHeight);
   context.fillRect(this.curBlock.x, this.curBlock.y, this.convertedBlockWidth, this.convertedBlockHeight);
   context.stroke();
+  context.closePath();
   context.restore();
 };
 
-NPEngine.RotationMotion.prototype.setBallMass = function(value) {
-  this.ballMass = value;
-};
+NPEngine.RotationMotion.prototype.setVariables = function (options) {
 
-NPEngine.RotationMotion.prototype.setBlockMass = function(value) {
-  this.blockMass = value;
-  this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
-};
+  options = options || {};
 
-NPEngine.RotationMotion.prototype.setK = function(value) {
-  this.k = value;
-};
+  this.k = options.k !== undefined ? options.k : 200000;            // N/m
 
-NPEngine.RotationMotion.prototype.setBallRadius = function(value) {
-  this.ballRadius = value;
-};
+  this.ballMass = options.ballMass !== undefined ? options.ballMass : 1.1;          // kg
+  this.ballRadius = options.ballRadius !== undefined ? options.ballRadius : 0.1;    // m
+  var ballVelocity = options.ballVelocity !== undefined ? options.ballVelocity : 3; // m/s
 
-NPEngine.RotationMotion.prototype.setBlockWidth = function(value) {
-  this.blockWidth = value;
-  this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
-  this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
-  this.blockCollisionPoint.x = this.blockWidth;
-};
+  this.blockMass = options.blockMass !== undefined ? options.blockMass : 15;        // kg
+  this.blockWidth = options.blockWidth !== undefined ? options.blockWidth : 0.3;    // m
+  this.blockHeight = options.blockHeight !== undefined ? options.blockHeight : 1;   // m
 
-NPEngine.RotationMotion.prototype.setBlockHeight = function(value) {
-  this.blockHeight = value;
   this.blockDiagonalHeight = Math.sqrt(this.blockWidth*this.blockWidth+this.blockHeight*this.blockHeight);
   this.momentOfInertia = 1/3*this.blockMass*this.blockHeight*this.blockHeight;
   this.theta0 = Math.atan(this.blockWidth/this.blockHeight);    // 블록 중심 각도
 
-  this.block.y = this.blockHeight;
-  this.blockCollisionPoint.y = this.blockHeight;
-  this.ball.y = this.blockHeight;
-};
+  this.block = new NPEngine.Point(0, this.blockHeight);
+  this.blockCollisionPoint = new NPEngine.Point(this.blockWidth, this.blockHeight);
+  this.ball = new NPEngine.Point(3, this.blockHeight);
+  this.ballVelocityX = -ballVelocity;   // m/s
 
-NPEngine.RotationMotion.prototype.setBallX = function(value) {
-  this.ball.x = value;
-};
-
-NPEngine.RotationMotion.prototype.setBallV = function(value) {
-  this.ballVelocityX = value;
+  this.curBall = this.ball.clone();
+  this.curBlock = this.block.clone();
 };

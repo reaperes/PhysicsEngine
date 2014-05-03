@@ -1,21 +1,23 @@
-NPEngine.PendulumCollision = function() {
+NPEngine.PendulumCollision = function(options) {
   NPEngine.DisplayObject.call(this);
+
+  options = options || {};
 
   // final variables
   this.deltaTime  = 0.0005;        // second
 
   // initial variables
+  this.k = options.k !== undefined ? options.k : 1000000;    // N/m
+  this.mu = options.mu !== undefined ? options.mu : 10;      // N s/m
+  this.theta1 = options.theta1 !== undefined ? NPEngine.Convert.toRadians(options.theta1) : 0;    // rad
+  this.theta2 = options.theta2 !== undefined ? NPEngine.Convert.toRadians(options.theta2) : NPEngine.Convert.toRadians(45);   // rad
+
+  // other variables
   this.gravity          = 9.8;        // m/s^2
   this.mass             = 0.5;        // kg
   this.lineLength       = 1;          // m
-  this.k                = 1000000;    // N/m
-  this.mu               = 10;         // N s/m
   this.diameter1        = 0.1;        // m
   this.diameter2        = 0.1;        // m
-  this.theta1           = 0;          // rad
-  this.theta2           = NPEngine.Convert.toRadians(45);   // rad
-//  this.circumference1   = this.lineLength*this.theta1;          // m
-//  this.circumference2   = this.lineLength*this.theta2;          // m
   this.angularVelocity1 = 0;
   this.angularVelocity2 = 0;
 
@@ -113,57 +115,45 @@ NPEngine.PendulumCollision.prototype.update = function () {
 };
 
 NPEngine.PendulumCollision.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.lineWidth = 4;
+  context.strokeStyle = stroke;
+  context.fillStyle = fill;
+
   context.beginPath();
-  context.lineWidth = 2;
   context.moveTo(this.pivot1.x, this.pivot1.y);
   context.lineTo(this.pivot1.x+this.ratio*this.ball1.x, this.pivot1.y+this.ratio*this.ball1.y);
   context.stroke();
+  context.closePath();
 
   context.beginPath();
   context.arc(this.pivot1.x+this.ratio*this.ball1.x, this.pivot1.y+this.ratio*this.ball1.y, this.ratio*this.diameter1, 0, 2*Math.PI, true);
   context.fillStyle = 'black';
-  context.fill();
   context.stroke();
+  context.closePath();
 
   context.beginPath();
-  context.lineWidth = 2;
   context.moveTo(this.pivot2.x, this.pivot2.y);
   context.lineTo(this.pivot2.x+this.ratio*this.ball2.x, this.pivot2.y+this.ratio*this.ball2.y);
   context.stroke();
+  context.closePath();
 
   context.beginPath();
   context.arc(this.pivot2.x+this.ratio*this.ball2.x, this.pivot2.y+this.ratio*this.ball2.y, this.ratio*this.diameter2, 0, 2*Math.PI, true);
   context.fillStyle = 'black';
-  context.fill();
   context.stroke();
+  context.closePath();
 };
 
+NPEngine.PendulumCollision.prototype.setVariables = function (options) {
+  options = options || {};
 
-
-NPEngine.PendulumCollision.prototype.setGravity = function (value) {
-  this.gravity = value;
-};
-
-NPEngine.PendulumCollision.prototype.setK = function (value) {
-  this.k = value;
-};
-
-NPEngine.PendulumCollision.prototype.setMu = function (value) {
-  this.mu = value;
-};
-
-NPEngine.PendulumCollision.prototype.setDiameter1 = function (value) {
-  this.diameter1 = value;
-};
-
-NPEngine.PendulumCollision.prototype.setDiameter2 = function (value) {
-  this.diameter2 = value;
-};
-
-NPEngine.PendulumCollision.prototype.setAngle1 = function (value) {
-  this.theta1 = NPEngine.Convert.toRadians(value);
-};
-
-NPEngine.PendulumCollision.prototype.setAngle2 = function (value) {
-  this.theta2 = NPEngine.Convert.toRadians(value);
+  // initial variables
+  this.k = options.k !== undefined ? options.k : 1000000;    // N/m
+  this.mu = options.mu !== undefined ? options.mu : 10;      // N s/m
+  this.theta1 = options.theta1 !== undefined ? NPEngine.Convert.toRadians(options.theta1) : 0;    // rad
+  this.theta2 = options.theta2 !== undefined ? NPEngine.Convert.toRadians(options.theta2) : NPEngine.Convert.toRadians(45);   // rad
 };

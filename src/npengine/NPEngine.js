@@ -3,7 +3,7 @@
  @return {NPEngine}
  */
 NPEngine = function(canvas) {
-  //this.fps = new NPEngine.FPS();
+  this.fps = new NPEngine.FPS();
   this.state = 'create';    // create, init, ready, start, resume, pause, stop, destroy
 
   if (!canvas) {
@@ -91,9 +91,9 @@ NPEngine.prototype.resume = function() {
     }
     requestAnimationFrame(run);
     that.renderer.update();
-    //that.fps.begin();
+    that.fps.begin();
     that.renderer.render();
-    //that.fps.end();
+    that.fps.end();
   }
 };
 

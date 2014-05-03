@@ -1,16 +1,28 @@
-NPEngine.Kepler = function() {
+NPEngine.Kepler = function(options) {
   NPEngine.DisplayObject.call(this);
 
+  options = options || {};
+
   this.deltaTime = 0.01;   // seconds
-  this.slowFactor = 7;
+
+  // exception
+  if (options.speed !== undefined) {
+    options.speed = options.speed < 1 ? 1 : options.speed;
+    options.speed = options.speed > 10 ? 10 : options.speed;
+  }
+
+  // init variables
+  var speed = options.speed !== undefined ? options.speed : 5;
+  this.augmentedFactor = options.augmentedFactor !== undefined ? options.augmentedFactor : 30;
+  this.dampingFactor = options.dampingFactor !== undefined ? options.dampingFactor : 1;
+
+
+  this.slowFactor = 10 - speed;
 
   this.G = 1.18e-19;
   this.earthMass = 1;
   this.sunMass = 332965;
   this.moonMass = 0.012321;
-
-  this.augmentedFactor = 30;
-  this.dampingFactor = 1;
 
   this.earthFarVelocity = 29304.64558;    // m/s
 
@@ -75,15 +87,15 @@ NPEngine.Kepler.prototype.compute = function () {
   });
 
   for (var i= 1; i<10000; i++) {
-    earthVelocityX = earthVelocityX+earthForceX/this.earthMass*1*24*3600;
-    earthVelocityY = earthVelocityY+earthForceY/this.earthMass*1*24*3600;
-    earthX = earthX+earthVelocityX*1*24*3600;
-    earthY = earthY+earthVelocityY*1*24*3600;
+    earthVelocityX = earthVelocityX+earthForceX/this.earthMass*24*3600;
+    earthVelocityY = earthVelocityY+earthForceY/this.earthMass*24*3600;
+    earthX = earthX+earthVelocityX*24*3600;
+    earthY = earthY+earthVelocityY*24*3600;
 
-    moonVelocityX = moonVelocityX+moonForceX/this.moonMass*1*24*3600;
-    moonVelocityY = moonVelocityY+moonForceY/this.moonMass*1*24*3600;
-    moonX = moonX+moonVelocityX*1*24*3600;
-    moonY = moonY+moonVelocityY*1*24*3600;
+    moonVelocityX = moonVelocityX+moonForceX/this.moonMass*24*3600;
+    moonVelocityY = moonVelocityY+moonForceY/this.moonMass*24*3600;
+    moonX = moonX+moonVelocityX*24*3600;
+    moonY = moonY+moonVelocityY*24*3600;
 
     sunEarthDistance = Math.sqrt(earthX*earthX+earthY*earthY);
     sunMoonDistance = Math.sqrt(moonX*moonX+moonY*moonY);
@@ -142,32 +154,46 @@ NPEngine.Kepler.prototype.update = function () {
 };
 
 NPEngine.Kepler.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.8)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.fillStyle = fill;
+
   context.beginPath();
   context.arc(this.grid.convertToVectorValueX(0), this.grid.convertToVectorValueY(0), 20, 0, 2*Math.PI, false);
   context.fill();
   context.stroke();
+  context.closePath();
 
   context.beginPath();
   context.arc(this.curEarthX, this.curEarthY, 8, 0, 2*Math.PI, false);
   context.fill();
   context.stroke();
+  context.closePath();
 
   context.beginPath();
   context.arc(this.curMoonX, this.curMoonY, 3, 0, 2*Math.PI, false);
   context.fill();
   context.stroke();
+  context.closePath();
 };
 
-NPEngine.Kepler.prototype.setSlowFactor = function(value) {
-  this.slowFactor = value;
-};
+NPEngine.Kepler.prototype.setVariables = function(options) {
+  options = options || {};
 
-NPEngine.Kepler.prototype.setAugmentedFactor = function(value) {
-  this.augmentedFactor = value;
-};
+  // exception
+  if (options.speed !== undefined) {
+    options.speed = options.speed < 0 ? 0 : options.speed;
+    options.speed = options.speed > 10 ? 10 : options.speed;
+  }
 
-NPEngine.Kepler.prototype.setDampingFactor = function(value) {
-  this.dampingFactor = value;
+  // init variables
+  var speed = options.speed !== undefined ? options.speed : 5;
+  this.augmentedFactor = options.augmentedFactor !== undefined ? options.augmentedFactor : 30;
+  this.dampingFactor = options.dampingFactor !== undefined ? options.dampingFactor : 1;
+
+  this.slowFactor = 10 - speed;
   this.earthVelocityY = this.earthFarVelocity/1.50e+11*this.dampingFactor;
   this.moonVelocityY = this.earthVelocityY+1018.326257/1.50E+11;
 };

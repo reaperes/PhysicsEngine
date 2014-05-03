@@ -42,9 +42,14 @@ NPEngine.QuadrantGrid.prototype.update = function () {
 };
 
 NPEngine.QuadrantGrid.prototype.render = function (context) {
+  var text = 'rgba(0, 0, 0, 0.8)';
+  var stroke = 'rgba(255, 255, 255, 0.6)';
+  var fill = 'rgba(255, 255, 255, 0.8)';
+
+  context.strokeStyle = stroke;
+
   context.beginPath();
   context.lineWidth = 0.4;
-  context.strokeStyle = '#550000';
 
   // draw right column line
   for (var i=this.centerX+this.ratio; i<this.width; i+=this.ratio) {
@@ -58,16 +63,17 @@ NPEngine.QuadrantGrid.prototype.render = function (context) {
     context.lineTo(this.width, i);
   }
   context.stroke();
+  context.closePath();
 
   // draw center line
   context.beginPath();
-  context.lineWidth = 2;
-  context.strokeStyle = '#550000';
+  context.lineWidth = 1;
   context.moveTo(this.centerX, 0);
   context.lineTo(this.centerX, this.height);
   context.moveTo(0, this.centerY);
   context.lineTo(this.width, this.centerY);
   context.stroke();
+  context.closePath();
 };
 
 NPEngine.QuadrantGrid.prototype.setRatio = function(value) {

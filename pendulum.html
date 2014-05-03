@@ -9,16 +9,19 @@
 <body>
 <script type="text/javascript">
   var engine = new NPEngine;
-  var pendulum = new NPEngine.Pendulum;
+  var pendulum = new NPEngine.Pendulum({
+    mass: 100,
+    lineLength: 5,
+    theta0: 30
+  });
   engine.addDisplayObject(pendulum);
   engine.ready();
 
   // default value
   var DefaultValue = function () {
     this.mass = 10;
-    this.length = 5;
+    this.lineLength = 5;
     this.theta0 = 45;
-    this.deltaT = 0.01;
   };
 
   window.onload = function () {
@@ -28,18 +31,18 @@
     var massFolder = gui.addFolder('질량 (Kg)');
     massFolder.open();
     var mass = massFolder.add(defaultValue, 'mass');
-    mass.onChange(function (value) {
+    mass.onFinishChange(function (value) {
       engine.stop();
-      pendulum.setMass(Math.round(value));
+      pendulum.setVariables({mass: Math.round(value)});
       engine.ready();
     });
 
     var lengthFolder = gui.addFolder('선 길이 (m)');
     lengthFolder.open();
-    var length = lengthFolder.add(defaultValue, 'length');
+    var length = lengthFolder.add(defaultValue, 'lineLength');
     length.onChange(function (value) {
       engine.stop();
-      pendulum.setLength(Math.round(value));
+      pendulum.setVariables({lineLength: Math.round(value)});
       engine.ready();
     });
 
@@ -48,7 +51,7 @@
     var theta0 = thetaFolder.add(defaultValue, 'theta0', -90, 90);
     theta0.onChange(function (value) {
       engine.stop();
-      pendulum.setTheta0(Math.round(value));
+      pendulum.setVariables({theta0: Math.round(value)});
       engine.ready();
     });
   };
