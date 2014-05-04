@@ -331,37 +331,6 @@ NPEngine.Convert.toTimeFormat = function(milliseconds) {
 //  return hrs + ':' + mins + ':' + secs + '.' + ms;
   return mins + ':' + secs + ':' + ms;
 }
-NPEngine.Point = function(positionX, positionY) {
-    this.x = positionX || 0;
-    this.y = positionY || 0;
-};
-
-NPEngine.Point.prototype = Object.create(NPEngine.Point.prototype);
-NPEngine.Point.prototype.constructor = NPEngine.Point;
-
-NPEngine.Point.prototype.setX = function(positionX) {
-    this.x = positionX || this.x;
-};
-
-NPEngine.Point.prototype.setY = function(positionY) {
-    this.y = positionY || this.y;
-};
-
-NPEngine.Point.prototype.getX = function() {
-    return this.x;
-};
-
-NPEngine.Point.prototype.getY = function() {
-    return this.y;
-};
-
-NPEngine.Point.prototype.distance = function(target) {
-  return Math.sqrt(Math.pow((this.x-target.x),2)+Math.pow((this.y-target.y),2));
-};
-
-NPEngine.Point.prototype.clone = function() {
-  return new NPEngine.Point(this.x, this.y);
-}
 NPEngine.Rectangle = function(x, y, width, height) {
   this.x = x || 0;
   this.y = y || 0;
@@ -466,6 +435,32 @@ NPEngine.DisplayObject.prototype.update = function () {
 NPEngine.DisplayObject.prototype.render = function (context) {
 };
 
+/**
+ * @author namhoon <emerald105@hanmail.net>
+ * @date 2014-05-04
+ */
+
+/**
+ * NPObject is root object.
+ *
+ * @class NPObject
+ */
+
+NPEngine.NPObject = function() {
+};
+/**
+ * @author namhoon <emerald105@hanmail.net>
+ * @date 2014-05-04
+ */
+
+/**
+ * NPObjectContainer
+ *
+ * @class NPObjectContainer
+ */
+
+NPEngine.NPObjectContainer = function() {
+};
 NPEngine.Grid = function () {
   NPEngine.DisplayObject.call(this);
 
@@ -1055,6 +1050,132 @@ NPEngine.SpringGrid.prototype.convertToGridScalaValue = function(value) {
   return value*this.ratio;
 };
 
+/**
+ * @author namhoon <emerald105@hanmail.net>
+ */
+
+/**
+ * Circle NPObject
+ *
+ * @class Circle
+ * @constructor
+ * @param x {Number} The X coordinate of the center of this circle
+ * @param y {Number} The Y coordinate of the center of this circle
+ * @param radius {Number} The radius of the circle
+ */
+NPEngine.Circle = function(x, y, radius) {
+  /**
+   * @property x
+   * @type Number
+   * @default 0
+   */
+  this.x = x || 0;
+
+  /**
+   * @property y
+   * @type Number
+   * @default 0
+   */
+  this.y = y || 0;
+
+  /**
+   * @property radius
+   * @type Number
+   * @default 0
+   */
+  this.radius = radius || 0;
+};
+
+/**
+ * @author namhoon <emerald105@hanmail.net>
+ */
+
+/**
+ * Line NPObject
+ *
+ * @class Line
+ * @constructor
+ * @param x1 {Number} The X1 coordinate of this line
+ * @param y1 {Number} The Y1 coordinate of this line
+ * @param x2 {Number} The X2 coordinate of this line
+ * @param y2 {Number} The Y2 coordinate of this line
+ */
+NPEngine.Line = function(x1, y1, x2, y2) {
+  /**
+   * @property x1
+   * @type Number
+   * @default 0
+   */
+  this.x1 = x1 || 0;
+
+  /**
+   * @property y1
+   * @type Number
+   * @default 0
+   */
+  this.y1 = y1 || 0;
+
+  /**
+   * @property x2
+   * @type Number
+   * @default 0
+   */
+  this.x2 = x2 || 0;
+
+  /**
+   * @property y2
+   * @type Number
+   * @default 0
+   */
+  this.y2 = y2 || 0;
+
+  /**
+   * @property lineLength
+   * @type Number
+   */
+  this.lineLength = Math.sqrt((x2-x1)*(x2-x1)-(y2-y1)*(y2-y1));
+};
+
+/**
+ * @author namhoon <emerald105@hanmail.net>
+ */
+
+/**
+ * @class Point
+ * @constructor
+ * @param x {Number} The X coordinate of this point
+ * @param y {Number} The Y coordinate of this point
+ */
+
+NPEngine.Point = function(x, y) {
+    this.x = x || 0;
+    this.y = y || 0;
+};
+
+NPEngine.Point.prototype = {
+  constructor: NPEngine.Point
+};
+
+/**
+ * @author namhoon <emerald105@hanmail.net>
+ */
+
+/**
+ * Pendulum object
+ *
+ * @class Pendulum
+ * @constructor
+ */
+NPEngine.Pendulum = function() {
+  var pivot = new NPEngine.Point();
+  var line = new NPEngine.Line();
+
+
+  this.pivot = new NPEngine.Point();
+  this.line = new NPEngine.Line();
+  this.ball = new NPEngine.Circle();
+};
+
 NPEngine.Collision2d = function (options) {
   NPEngine.DisplayObject.call(this);
 
@@ -1363,7 +1484,7 @@ NPEngine.ForcedSpring.prototype.setVariables = function(options) {
 
   this.angularVelocity0 = Math.sqrt(this.k/this.mass);
   this.angularVelocity = this.angularVelocity0*this.frequency;
-}
+};
 NPEngine.Kepler = function(options) {
   NPEngine.DisplayObject.call(this);
 
@@ -1707,7 +1828,7 @@ NPEngine.ParabolicMotion.prototype.setVariables = function (options) {
   this.velocity = options.velocity !== undefined ? options.velocity : 60;                            // m/s
 };
 
-NPEngine.Pendulum = function (options) {
+NPEngine.PendulumSimulation = function (options) {
   NPEngine.DisplayObject.call(this);
 
   options = options || {};
@@ -1725,18 +1846,18 @@ NPEngine.Pendulum = function (options) {
   this.curCircle = new NPEngine.Point;
 };
 
-NPEngine.Pendulum.prototype = Object.create(NPEngine.DisplayObject.prototype);
-NPEngine.Pendulum.prototype.constructor = NPEngine.Pendulum;
+NPEngine.PendulumSimulation.prototype = Object.create(NPEngine.DisplayObject.prototype);
+NPEngine.PendulumSimulation.prototype.constructor = NPEngine.PendulumSimulation;
 
 
 
-NPEngine.Pendulum.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
+NPEngine.PendulumSimulation.prototype.onAttachedRenderer = function(viewWidth, viewHeight, timeBoard) {
   this.pivot.x = Math.round(viewWidth/2);
   this.pivot.y = 0;
   this.timeBoard = timeBoard;
 };
 
-NPEngine.Pendulum.prototype.compute = function () {
+NPEngine.PendulumSimulation.prototype.compute = function () {
   this.memory = [];
   if (this.theta0 < 0.5) { /* theta0 is less than about 30 degrees */
     this.period = Math.round((2 * Math.PI * Math.sqrt(this.lineLength/this.gravity))*(1/this.deltaTime));
@@ -1794,24 +1915,24 @@ NPEngine.Pendulum.prototype.compute = function () {
   }
 };
 
-NPEngine.Pendulum.prototype.onReady = function() {
+NPEngine.PendulumSimulation.prototype.onReady = function() {
   this.curCircle.x = this.memory[0].x;
   this.curCircle.y = this.memory[0].y;
 };
 
-NPEngine.Pendulum.prototype.onStart = function() {
+NPEngine.PendulumSimulation.prototype.onStart = function() {
 };
 
-NPEngine.Pendulum.prototype.onResume = function() {
+NPEngine.PendulumSimulation.prototype.onResume = function() {
 };
 
-NPEngine.Pendulum.prototype.onPause = function() {
+NPEngine.PendulumSimulation.prototype.onPause = function() {
 };
 
-NPEngine.Pendulum.prototype.onStop = function() {
+NPEngine.PendulumSimulation.prototype.onStop = function() {
 };
 
-NPEngine.Pendulum.prototype.update = function () {
+NPEngine.PendulumSimulation.prototype.update = function () {
   var gap = Math.round((new Date().getTime()-this.timeBoard.then)/(this.deltaTime*1000)); // millisecond to 0.01 second
   var phase = Math.round(gap%this.period);
 
@@ -1819,7 +1940,7 @@ NPEngine.Pendulum.prototype.update = function () {
   this.curCircle.y = this.memory[phase].y;
 };
 
-NPEngine.Pendulum.prototype.render = function (context) {
+NPEngine.PendulumSimulation.prototype.render = function (context) {
   var convertedLineLength = Math.round(this.lineLength*5)+60;
   var convertedMass = Math.round(this.mass/3)+22;
 
@@ -1835,7 +1956,7 @@ NPEngine.Pendulum.prototype.render = function (context) {
   context.stroke();
 };
 
-NPEngine.Pendulum.prototype.setVariables = function (options) {
+NPEngine.PendulumSimulation.prototype.setVariables = function (options) {
   options = options || {};
 
   this.mass = options.mass !== undefined ? options.mass : this.mass;

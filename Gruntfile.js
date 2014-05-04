@@ -4,10 +4,13 @@ module.exports = function (grunt) {
     'src/npengine/NPEngine.js',
     'src/npengine/FPS.js',
     'src/npengine/math/*.js',
+    'src/npengine/core/*.js',
     'src/npengine/database/*.js',
     'src/npengine/display/*.js',
     'src/npengine/display/background/*.js',
+    'src/npengine/display/object/core/*.js',
     'src/npengine/display/object/*.js',
+    'src/npengine/simulation/*.js',
     'src/npengine/renderer/*.js'
   ];
 

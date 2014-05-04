@@ -127,4 +127,4 @@ NPEngine.ForcedSpring.prototype.setVariables = function(options) {
 
   this.angularVelocity0 = Math.sqrt(this.k/this.mass);
   this.angularVelocity = this.angularVelocity0*this.frequency;
-}
+};
