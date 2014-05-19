@@ -3,9 +3,7 @@
  */
 
 /**
- * Circle NPObject
- *
- * @class Circle
+ * @class NPEngine.Circle
  * @constructor
  * @param x {Number} The X coordinate of the center of this circle
  * @param y {Number} The Y coordinate of the center of this circle

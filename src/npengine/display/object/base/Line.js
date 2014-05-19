@@ -3,8 +3,6 @@
  */
 
 /**
- * Line NPObject
- *
  * @class Line
  * @constructor
  * @param x1 {Number} The X1 coordinate of this line
@@ -46,4 +44,11 @@ NPEngine.Line = function(x1, y1, x2, y2) {
    * @type Number
    */
   this.lineLength = Math.sqrt((x2-x1)*(x2-x1)-(y2-y1)*(y2-y1));
+
+  /**
+   * @property lineWidth
+   * @type Number
+   * @default 1
+   */
+  this.lineWidth = 1;
 };

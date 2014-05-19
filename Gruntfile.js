@@ -2,12 +2,15 @@ module.exports = function (grunt) {
 
   var srcFiles = [
     'src/npengine/NPEngine.js',
+    'src/npengine/util/*.js',
     'src/npengine/core/*.js',
+    'src/npengine/design/*.js',
     'src/npengine/display/*.js',
-    'src/npengine/display/npobject/*.js',
-    'src/npengine/display/npobject/base/*.js',
-    'src/npengine/display/npobject/npobject/*.js',
+    'src/npengine/display/object/*.js',
+    'src/npengine/display/object/base/*.js',
+    'src/npengine/display/object/npobject/*.js',
     'src/npengine/display/background/*.js',
+    'src/npengine/renderer/*.js'
   ];
 
   grunt.initConfig({
@@ -15,7 +18,7 @@ module.exports = function (grunt) {
 
     clean: {
       build: {
-        src: ['bin/npengine.dev.js']
+        src: ['bin/*']
       }
     },
 
@@ -28,6 +31,9 @@ module.exports = function (grunt) {
 
     uglify: {
       build: {
+        options: {
+          beautify: true
+        },
         files: {
           'bin/npengine.js': ['bin/npengine.dev.js']
         }

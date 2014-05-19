@@ -1,143 +1,46 @@
 /**
- @param {HTMLElement} canvas
- @return {NPEngine}
+ * @author namhoon <emerald105@hanmail.net>
+ */
+
+/**
+ * @class NPEngine
+ * @param canvas {HTMLCanvasElement}
+ * @constructor
  */
 NPEngine = function(canvas) {
-  this.fps = new NPEngine.FPS();
-  this.state = 'create';    // create, init, ready, start, resume, pause, stop, destroy
+  var state = 'create';     // create, ready, start, resume, pause, stop, destroy
 
-  if (!canvas) {
-    var c = document.createElement("canvas");
-    c.width = 800;
-    c.height = 600;
-    document.body.appendChild(c);
-    canvas = c;
+  if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
+    throw 'HTMLCanvasElement parameter is empty or wrong.';
   }
 
-  var that = this;
-  this.keyHandler = function(e) {
-    if (e.keyCode != 13) {
-      return ;
-    }
-    if (that.state == 'create' || that.state == 'init' || that.state == 'destroy') {
-      return ;
-    }
+  var objectManager = new NPEngine.ObjectManager();
+  var rendererManager = new NPEngine.RendererManager(canvas, objectManager);
+  var interactionManager = new NPEngine.InteractionManager(canvas, objectManager, rendererManager);
 
-    if (that.state=='ready') {
-      that.start();
-    }
-    else if (that.state=='resume') {
-      that.pause();
-    }
-    else if (that.state=='pause') {
-      that.resume();
-    }
+  /**
+   * Add the NPObject to object manager.
+   *
+   * @method addObject
+   * @param npobject {NPObject}
+   */
+  this.addObject = function(npobject) {
+    objectManager.addObject(npobject);
   };
-  window.addEventListener("keypress", this.keyHandler, false);
 
-  var clickHandler = function(e) {
-    if (that.state == 'create' || that.state == 'init' || that.state == 'destroy') {
-      return ;
-    }
 
-    if (that.state=='ready') {
-      that.start();
-    }
-    else if (that.state=='resume') {
-      that.pause();
-    }
-    else if (that.state=='pause') {
-      that.resume();
-    }
+
+  /**
+   * update and render
+   * @method updateAndRender
+   */
+  var updateAndRender = function() {
+    objectManager.updateObjects();
+    rendererManager.render();
+    requestAnimationFrame(updateAndRender, canvas);
   };
-  canvas.addEventListener('click', clickHandler, false);
 
-  this.init(canvas);
+  requestAnimationFrame(updateAndRender, canvas); // temp code for test
 };
 
 NPEngine.prototype.constructor = NPEngine;
-
-
-
-NPEngine.prototype.init = function(canvas) {
-  this.renderer = new NPEngine.CanvasRenderer(canvas);
-  this.state = 'init';
-};
-
-NPEngine.prototype.ready = function() {
-  this.renderer.compute();
-  this.renderer.onEngineReady();
-  this.state = 'ready';
-};
-
-NPEngine.prototype.start = function() {
-  this.renderer.onEngineStart();
-  this.state = 'start';
-
-  this.resume();
-};
-
-NPEngine.prototype.resume = function() {
-  var that = this;
-  this.isRun = true;
-
-  this.renderer.onEngineResume();
-  this.state = 'resume';
-
-  requestAnimationFrame(run);
-  function run() {
-    if (!that.isRun) {
-      return ;
-    }
-    requestAnimationFrame(run);
-    that.renderer.update();
-    that.fps.begin();
-    that.renderer.render();
-    that.fps.end();
-  }
-};
-
-NPEngine.prototype.pause = function() {
-  this.state = 'pause';
-  this.isRun = false;
-  this.renderer.onEnginePause();
-};
-
-NPEngine.prototype.stop = function() {
-  this.state = 'stop';
-  this.isRun = false;
-  this.renderer.onEngineStop();
-};
-
-NPEngine.prototype.destroy = function() {
-  this.state = 'destroy';
-  this.renderer.onEngineDestroy();
-};
-
-NPEngine.prototype.setFps = function(flag) {
-  this.renderer.setFps(flag);
-};
-
-NPEngine.prototype.addDisplayObject = function(displayObject) {
-  if (displayObject == null) {
-    throw new Error('Parameter can not be null');
-  }
-
-  if ((displayObject instanceof NPEngine.DisplayObject) == false) {
-    throw new Error('Parameter is not DisplayObject');
-  }
-
-  this.renderer.addChild(displayObject);
-};
-
-NPEngine.prototype.setGrid = function(gridObject) {
-  if (gridObject == null) {
-    throw new Error('Parameter can not be null');
-  }
-
-  if ((gridObject instanceof NPEngine.DisplayObject) == false) {
-    throw new Error('Parameter is not DisplayObject');
-  }
-
-  this.renderer.setGrid(gridObject);
-};
