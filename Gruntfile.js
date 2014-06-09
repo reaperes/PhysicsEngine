@@ -1,16 +1,22 @@
 module.exports = function (grunt) {
 
   var srcFiles = [
-    'src/npengine/NPEngine.js',
-    'src/npengine/util/*.js',
-    'src/npengine/core/*.js',
-    'src/npengine/design/*.js',
-    'src/npengine/display/*.js',
-    'src/npengine/display/object/*.js',
-    'src/npengine/display/object/base/*.js',
-    'src/npengine/display/object/npobject/*.js',
-    'src/npengine/display/background/*.js',
-    'src/npengine/renderer/*.js'
+      'src/nextphysics/intro.js',
+      'src/nextphysics/NextPhysics.js',
+      'src/nextphysics/npengine/*.js',
+      'src/nextphysics/npengine/object/*.js',
+      'src/nextphysics/npobjects/*.js',
+      'src/nextphysics/nprenderer/*.js'
+//    'src/npengine/NPEngine.js',
+//    'src/npengine/util/*.js',
+//    'src/npengine/core/*.js',
+//    'src/npengine/design/*.js',
+//    'src/npengine/display/*.js',
+//    'src/npengine/display/object/*.js',
+//    'src/npengine/display/object/base/*.js',
+//    'src/npengine/display/object/npobject/*.js',
+//    'src/npengine/display/background/*.js',
+//    'src/npengine/renderer/*.js'
   ];
 
   grunt.initConfig({
@@ -25,7 +31,7 @@ module.exports = function (grunt) {
     concat: {
       dist: {
         src: srcFiles,
-        dest: 'bin/npengine.dev.js'
+        dest: 'bin/nextphysics.dev.js'
       }
     },
 
@@ -35,7 +41,7 @@ module.exports = function (grunt) {
           beautify: true
         },
         files: {
-          'bin/npengine.js': ['bin/npengine.dev.js']
+          'bin/npengine.js': ['bin/nextphysics.dev.js']
         }
       }
     }
