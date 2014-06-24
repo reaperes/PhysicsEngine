@@ -4,9 +4,12 @@ module.exports = function (grunt) {
       'src/nextphysics/intro.js',
       'src/nextphysics/NextPhysics.js',
       'src/nextphysics/npengine/*.js',
-      'src/nextphysics/npengine/object/*.js',
+      'src/nextphysics/npengine/force/*.js',
       'src/nextphysics/npobjects/*.js',
-      'src/nextphysics/nprenderer/*.js'
+      'src/nextphysics/npobjects/core/base/*.js',
+      'src/nextphysics/npobjects/core/*.js',
+      'src/nextphysics/npobjects/sample/*.js',
+      'src/nextphysics/renderers/*.js'
 //    'src/npengine/NPEngine.js',
 //    'src/npengine/util/*.js',
 //    'src/npengine/core/*.js',

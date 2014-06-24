@@ -11,9 +11,21 @@
 <script type="text/javascript">
 
   var physics = new NextPhysics(document.getElementById('canvas'));
+  var circle = new NP.Circle(1, 1, 2);
+  circle.add({
+    force: {
+      gravity: 9.8
+    }
+  });
+  physics.add(circle);
 
-  object = new NP.Object();
-  physics.add(object);
+  physics.start();
+
+
+//  var physics = new NextPhysics(document.getElementById('canvas'));
+//
+//  object = new NP.Object();
+//  physics.add(object);
 
 
 

@@ -10,8 +10,15 @@
 NP.Renderer = function(canvas) {
   var ctx = canvas.getContext('2d');
 
-  this.render = function() {
-    ctx.arc();
+  /**
+   * Render objects
+   *
+   * @method render
+   * @param object {NP.Object} render object
+   */
+  this.render = function(object) {
+    ctx.arc(100,75,50,0,2*Math.PI);
+    ctx.stroke();
   }
 };
 

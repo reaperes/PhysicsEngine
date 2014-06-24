@@ -16,24 +16,58 @@ NextPhysics = function (canvas) {
   var renderer = new NP.Renderer(canvas);
   var objects = [];
 
-  this.add = function (arg) {
-    var i = 0,
-        len = arg && arg.length || 0,
-        thing = len ? arg[0] : arg;
+  /**
+   * del
+   *
+   * @property deltaT
+   * @type {Number}
+   */
+  var deltaT = 0.1;
 
-    if (!thing) {
-      return;
-    }
-
-    do {
-      objects.push(thing);
-      engine.add(thing);
-    } while (++i < len && (thing = arg[i]));
+  /**
+   * @method add
+   * @param npobject {NP.Object}
+   */
+  this.add = function (npobject) {
+    objects.push(npobject);
+    engine.add(npobject);
   };
 
-  this.show = function () {
-    renderer.render();
-  }
+  /**
+   * Updates objects
+   *
+   * @method update
+   */
+  this.update = function () {
+    engine.update();
+  };
+
+  /**
+   * Display objects
+   *
+   * @method render
+   */
+  this.render = function () {
+    for (var i = 0, len = objects.length; i<len; i++) {
+      renderer.render(objects[i]);
+      // consider priority, camera position
+    }
+  };
+
+  /**
+   * Start engine
+   *
+   * @method start
+   */
+  this.start = function() {
+    var loop = function() {
+      this.update();
+      this.render();
+      requestAnimationFrame(loop, undefined);
+    }.bind(this);
+
+    requestAnimationFrame(loop, undefined);
+  };
 };
 
 NextPhysics.prototype.constructor = NextPhysics;
