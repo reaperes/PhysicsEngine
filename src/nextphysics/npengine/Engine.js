@@ -52,7 +52,7 @@ NP.Engine = function() {
    * Solve the net force of npobject.
    *
    * @method solveNetForce
-   * @param forces {NP.Object} object of forces
+   * @param forces {Object} object of forces
    * @return {Array} net force array.
    */
   var solveNetForce = function(forces) {

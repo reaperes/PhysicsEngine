@@ -4,20 +4,15 @@
 
 /**
  * @class NextPhysics
- * @param canvas {HTMLCanvasElement}
+ * @param canvasContainer {HTMLElement}
  * @constructor
  */
-NextPhysics = function (canvas) {
-  if (canvas === undefined || !(canvas instanceof HTMLCanvasElement)) {
-    throw 'HTMLCanvasElement parameter is empty or wrong.';
-  }
-
+NextPhysics = function (canvasContainer) {
   var engine = new NP.Engine();
-  var renderer = new NP.Renderer(canvas);
-  var objects = [];
+  var renderer = new NP.Renderer(canvasContainer);
 
   /**
-   * del
+   * delta time
    *
    * @property deltaT
    * @type {Number}
@@ -29,8 +24,8 @@ NextPhysics = function (canvas) {
    * @param npobject {NP.Object}
    */
   this.add = function (npobject) {
-    objects.push(npobject);
     engine.add(npobject);
+    renderer.add(npobject);
   };
 
   /**
@@ -39,7 +34,7 @@ NextPhysics = function (canvas) {
    * @method update
    */
   this.update = function () {
-    engine.update();
+    engine.update(deltaT);
   };
 
   /**
@@ -48,10 +43,7 @@ NextPhysics = function (canvas) {
    * @method render
    */
   this.render = function () {
-    for (var i = 0, len = objects.length; i<len; i++) {
-      renderer.render(objects[i]);
-      // consider priority, camera position
-    }
+    renderer.render();
   };
 
   /**
@@ -66,7 +58,26 @@ NextPhysics = function (canvas) {
       requestAnimationFrame(loop, undefined);
     }.bind(this);
 
-    requestAnimationFrame(loop, undefined);
+    var debugLoop = function() {
+      stats.begin();
+      this.update();
+      this.render();
+      stats.end();
+      requestAnimationFrame(debugLoop, undefined);
+    }.bind(this);
+
+    if (NP.DEBUG) {
+      var stats = new Stats();
+      stats.setMode(0); // 0: fps, 1: ms
+      stats.domElement.style.position = 'absolute';
+      stats.domElement.style.left = '0px';
+      stats.domElement.style.top = '0px';
+      document.body.appendChild( stats.domElement );
+      requestAnimationFrame(debugLoop, undefined);
+    }
+    else {
+      requestAnimationFrame(loop, undefined);
+    }
   };
 };
 

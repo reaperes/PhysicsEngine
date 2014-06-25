@@ -10,6 +10,14 @@
  */
 NP.Object = function() {
   /**
+   * Type of object
+   *
+   * @property type
+   * @type NP.Object.Type
+   */
+  this.type = undefined;
+
+  /**
    * Forces of object
    *
    * @property forces
@@ -45,40 +53,42 @@ NP.Object = function() {
   this.position = [0, 0];
 };
 
-NP.Object.prototype = {
-  constructor: NP.Object,
+NP.Object.prototype.constructor = NP.Object;
 
+
+/**
+ * Add force, etc.
+ *
+ * @method add
+ */
+NP.Object.prototype.add = (function() {
   /**
-   * Add force, etc.
+   * After parsing force object, add force object, and calculate net force of this object.
    *
-   * @method add
+   * @method addForce
+   * @param forces {Object} object of forces
    */
-  add: (function() {
-    /**
-     * After parsing force object, add force object, and calculate net force of this object.
-     *
-     * @method addForce
-     * @param forces {Object} object of forces
-     */
-    var addForce = function(forces) {
-      var i, len;
+  var addForce = function(forces) {
+    var i, len;
 
-      for (i=0, len=Object.keys(forces).length; i<len; i++) {
-        if ('gravity' === forces[i]) {
-          this.forces['gravity'] = forces[i] === 'default' ? new NP.GravityForce() : new NP.GravityForce(forces[i]);
-        }
+    for (i=0, len=Object.keys(forces).length; i<len; i++) {
+      if ('gravity' === forces[i]) {
+        this.forces['gravity'] = forces[i] === 'default' ? new NP.GravityForce() : new NP.GravityForce(forces[i]);
       }
-    };
+    }
+  };
 
-    return function() {
-      var i, len, key;
-      for (i=0, len=arguments.length; i<len; i++) {
-        for (key in arguments[i]) {
-          if (key === 'force') {
-            addForce(arguments[i]['force']);
-          }
+  return function() {
+    var i, len, key;
+    for (i=0, len=arguments.length; i<len; i++) {
+      for (key in arguments[i]) {
+        if (key === 'force') {
+          addForce(arguments[i]['force']);
         }
       }
     }
-  })()
-};
+  }
+})();
+
+NP.Object.Type = {};
+NP.Object.Type.CIRCLE = 'circle';

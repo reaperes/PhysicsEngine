@@ -3,3 +3,4 @@
  */
 
 NP = {};
+NP.DEBUG = true;
