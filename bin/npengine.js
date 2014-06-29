@@ -1,6 +1,25 @@
-NP = {}, NP.DEBUG = !0, NextPhysics = function(a) {
+if (NP = {}, NP.DEBUG = !0, NP.DEBUG) {
+    NP.DEBUG_KEY = "debug_key", NP.DEBUG_VALUE = "debug_value";
+    var _debug_container = document.createElement("div");
+    _debug_container.id = "debug", _debug_container.style.cssText = "width:0px;height:0px;opacity:0.9;";
+    var _debug_addKey = function(a, b) {
+        var c = document.createElement("span");
+        c.id = "debug_key", c.style.cssText = "width:200px;height:100px;background-color:#fff;color:#000;font-size:14px;font-family:Helvetica,Arial,sans-serif;line-height:20px;top:50px;left:0px;position:absolute;padding-left:10px;", 
+        c.textContent = a, _debug_container.appendChild(c);
+        var d = document.createElement("span");
+        d.id = "debug_key", d.style.cssText = "width:200px;height:100px;background-color:#fff;color:#000;font-size:14px;font-family:Helvetica,Arial,sans-serif;line-height:20px;top:70px;left:0px;position:absolute;padding-left:10px;", 
+        d.textContent = b, _debug_container.appendChild(d);
+    };
+    window.onload = function() {
+        document.body.appendChild(_debug_container);
+    };
+}
+
+NextPhysics = function(a) {
     var b = new NP.Engine(), c = new NP.Renderer(a), d = .1;
-    this.add = function(a) {
+    this.setDimension = function(a) {
+        NP.dimension = "2d" === a || "3d" === a ? a : "2d";
+    }, this.add = function(a) {
         b.add(a), c.add(a);
     }, this.update = function() {
         b.update(d);
@@ -17,7 +36,10 @@ NP = {}, NP.DEBUG = !0, NextPhysics = function(a) {
             c.setMode(0), c.domElement.style.position = "absolute", c.domElement.style.left = "0px", 
             c.domElement.style.top = "0px", document.body.appendChild(c.domElement), requestAnimationFrame(b, void 0);
         } else requestAnimationFrame(a, void 0);
-    };
+    }, a.addEventListener("mouseover", function() {}.bind(this), !1), a.addEventListener("mousewheel", function(a) {
+        a.wheelDelta > 0 ? c.camera.position.z -= c.camera.position.z / 10 : c.camera.position.z += c.camera.position.z / 10, 
+        console.log(c.camera.position.z);
+    }.bind(this), !1);
 }, NextPhysics.prototype.constructor = NextPhysics, NP.Engine = function() {
     var a = [];
     this.add = function(b) {
@@ -65,7 +87,10 @@ NP.Object = function() {
         var b, c, d;
         for (b = 0, c = arguments.length; c > b; b++) for (d in arguments[b]) "force" === d && a(arguments[b].force);
     };
-}(), NP.Object.Type = {}, NP.Object.Type.CIRCLE = "circle", NP.ObjectContainer = function() {
+}(), NP.Object.Type = {
+    CIRCLE: "circle",
+    SPHERE: "sphere"
+}, NP.ObjectContainer = function() {
     NP.Object.call(this);
 }, NP.ObjectContainer.prototype = Object.create(NP.Object.prototype), NP.ObjectContainer.prototype.constructor = NP.ObjectContainer, 
 NP.Point = function(a, b) {
@@ -73,59 +98,50 @@ NP.Point = function(a, b) {
         return [ this.x, this.y ];
     };
 }, NP.Point.prototype.constructor = NP.Point, NP.Circle = function(a, b, c) {
-    NP.Object.call(this), this.type = NP.Object.Type.CIRCLE, this.x = void 0 !== a ? this.x : a, 
-    this.y = void 0 !== b ? this.y : b, this.radius = void 0 !== c ? this.radius : c;
+    NP.Object.call(this), this.type = NP.Object.Type.CIRCLE, this.x = void 0 !== a ? a : this.x, 
+    this.y = void 0 !== b ? b : this.y, this.radius = void 0 !== c ? c : this.radius;
 }, NP.Circle.prototype = Object.create(NP.Object.prototype), NP.Circle.prototype.constructor = NP.Circle, 
+NP.Sphere = function(a, b, c, d) {
+    NP.Object.call(this), this.type = NP.Object.Type.SPHERE, this.x = void 0 !== a ? a : this.x, 
+    this.y = void 0 !== b ? b : this.y, this.z = void 0 !== c ? c : this.z, this.radius = void 0 !== d ? d : this.radius;
+}, NP.Sphere.prototype = Object.create(NP.Object.prototype), NP.Sphere.prototype.constructor = NP.Sphere, 
 NP.Pendulum = function() {
     NP.ObjectContainer.call(this);
 }, NP.Pendulum.prototype = Object.create(NP.ObjectContainer.prototype), NP.Pendulum.prototype.constructor = NP.Pendulum, 
 NP.ColorSets = function() {
     var a = {
-        background: "#FFFFFF",
-        color1: "#DF4949",
-        color2: "#E27A3F",
-        color3: "#EFC94C",
-        color4: "#45B29D",
-        color5: "#334D5C"
+        background: 16777215,
+        color1: 14633289,
+        color2: 14842431,
+        color3: 15714636,
+        color4: 4567709,
+        color5: 3362140
     };
     return [ a ];
 }(), NP.Renderer = function(a) {
-    return new NP.Renderer3D(a);
-}, NP.Renderer.prototype.constructor = NP.Renderer, NP.Renderer.prototype.render = function() {
-    alert("error");
-}, NP.Renderer.prototype.add = function() {
-    alert("error");
-}, NP.Renderer2D = function(a) {
-    var b = new Two({
-        width: a.offsetWidth,
-        height: a.offsetHeight
-    }).appendTo(a), c = NP.ColorSets[0];
-    a.style.background = c.background, this.render = function() {
-        b.update();
-    }, this.add = function(a) {
-        switch (a.type) {
-          case NP.Object.Type.CIRCLE:
-            var d = b.makeCircle(100, 100, 20);
-            d.fill = c.color1, d.noStroke();
-        }
-    };
-}, NP.Renderer2D.prototype = Object.create(NP.Renderer.prototype), NP.Renderer2D.prototype.constructor = NP.Renderer2D, 
-NP.Renderer3D = function(a) {
-    var b = new THREE.WebGLRenderer(), c = new THREE.Scene(), d = new THREE.PerspectiveCamera(45, a.offsetWidth / a.offsetHeight, 1, 100);
+    var b = new THREE.WebGLRenderer(), c = new THREE.Scene(), d = new THREE.PerspectiveCamera(45, a.offsetWidth / a.offsetHeight, 1e-4, 1e5), e = NP.ColorSets[0];
     b.setClearColor(new THREE.Color(15658734)), b.setSize(a.offsetWidth, a.offsetHeight), 
-    a.appendChild(b.domElement), c.add(d);
-    var e = new THREE.AxisHelper(100);
-    c.add(e), this.render = function() {
+    a.appendChild(b.domElement), c.add(d), d.position.x = 0, d.position.y = 0, d.position.z = 5, 
+    d.lookAt(c.position);
+    var f = new THREE.AxisHelper(100);
+    c.add(f), this.camera = d, this.render = function() {
         b.render(c, d);
     }, this.add = function(a) {
+        var b = 16;
         switch (a.type) {
           case NP.Object.Type.CIRCLE:
-            var b = new THREE.SphereGeometry(1, 15, 15), e = new THREE.MeshBasicMaterial({
-                color: 7829503,
+            var d = new THREE.CircleGeometry(a.radius, b), f = new THREE.MeshBasicMaterial({
+                color: e.color1
+            }), g = new THREE.Mesh(d, f);
+            g.position.x = a.x, g.position.y = a.y, c.add(g);
+            break;
+
+          case NP.Object.Type.SPHERE:
+            var h = new THREE.SphereGeometry(a.radius, b, b), i = new THREE.MeshBasicMaterial({
+                color: e.color1,
                 wireframe: !0
-            }), f = new THREE.Mesh(b, e);
-            f.position.x = 0, f.position.y = 0, f.position.z = 0, c.add(f), d.position.x = 0, 
-            d.position.y = 0, d.position.z = 10, d.lookAt(c.position);
+            }), j = new THREE.Mesh(h, i);
+            j.position.x = a.x, j.position.y = a.y, j.position.z = a.z, c.add(j);
         }
     };
-}, NP.Renderer3D.prototype = Object.create(NP.Renderer.prototype), NP.Renderer3D.prototype.constructor = NP.Renderer3D;
+}, NP.Renderer.prototype.constructor = NP.Renderer;

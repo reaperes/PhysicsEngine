@@ -20,6 +20,23 @@ NextPhysics = function (canvasContainer) {
   var deltaT = 0.1;
 
   /**
+   * Set Physics dimension.
+   *
+   * @method add
+   * @param value {String} '2d' or '3d'. Default is '2d'.
+   */
+  this.setDimension = function(value) {
+    if (value === '2d' || value === '3d') {
+      NP.dimension = value;
+    }
+    else {
+      NP.dimension = '2d';
+    }
+  };
+
+  /**
+   * Add object
+   *
    * @method add
    * @param npobject {NP.Object}
    */
@@ -79,6 +96,20 @@ NextPhysics = function (canvasContainer) {
       requestAnimationFrame(loop, undefined);
     }
   };
+
+  /****************************************************
+   * Mouse event handling
+   ****************************************************/
+  canvasContainer.addEventListener('mouseover', function(e) {}.bind(this), false);
+  canvasContainer.addEventListener('mousewheel', function(e) {
+    if (e.wheelDelta > 0) {
+      renderer.camera.position.z -= renderer.camera.position.z / 10;
+    }
+    else {
+      renderer.camera.position.z += renderer.camera.position.z / 10;
+    }
+    console.log(renderer.camera.position.z);
+  }.bind(this), false);
 };
 
 NextPhysics.prototype.constructor = NextPhysics;

@@ -90,5 +90,7 @@ NP.Object.prototype.add = (function() {
   }
 })();
 
-NP.Object.Type = {};
-NP.Object.Type.CIRCLE = 'circle';
+NP.Object.Type = {
+  CIRCLE: 'circle',
+  SPHERE: 'sphere'
+};

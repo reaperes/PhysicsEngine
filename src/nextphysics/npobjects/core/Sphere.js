@@ -3,17 +3,18 @@
  */
 
 /**
- * @class NP.Circle
+ * @class NP.Sphere
  * @constructor
  */
-NP.Circle = function(x, y, radius) {
+NP.Sphere = function(x, y, z, radius) {
   NP.Object.call(this);
-  this.type = NP.Object.Type.CIRCLE;
+  this.type = NP.Object.Type.SPHERE;
 
   this.x = x !== undefined ? x : this.x;
   this.y = y !== undefined ? y : this.y;
+  this.z = z !== undefined ? z : this.z;
   this.radius = radius !== undefined ? radius : this.radius;
 };
 
-NP.Circle.prototype = Object.create(NP.Object.prototype);
-NP.Circle.prototype.constructor = NP.Circle;
+NP.Sphere.prototype = Object.create(NP.Object.prototype);
+NP.Sphere.prototype.constructor = NP.Sphere;

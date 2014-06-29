@@ -4,27 +4,29 @@
   <meta charset="utf-8">
   <title>Next PhysicsEngine (mini) - Pendulum</title>
   <script type="text/javascript" src="bin/nextphysics.dev.js"></script>
-  <script type="text/javascript" src="lib/two.js"></script>
   <script type="text/javascript" src="lib/three.js"></script>
   <script type="text/javascript" src="lib/stats.min.js"></script>
   <script type="text/javascript" src="lib/dat.gui.min.js"></script>
   <script type="text/css" src="test.css"></script>
 </head>
 <body>
-<div id="canvas" style="width:1260px;height:650px;">
+<div id="canvas" style="width:1200px;height:600px;">
 </div>
 <script type="text/javascript">
-  var physics = new NextPhysics(document.getElementById('canvas'));
-  var circle = new NP.Circle(1, 1, 2);
-  circle.add({
-    force: {
-      gravity: 9.8
-    }
-  });
-  physics.add(circle);
+  window.onload = function() {
+    var physics = new NextPhysics(document.getElementById('canvas'));
+    var circle = new NP.Circle(-1, 0, 1);
+    circle.add({
+      force: {
+        gravity: 9.8
+      }
+    });
+    physics.add(circle);
+    var sphere = new NP.Sphere(1, 0, 0, 1);
+    physics.add(sphere);
 
-  physics.start();
-
+    physics.start();
+  };
 
 //  var physics = new NextPhysics(document.getElementById('canvas'));
 //

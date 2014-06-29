@@ -4,6 +4,48 @@
 
 NP = {};
 NP.DEBUG = true;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ONLY FOR DEBUGGING TOOLS
+if (NP.DEBUG) {
+  NP.DEBUG_KEY = 'debug_key';
+  NP.DEBUG_VALUE = 'debug_value';
+
+  var _debug_container = document.createElement('div');
+  _debug_container.id = 'debug';
+  _debug_container.style.cssText = 'width:0px;height:0px;opacity:0.9;';
+
+  var _debug_addKey = function (key, value) {
+    var el = document.createElement('span');
+    el.id = 'debug_key';
+    el.style.cssText = 'width:200px;height:100px;background-color:#fff;color:#000;font-size:14px;font-family:Helvetica,Arial,sans-serif;line-height:20px;top:50px;left:0px;position:absolute;padding-left:10px;';
+    el.textContent = key;
+    _debug_container.appendChild(el);
+
+    var el2 = document.createElement('span');
+    el2.id = 'debug_key';
+    el2.style.cssText = 'width:200px;height:100px;background-color:#fff;color:#000;font-size:14px;font-family:Helvetica,Arial,sans-serif;line-height:20px;top:70px;left:0px;position:absolute;padding-left:10px;';
+    el2.textContent = value;
+    _debug_container.appendChild(el2);
+  };
+
+  window.onload = function() {
+    document.body.appendChild(_debug_container);
+  }
+}
 /**
  * @author namhoon <emerald105@hanmail.net>
  */
@@ -26,6 +68,23 @@ NextPhysics = function (canvasContainer) {
   var deltaT = 0.1;
 
   /**
+   * Set Physics dimension.
+   *
+   * @method add
+   * @param value {String} '2d' or '3d'. Default is '2d'.
+   */
+  this.setDimension = function(value) {
+    if (value === '2d' || value === '3d') {
+      NP.dimension = value;
+    }
+    else {
+      NP.dimension = '2d';
+    }
+  };
+
+  /**
+   * Add object
+   *
    * @method add
    * @param npobject {NP.Object}
    */
@@ -85,6 +144,20 @@ NextPhysics = function (canvasContainer) {
       requestAnimationFrame(loop, undefined);
     }
   };
+
+  /****************************************************
+   * Mouse event handling
+   ****************************************************/
+  canvasContainer.addEventListener('mouseover', function(e) {}.bind(this), false);
+  canvasContainer.addEventListener('mousewheel', function(e) {
+    if (e.wheelDelta > 0) {
+      renderer.camera.position.z -= renderer.camera.position.z / 10;
+    }
+    else {
+      renderer.camera.position.z += renderer.camera.position.z / 10;
+    }
+    console.log(renderer.camera.position.z);
+  }.bind(this), false);
 };
 
 NextPhysics.prototype.constructor = NextPhysics;
@@ -316,17 +389,19 @@ NP.Object.prototype.add = (function() {
   }
 })();
 
-NP.Object.Type = {};
-NP.Object.Type.CIRCLE = 'circle';
+NP.Object.Type = {
+  CIRCLE: 'circle',
+  SPHERE: 'sphere'
+};
 /**
  * @author namhoon <emerald105@hanmail.net>
  */
 
 /**
+ * NP.ObjectContainer can contains every NP.Object
+ *
  * @class NP.ObjectContainer
  * @constructor
- *
- * NP.ObjectContainer can contains every NP.Object
  */
 NP.ObjectContainer = function() {
   NP.Object.call(this);
@@ -371,13 +446,34 @@ NP.Circle = function(x, y, radius) {
   NP.Object.call(this);
   this.type = NP.Object.Type.CIRCLE;
 
-  this.x = x !== undefined ? this.x : x;
-  this.y = y !== undefined ? this.y : y;
-  this.radius = radius !== undefined ? this.radius : radius;
+  this.x = x !== undefined ? x : this.x;
+  this.y = y !== undefined ? y : this.y;
+  this.radius = radius !== undefined ? radius : this.radius;
 };
 
 NP.Circle.prototype = Object.create(NP.Object.prototype);
 NP.Circle.prototype.constructor = NP.Circle;
+
+/**
+ * @author namhoon <emerald105@hanmail.net>
+ */
+
+/**
+ * @class NP.Sphere
+ * @constructor
+ */
+NP.Sphere = function(x, y, z, radius) {
+  NP.Object.call(this);
+  this.type = NP.Object.Type.SPHERE;
+
+  this.x = x !== undefined ? x : this.x;
+  this.y = y !== undefined ? y : this.y;
+  this.z = z !== undefined ? z : this.z;
+  this.radius = radius !== undefined ? radius : this.radius;
+};
+
+NP.Sphere.prototype = Object.create(NP.Object.prototype);
+NP.Sphere.prototype.constructor = NP.Sphere;
 
 /**
  * @author namhoon <emerald105@hanmail.net>
@@ -425,12 +521,12 @@ NP.ColorSets = (function() {
    * https://kuler.adobe.com/Copy-of-Flat-Design-Colors-v2-color-theme-3936285/
    */
   var Flat_Design_Colors_v2 = {
-    background: '#FFFFFF',
-    color1: '#DF4949',
-    color2: '#E27A3F',
-    color3: '#EFC94C',
-    color4: '#45B29D',
-    color5: '#334D5C'
+    background: 0xFFFFFF,
+    color1: 0xDF4949,
+    color2: 0xE27A3F,
+    color3: 0xEFC94C,
+    color4: 0x45B29D,
+    color5: 0x334D5C
   };
 
   /**
@@ -445,124 +541,37 @@ NP.ColorSets = (function() {
  */
 
 /**
- * Interface of nprenderer
+ * Next physics renderer
  *
  * @class NP.Renderer
  * @constructor
  * @param canvasContainer {HTMLDivElement}
  */
 NP.Renderer = function(canvasContainer) {
-  // auto detect 2d or 3d renderer
-//  return new NP.Renderer2D(canvasContainer);
-  return new NP.Renderer3D(canvasContainer);
-};
-
-NP.Renderer.prototype.constructor = NP.Renderer;
-
-
-/**
- * Render objects
- *
- * @method render
- */
-NP.Renderer.prototype.render = function() {
-  alert('error');
-};
-
-/**
- * Add object to renderer scene
- *
- * @method add
- * @param object {NP.Object}
- */
-NP.Renderer.prototype.add = function(object) {
-  alert('error');
-};
-
-/**
- * @author namhoon <emerald105@hanmail.net>
- */
-
-/**
- * @class NP.Renderer2D
- * @constructor
- * @param canvasContainer {HTMLDivElement}
- */
-NP.Renderer2D = function(canvasContainer) {
-  /**
-   * Array of rendered object.
-   * Render starts index 0 to last index.
-   *
-   * @property objects
-   * @type Array[NP.Object]
-   */
-  var objects = [];
-
-  /**
-   * Two.js property
-   *
-   * @property two
-   */
-  var two = new Two({
-    width: canvasContainer.offsetWidth,
-    height: canvasContainer.offsetHeight
-  }).appendTo(canvasContainer);
-
-  // find color set
-  var colorSet = NP.ColorSets[0];
-  canvasContainer.style.background = colorSet['background'];
-
-  /**
-   * Render objects
-   *
-   * @method render
-   */
-  this.render = function() {
-    two.update();
-  };
-
-  /**
-   * Add object to renderer scene
-   *
-   * @method add
-   * @param object one of npobject
-   */
-  this.add = function(object) {
-    switch (object.type) {
-      case NP.Object.Type.CIRCLE:
-//        var circle = two.makeCircle(object.position[0], object.position[1], object.radius);
-        var circle = two.makeCircle(100, 100, 20);
-        circle.fill = colorSet['color1'];
-        circle.noStroke();
-        break;
-    }
-  }
-};
-
-NP.Renderer2D.prototype = Object.create(NP.Renderer.prototype);
-NP.Renderer2D.prototype.constructor = NP.Renderer2D;
-
-/**
- * @author namhoon <emerald105@hanmail.net>
- */
-
-/**
- * @class NP.Renderer3D
- * @constructor
- * @param canvasContainer {HTMLDivElement}
- */
-NP.Renderer3D = function(canvasContainer) {
   var renderer = new THREE.WebGLRenderer();
   var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(45, canvasContainer.offsetWidth / canvasContainer.offsetHeight, 1, 100);
+  var camera = new THREE.PerspectiveCamera(45, canvasContainer.offsetWidth / canvasContainer.offsetHeight, 0.0001, 100000);
+  var colorSet = NP.ColorSets[0];
 
   renderer.setClearColor(new THREE.Color(0xEEEEEE));
   renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight);
   canvasContainer.appendChild(renderer.domElement);
   scene.add(camera);
 
+  camera.position.x = 0;
+  camera.position.y = 0;
+  camera.position.z = 5;
+  camera.lookAt(scene.position);
+
   var axes = new THREE.AxisHelper( 100 );
   scene.add(axes);
+
+  /**
+   * Renderer camera
+   *
+   * @property camera
+   */
+  this.camera = camera;
 
   /**
    * Render objects
@@ -580,28 +589,31 @@ NP.Renderer3D = function(canvasContainer) {
    * @param object {NP.Object}
    */
   this.add = function(object) {
+    var segments = 16;
+
     switch (object.type) {
       case NP.Object.Type.CIRCLE:
+        var circleGeometry = new THREE.CircleGeometry( object.radius, segments );
+        var material = new THREE.MeshBasicMaterial({color: colorSet['color1']});
+        var circle = new THREE.Mesh( circleGeometry, material );
 
-        var sphereGeometry = new THREE.SphereGeometry(1, 15, 15);
-        var sphereMaterial = new THREE.MeshBasicMaterial({color: 0x7777ff, wireframe: true});
-        var sphere = new THREE.Mesh(sphereGeometry,sphereMaterial);
+        circle.position.x = object.x;
+        circle.position.y = object.y;
+        scene.add( circle );
+        break;
 
-        // position the sphere
-        sphere.position.x=0;
-        sphere.position.y=0;
-        sphere.position.z=0;
+      case NP.Object.Type.SPHERE:
+        var sphereGeometry = new THREE.SphereGeometry(object.radius, segments, segments);
+        var sphereMaterial = new THREE.MeshBasicMaterial({color: colorSet['color1'], wireframe: true});
+        var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+        sphere.position.x = object.x;
+        sphere.position.y = object.y;
+        sphere.position.z = object.z;
         scene.add(sphere);
-
-        camera.position.x = 0;
-        camera.position.y = 0;
-        camera.position.z = 10;
-        camera.lookAt(scene.position);
-
         break;
     }
   };
 };
 
-NP.Renderer3D.prototype = Object.create(NP.Renderer.prototype);
-NP.Renderer3D.prototype.constructor = NP.Renderer3D;
+NP.Renderer.prototype.constructor = NP.Renderer;

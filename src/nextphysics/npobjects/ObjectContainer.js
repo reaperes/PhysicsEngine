@@ -3,10 +3,10 @@
  */
 
 /**
+ * NP.ObjectContainer can contains every NP.Object
+ *
  * @class NP.ObjectContainer
  * @constructor
- *
- * NP.ObjectContainer can contains every NP.Object
  */
 NP.ObjectContainer = function() {
   NP.Object.call(this);
