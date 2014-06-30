@@ -10,7 +10,6 @@ module.exports = function (grunt) {
     'src/nextphysics/npobjects/core/base/*.js',
     'src/nextphysics/npobjects/core/*.js',
     'src/nextphysics/npobjects/sample/*.js',
-    'src/nextphysics/nprenderer/theme/*.js',
     'src/nextphysics/nprenderer/*.js',
   ];
 
