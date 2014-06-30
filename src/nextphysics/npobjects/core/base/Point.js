@@ -6,9 +6,10 @@
  * @class NP.Point
  * @constructor
  */
-NP.Point = function(x, y) {
+NP.Point = function(x, y, z) {
   this.x = x || 0;
   this.y = y || 0;
+  this.z = z || 0;
 
   /**
    * Convert to Array list
@@ -16,7 +17,7 @@ NP.Point = function(x, y) {
    * @method list
    */
   this.list = function() {
-    return [this.x, this.y];
+    return [this.x, this.y, this.z];
   }
 };
 

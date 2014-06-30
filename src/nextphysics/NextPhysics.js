@@ -17,22 +17,7 @@ NextPhysics = function (canvasContainer) {
    * @property deltaT
    * @type {Number}
    */
-  var deltaT = 0.1;
-
-  /**
-   * Set Physics dimension.
-   *
-   * @method add
-   * @param value {String} '2d' or '3d'. Default is '2d'.
-   */
-  this.setDimension = function(value) {
-    if (value === '2d' || value === '3d') {
-      NP.dimension = value;
-    }
-    else {
-      NP.dimension = '2d';
-    }
-  };
+  var deltaT = 0.01;
 
   /**
    * Add object
@@ -72,7 +57,7 @@ NextPhysics = function (canvasContainer) {
     var loop = function() {
       this.update();
       this.render();
-      requestAnimationFrame(loop, undefined);
+      requestAnimationFrame(loop, renderer.canvas);
     }.bind(this);
 
     var debugLoop = function() {
@@ -80,7 +65,7 @@ NextPhysics = function (canvasContainer) {
       this.update();
       this.render();
       stats.end();
-      requestAnimationFrame(debugLoop, undefined);
+      requestAnimationFrame(debugLoop, renderer.canvas);
     }.bind(this);
 
     if (NP.DEBUG) {
@@ -90,10 +75,10 @@ NextPhysics = function (canvasContainer) {
       stats.domElement.style.left = '0px';
       stats.domElement.style.top = '0px';
       document.body.appendChild( stats.domElement );
-      requestAnimationFrame(debugLoop, undefined);
+      requestAnimationFrame(debugLoop, renderer.canvas);
     }
     else {
-      requestAnimationFrame(loop, undefined);
+      requestAnimationFrame(loop, renderer.canvas);
     }
   };
 
@@ -108,7 +93,6 @@ NextPhysics = function (canvasContainer) {
     else {
       renderer.camera.position.z += renderer.camera.position.z / 10;
     }
-    console.log(renderer.camera.position.z);
   }.bind(this), false);
 };
 

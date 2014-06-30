@@ -6,12 +6,13 @@
  * @class NP.Circle
  * @constructor
  */
-NP.Circle = function(x, y, radius) {
+NP.Circle = function(x, y, z, radius) {
   NP.Object.call(this);
   this.type = NP.Object.Type.CIRCLE;
 
-  this.x = x !== undefined ? x : this.x;
-  this.y = y !== undefined ? y : this.y;
+  this.position.x = x !== undefined ? x : this.position.x;
+  this.position.y = y !== undefined ? y : this.position.y;
+  this.position.z = z !== undefined ? z : this.position.z;
   this.radius = radius !== undefined ? radius : this.radius;
 };
 

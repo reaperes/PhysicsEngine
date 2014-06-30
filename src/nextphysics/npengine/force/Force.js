@@ -7,8 +7,7 @@
  * @constructor
  */
 NP.Force = function() {
-  this.x = 0;
-  this.y = 0;
+  this.vector = new NP.Vec3();
 };
 
 NP.Force.prototype.constructor = NP.Force;
@@ -21,7 +20,5 @@ NP.Force.GRAVITY = 'gravity';
  * @method list
  */
 NP.Force.prototype.list = function() {
-  this.list = function() {
-    return [this.x, this.y];
-  };
+  return this.vector.list();
 };

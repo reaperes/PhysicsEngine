@@ -1,26 +1,17 @@
 module.exports = function (grunt) {
 
   var srcFiles = [
-      'src/nextphysics/intro.js',
-      'src/nextphysics/NextPhysics.js',
-      'src/nextphysics/npengine/*.js',
-      'src/nextphysics/npengine/force/*.js',
-      'src/nextphysics/npobjects/*.js',
-      'src/nextphysics/npobjects/core/base/*.js',
-      'src/nextphysics/npobjects/core/*.js',
-      'src/nextphysics/npobjects/sample/*.js',
-      'src/nextphysics/nprenderer/theme/*.js',
-      'src/nextphysics/nprenderer/*.js',
-//    'src/npengine/NPEngine.js',
-//    'src/npengine/util/*.js',
-//    'src/npengine/core/*.js',
-//    'src/npengine/design/*.js',
-//    'src/npengine/display/*.js',
-//    'src/npengine/display/object/*.js',
-//    'src/npengine/display/object/base/*.js',
-//    'src/npengine/display/object/npobject/*.js',
-//    'src/npengine/display/background/*.js',
-//    'src/npengine/renderer/*.js'
+    'src/nextphysics/intro.js',
+    'src/nextphysics/util/*.js',
+    'src/nextphysics/NextPhysics.js',
+    'src/nextphysics/npengine/*.js',
+    'src/nextphysics/npengine/force/*.js',
+    'src/nextphysics/npobjects/*.js',
+    'src/nextphysics/npobjects/core/base/*.js',
+    'src/nextphysics/npobjects/core/*.js',
+    'src/nextphysics/npobjects/sample/*.js',
+    'src/nextphysics/nprenderer/theme/*.js',
+    'src/nextphysics/nprenderer/*.js',
   ];
 
   grunt.initConfig({

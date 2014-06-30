@@ -36,15 +36,17 @@ NP.Engine = function() {
 
     for (i=0, lenI=objects.length; i<lenI; i++) {
       var object = objects[i];
-      object.force = solveNetForce(object.forces);
+      var force = object.force = solveNetForce(object.forces);
 
-      for (j=0, lenJ=object.force.length; j<lenJ; j++) {
-        object.velocity[j] += object.force[j] * deltaT;
-      }
+      var velocity = object.velocity;
+      velocity.x += force.x * deltaT;
+      velocity.y += force.y * deltaT;
+      velocity.z += force.z * deltaT;
 
-      for (j=0, lenJ=object.velocity.length; j<lenJ; j++) {
-        object.position[j] += object.velocity[j] * deltaT;
-      }
+      var position = object.position;
+      position.x += velocity.x * deltaT;
+      position.y += velocity.y * deltaT;
+      position.z += velocity.z * deltaT;
     }
   };
 
@@ -53,26 +55,26 @@ NP.Engine = function() {
    *
    * @method solveNetForce
    * @param forces {Object} object of forces
-   * @return {Array} net force array.
+   * @return {NP.Vec3} net force vector.
    */
   var solveNetForce = function(forces) {
     var keys = Object.keys(forces);
     var len = keys.length;
     if (len == 0) {
-      return [0, 0];
+      return new NP.Vec3();
     }
 
     var i;
-    var x = 0, y = 0;
+    var vector = new NP.Vec3();
     for (i=0; i<len; i++) {
       switch (keys[i]) {
         case NP.Force.GRAVITY:
-          y -= -9.8;
+          vector.add(forces[NP.Force.GRAVITY].vector);
           break;
       }
     }
 
-    return [x, y];
+    return vector;
   }
 };
 

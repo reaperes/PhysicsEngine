@@ -15,11 +15,12 @@ NP.GravityForce = function(gravity) {
   });
   this.__defineSetter__('gravity', function(value) {
     gravity = value;
-    this.y = -value;
+    this.vector.y = -value;
   });
 
-  this.x = 0;
-  this.y = -9.8;
+  this.vector.x = 0;
+  this.vector.y = -9.8;
+  this.vector.z = 0;
 };
 
 NP.GravityForce.prototype = Object.create(NP.Force.prototype);

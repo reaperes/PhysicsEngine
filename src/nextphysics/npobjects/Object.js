@@ -27,30 +27,30 @@ NP.Object = function() {
 
   /**
    * Net force of object. Unit is Newton.
-   * [0] = x, [1] = y.
+   * [0] = x, [1] = y, [2] = z.
    *
    * @property force
-   * @type Array[Number]
+   * @type {NP.Vec3}
    */
-  this.force = [0, 0];
+  this.force = new NP.Vec3();
 
   /**
    * The velocity of object. Unit is m/s.
-   * [0] = x, [1] = y.
+   * [0] = x, [1] = y, [2] = z.
    *
    * @property velocity
-   * @type Array[Number]
+   * @type {NP.Vec3}
    */
-  this.velocity = [0, 0];
+  this.velocity = new NP.Vec3();
 
   /**
    * Position of object. Unit is m.
-   * [0] = x, [1] = y.
+   * [0] = x, [1] = y, [2] = z.
    *
    * @property position
-   * @type Array[Number]
+   * @type {NP.Vec3}
    */
-  this.position = [0, 0];
+  this.position = new NP.Vec3();
 };
 
 NP.Object.prototype.constructor = NP.Object;
@@ -63,16 +63,17 @@ NP.Object.prototype.constructor = NP.Object;
  */
 NP.Object.prototype.add = (function() {
   /**
-   * After parsing force object, add force object, and calculate net force of this object.
+   * After parsing force object, add force to object.
    *
    * @method addForce
    * @param forces {Object} object of forces
    */
   var addForce = function(forces) {
     var i, len;
+    var forcesArr = Object.keys(forces);
 
-    for (i=0, len=Object.keys(forces).length; i<len; i++) {
-      if ('gravity' === forces[i]) {
+    for (i=0, len=forcesArr.length; i<len; i++) {
+      if ('gravity' === forcesArr[i]) {
         this.forces['gravity'] = forces[i] === 'default' ? new NP.GravityForce() : new NP.GravityForce(forces[i]);
       }
     }
@@ -83,11 +84,11 @@ NP.Object.prototype.add = (function() {
     for (i=0, len=arguments.length; i<len; i++) {
       for (key in arguments[i]) {
         if (key === 'force') {
-          addForce(arguments[i]['force']);
+          addForce.call(this, arguments[i]['force']);
         }
       }
     }
-  }
+  };
 })();
 
 NP.Object.Type = {
