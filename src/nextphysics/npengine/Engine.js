@@ -67,11 +67,9 @@ NP.Engine = function() {
     var i;
     var vector = new NP.Vec3();
     for (i=0; i<len; i++) {
-      switch (keys[i]) {
-        case NP.Force.GRAVITY:
-          vector.add(forces[NP.Force.GRAVITY].vector);
-          break;
-      }
+      var force = forces[NP.Force.Type.GRAVITY];
+      force.update();
+      vector.add(force.vector);
     }
 
     return vector;

@@ -15,23 +15,29 @@
 <script type="text/javascript">
   window.onload = function() {
     var physics = new NextPhysics(document.getElementById('canvas'));
-    var circle = new NP.Circle(-1, 0, 0, 1);
-    circle.add({
-      force: {
-        gravity: 9.8
-      }
-    });
-    physics.add(circle);
-    var sphere = new NP.Sphere(1, 0, 0, 1);
-    physics.add(sphere);
+
+//    var circle = new NP.Circle(-1, 0, 0, 1);
+//    circle.add({
+//      force: {
+//        gravity: 9.8
+//      }
+//    });
+//    physics.add(circle);
+//
+//    var sphere = new NP.Sphere(1, 0, 0, 1);
+//    sphere.add({
+//      force: {
+//        gravity: 4.9
+//      }
+//    });
+//    physics.add(sphere);
+
+    var line = new NP.Line(new NP.Vec3(0, 0), new NP.Vec3(2, 2));
+    physics.add(line);
 
     physics.start();
   };
 
-//  var physics = new NextPhysics(document.getElementById('canvas'));
-//
-//  object = new NP.Object();
-//  physics.add(object);
 
 
 

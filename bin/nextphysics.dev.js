@@ -113,6 +113,37 @@ NP.Vec3 = function(x, y, z) {
     this.x += vec3.x;
     this.y += vec3.y;
     this.z += vec3.z;
+    return this;
+  };
+
+  /**
+   * Divide
+   *
+   * @method divideScala
+   * @param scalar {Number}
+   */
+  this.divideScala = function(scalar) {
+    if ( scalar !== 0 ) {
+      var invScalar = 1 / scalar;
+      this.x *= invScalar;
+      this.y *= invScalar;
+      this.z *= invScalar;
+    } else {
+      this.x = 0;
+      this.y = 0;
+      this.z = 0;
+    }
+    return this;
+  };
+
+  /**
+   * vector inner product
+   *
+   * @method dot
+   * @param vec3 {NP.Vec3}
+   */
+  this.dot = function(vec3) {
+    return this.x * vec3.x + this.y * vec3.y + this.z * vec3.z;
   };
 };
 
@@ -137,7 +168,7 @@ NextPhysics = function (canvasContainer) {
    * @property deltaT
    * @type {Number}
    */
-  var deltaT = 0.01;
+  var deltaT = 0.001;
 
   /**
    * Add object
@@ -287,11 +318,9 @@ NP.Engine = function() {
     var i;
     var vector = new NP.Vec3();
     for (i=0; i<len; i++) {
-      switch (keys[i]) {
-        case NP.Force.GRAVITY:
-          vector.add(forces[NP.Force.GRAVITY].vector);
-          break;
-      }
+      var force = forces[NP.Force.Type.GRAVITY];
+      force.update();
+      vector.add(force.vector);
     }
 
     return vector;
@@ -309,12 +338,16 @@ NP.Engine.prototype.constructor = NP.Engine;
  * @constructor
  */
 NP.Force = function() {
+  this.position = new NP.Vec3();
   this.vector = new NP.Vec3();
 };
 
 NP.Force.prototype.constructor = NP.Force;
 
-NP.Force.GRAVITY = 'gravity';
+NP.Force.Type = {
+  GRAVITY: 'gravity',
+  TENSION: 'tension'
+};
 
 /**
  * Convert to Array list
@@ -325,6 +358,14 @@ NP.Force.prototype.list = function() {
   return this.vector.list();
 };
 
+/**
+ * Update force
+ *
+ * @method update
+ */
+NP.Force.prototype.update = function() {
+  throw new Error('Update function must be override.');
+};
 /**
  * @author namhoon <emerald105@hanmail.net>
  */
@@ -346,12 +387,43 @@ NP.GravityForce = function(gravity) {
   });
 
   this.vector.x = 0;
-  this.vector.y = -9.8;
+  this.vector.y = -gravity;
   this.vector.z = 0;
 };
 
 NP.GravityForce.prototype = Object.create(NP.Force.prototype);
 NP.GravityForce.prototype.constructor = NP.GravityForce;
+
+NP.GravityForce.prototype.update = function() {
+  // gravitational force is constant.
+};
+/**
+ * @author namhoon <emerald105@hanmail.net>
+ */
+
+/**
+ * @class NP.TensionForce
+ * @constructor
+ * @param pivot {NP.Vec3} the point of pivot
+ * @param reaction {NP.Force} the reaction force
+ */
+NP.TensionForce = function(pivot, reaction) {
+  NP.Force.call(this);
+
+  this.pivot = pivot !== undefined ? pivot : new NP.Vec3();
+  this.reactionForce = reaction !== undefined ? reaction : new NP.Vec3();
+};
+
+NP.GravityForce.prototype = Object.create(NP.Force.prototype);
+NP.GravityForce.prototype.constructor = NP.GravityForce;
+
+NP.GravityForce.prototype.update = function() {
+  // todo: consider 3d tension
+
+
+
+//  this.reactionForce * Math.cos(theta);
+};
 
 /**
  * @author namhoon <emerald105@hanmail.net>
@@ -429,7 +501,8 @@ NP.Object.prototype.add = (function() {
 
     for (i=0, len=forcesArr.length; i<len; i++) {
       if ('gravity' === forcesArr[i]) {
-        this.forces['gravity'] = forces[i] === 'default' ? new NP.GravityForce() : new NP.GravityForce(forces[i]);
+        this.forces['gravity'] = new NP.GravityForce(forces[forcesArr[i]]);
+        this.forces['gravity'].position = this.position;
       }
     }
   };
@@ -447,6 +520,7 @@ NP.Object.prototype.add = (function() {
 })();
 
 NP.Object.Type = {
+  LINE: 'line',
   CIRCLE: 'circle',
   SPHERE: 'sphere'
 };
@@ -473,31 +547,6 @@ NP.ObjectContainer.prototype.constructor = NP.ObjectContainer;
  */
 
 /**
- * @class NP.Point
- * @constructor
- */
-NP.Point = function(x, y, z) {
-  this.x = x || 0;
-  this.y = y || 0;
-  this.z = z || 0;
-
-  /**
-   * Convert to Array list
-   *
-   * @method list
-   */
-  this.list = function() {
-    return [this.x, this.y, this.z];
-  }
-};
-
-NP.Point.prototype.constructor = NP.Point;
-
-/**
- * @author namhoon <emerald105@hanmail.net>
- */
-
-/**
  * @class NP.Circle
  * @constructor
  */
@@ -513,6 +562,26 @@ NP.Circle = function(x, y, z, radius) {
 
 NP.Circle.prototype = Object.create(NP.Object.prototype);
 NP.Circle.prototype.constructor = NP.Circle;
+
+/**
+ * @author namhoon <emerald105@hanmail.net>
+ */
+
+/**
+ * @class NP.Line
+ * @constructor
+ */
+NP.Line = function(v1, v2) {
+  NP.Object.call(this);
+  this.type = NP.Object.Type.LINE;
+
+  this.v1 = v1 !== undefined ? v1 : new NP.Vec3();
+  this.v2 = v2 !== undefined ? v2 : new NP.Vec3();
+  this.position = this.v1;
+};
+
+NP.Line.prototype = Object.create(NP.Object.prototype);
+NP.Line.prototype.constructor = NP.Line;
 
 /**
  * @author namhoon <emerald105@hanmail.net>
@@ -621,11 +690,11 @@ NP.Renderer = function(canvasContainer) {
 
   camera.position.x = 0;
   camera.position.y = 0;
-  camera.position.z = 5;
+  camera.position.z = 15;
   camera.lookAt(scene.position);
 
-  var axes = new THREE.AxisHelper( 100 );
-  scene.add(axes);
+//  var axes = new THREE.AxisHelper( 100 );
+//  scene.add(axes);
 
   /**
    * Renderer camera
@@ -659,12 +728,26 @@ NP.Renderer = function(canvasContainer) {
    */
   this.add = function(object) {
     var segments = 16;
+    var geometry, material;
 
     switch (object.type) {
+      case NP.Object.Type.LINE:
+        material = new THREE.LineBasicMaterial({
+          color: colorSet['color1']
+        });
+
+        geometry = new THREE.Geometry();
+        geometry.vertices.push(new THREE.Vector3(object.v1.x, object.v1.y, object.v1.z));
+        geometry.vertices.push(new THREE.Vector3(object.v2.x, object.v2.y, object.v2.z));
+
+        var line = new THREE.Line(geometry, material);
+        scene.add(line);
+        break;
+
       case NP.Object.Type.CIRCLE:
-        var circleGeometry = new THREE.CircleGeometry( object.radius, segments );
-        var material = new THREE.MeshBasicMaterial({color: colorSet['color1']});
-        var circle = new THREE.Mesh( circleGeometry, material );
+        geometry = new THREE.CircleGeometry( object.radius, segments );
+        material = new THREE.MeshBasicMaterial({color: colorSet['color1']});
+        var circle = new THREE.Mesh( geometry, material );
 
         circle.position.x = object.position.x;
         circle.position.y = object.position.y;
@@ -675,9 +758,9 @@ NP.Renderer = function(canvasContainer) {
         break;
 
       case NP.Object.Type.SPHERE:
-        var sphereGeometry = new THREE.SphereGeometry(object.radius, segments, segments);
-        var sphereMaterial = new THREE.MeshBasicMaterial({color: colorSet['color1'], wireframe: true});
-        var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        geometry = new THREE.SphereGeometry(object.radius, segments, segments);
+        material = new THREE.MeshBasicMaterial({color: colorSet['color1'], wireframe: true});
+        var sphere = new THREE.Mesh(geometry, material);
 
         sphere.position.x = object.position.x;
         sphere.position.y = object.position.y;

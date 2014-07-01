@@ -17,7 +17,7 @@ NextPhysics = function (canvasContainer) {
    * @property deltaT
    * @type {Number}
    */
-  var deltaT = 0.01;
+  var deltaT = 0.001;
 
   /**
    * Add object

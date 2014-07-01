@@ -7,12 +7,16 @@
  * @constructor
  */
 NP.Force = function() {
+  this.position = new NP.Vec3();
   this.vector = new NP.Vec3();
 };
 
 NP.Force.prototype.constructor = NP.Force;
 
-NP.Force.GRAVITY = 'gravity';
+NP.Force.Type = {
+  GRAVITY: 'gravity',
+  TENSION: 'tension'
+};
 
 /**
  * Convert to Array list
@@ -21,4 +25,13 @@ NP.Force.GRAVITY = 'gravity';
  */
 NP.Force.prototype.list = function() {
   return this.vector.list();
+};
+
+/**
+ * Update force
+ *
+ * @method update
+ */
+NP.Force.prototype.update = function() {
+  throw new Error('Update function must be override.');
 };

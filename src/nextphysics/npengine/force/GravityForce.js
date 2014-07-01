@@ -19,9 +19,13 @@ NP.GravityForce = function(gravity) {
   });
 
   this.vector.x = 0;
-  this.vector.y = -9.8;
+  this.vector.y = -gravity;
   this.vector.z = 0;
 };
 
 NP.GravityForce.prototype = Object.create(NP.Force.prototype);
 NP.GravityForce.prototype.constructor = NP.GravityForce;
+
+NP.GravityForce.prototype.update = function() {
+  // gravitational force is constant.
+};

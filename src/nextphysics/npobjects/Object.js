@@ -74,7 +74,8 @@ NP.Object.prototype.add = (function() {
 
     for (i=0, len=forcesArr.length; i<len; i++) {
       if ('gravity' === forcesArr[i]) {
-        this.forces['gravity'] = forces[i] === 'default' ? new NP.GravityForce() : new NP.GravityForce(forces[i]);
+        this.forces['gravity'] = new NP.GravityForce(forces[forcesArr[i]]);
+        this.forces['gravity'].position = this.position;
       }
     }
   };
@@ -92,6 +93,7 @@ NP.Object.prototype.add = (function() {
 })();
 
 NP.Object.Type = {
+  LINE: 'line',
   CIRCLE: 'circle',
   SPHERE: 'sphere'
 };

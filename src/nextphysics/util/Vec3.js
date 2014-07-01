@@ -30,6 +30,37 @@ NP.Vec3 = function(x, y, z) {
     this.x += vec3.x;
     this.y += vec3.y;
     this.z += vec3.z;
+    return this;
+  };
+
+  /**
+   * Divide
+   *
+   * @method divideScala
+   * @param scalar {Number}
+   */
+  this.divideScala = function(scalar) {
+    if ( scalar !== 0 ) {
+      var invScalar = 1 / scalar;
+      this.x *= invScalar;
+      this.y *= invScalar;
+      this.z *= invScalar;
+    } else {
+      this.x = 0;
+      this.y = 0;
+      this.z = 0;
+    }
+    return this;
+  };
+
+  /**
+   * vector inner product
+   *
+   * @method dot
+   * @param vec3 {NP.Vec3}
+   */
+  this.dot = function(vec3) {
+    return this.x * vec3.x + this.y * vec3.y + this.z * vec3.z;
   };
 };
 
