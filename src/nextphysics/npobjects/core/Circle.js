@@ -13,7 +13,7 @@ NP.Circle = function(x, y, z, radius) {
   this.position.x = x !== undefined ? x : this.position.x;
   this.position.y = y !== undefined ? y : this.position.y;
   this.position.z = z !== undefined ? z : this.position.z;
-  this.radius = radius !== undefined ? radius : this.radius;
+  this.radius = radius !== undefined ? radius : 1;
 };
 
 NP.Circle.prototype = Object.create(NP.Object.prototype);

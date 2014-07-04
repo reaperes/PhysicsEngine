@@ -7,8 +7,8 @@
  * @constructor
  */
 NP.Force = function() {
-  this.position = new NP.Vec3();
-  this.vector = new NP.Vec3();
+  this.position = new THREE.Vector3();
+  this.vector = new THREE.Vector3();
 };
 
 NP.Force.prototype.constructor = NP.Force;

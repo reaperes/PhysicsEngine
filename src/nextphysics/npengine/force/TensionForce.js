@@ -5,23 +5,21 @@
 /**
  * @class NP.TensionForce
  * @constructor
- * @param pivot {NP.Vec3} the point of pivot
- * @param reaction {NP.Force} the reaction force
+ * @param pivot {THREE.Vector3} the point of pivot
+ * @param object {NP.Object}
  */
-NP.TensionForce = function(pivot, reaction) {
+NP.TensionForce = function(pivot, object) {
   NP.Force.call(this);
 
-  this.pivot = pivot !== undefined ? pivot : new NP.Vec3();
-  this.reactionForce = reaction !== undefined ? reaction : new NP.Vec3();
+  this.pivot = pivot !== undefined ? pivot : new THREE.Vector3();
+  this.object = object !== undefined ? object : new NP.Object();
 };
 
-NP.GravityForce.prototype = Object.create(NP.Force.prototype);
-NP.GravityForce.prototype.constructor = NP.GravityForce;
+NP.TensionForce.prototype = Object.create(NP.Force.prototype);
+NP.TensionForce.prototype.constructor = NP.TensionForce;
 
-NP.GravityForce.prototype.update = function() {
-  // todo: consider 3d tension
-
-
-
-//  this.reactionForce * Math.cos(theta);
+NP.TensionForce.prototype.update = function() {
+  var distanceToObject = this.pivot.distanceTo(this.object.position);
+  var cosTheta = Math.abs(this.object.position.y - this.pivot.y) / distanceToObject;
+  this.vector = this.object.force.clone().multiplyScalar(-cosTheta);
 };

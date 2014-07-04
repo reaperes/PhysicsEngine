@@ -10,6 +10,13 @@
  */
 NP.ObjectContainer = function() {
   NP.Object.call(this);
+
+  /**
+   * The list of contained object.
+   *
+   * @type {Array}
+   */
+  this.childs = [];
 };
 
 NP.ObjectContainer.prototype = Object.create(NP.Object.prototype);

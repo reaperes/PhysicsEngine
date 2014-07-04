@@ -17,7 +17,7 @@ NextPhysics = function (canvasContainer) {
    * @property deltaT
    * @type {Number}
    */
-  var deltaT = 0.001;
+  var deltaT = 0.01;
 
   /**
    * Add object
@@ -26,8 +26,14 @@ NextPhysics = function (canvasContainer) {
    * @param npobject {NP.Object}
    */
   this.add = function (npobject) {
-    engine.add(npobject);
-    renderer.add(npobject);
+    if (npobject instanceof NP.ObjectContainer) {
+      engine.addContainer(npobject);
+      renderer.addContainer(npobject);
+    }
+    else {
+      engine.add(npobject);
+      renderer.add(npobject);
+    }
   };
 
   /**

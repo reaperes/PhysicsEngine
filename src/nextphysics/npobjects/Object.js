@@ -18,6 +18,13 @@ NP.Object = function() {
   this.type = undefined;
 
   /**
+   * If object can be forced.
+   *
+   * @type {boolean}
+   */
+  this.forceFlag = true;
+
+  /**
    * Forces of object
    *
    * @property forces
@@ -27,34 +34,37 @@ NP.Object = function() {
 
   /**
    * Net force of object. Unit is Newton.
-   * [0] = x, [1] = y, [2] = z.
    *
    * @property force
-   * @type {NP.Vec3}
+   * @type {THREE.Vector3}
    */
-  this.force = new NP.Vec3();
+  this.force = new THREE.Vector3();
 
   /**
    * The velocity of object. Unit is m/s.
    * [0] = x, [1] = y, [2] = z.
    *
    * @property velocity
-   * @type {NP.Vec3}
+   * @type {THREE.Vector3}
    */
-  this.velocity = new NP.Vec3();
+  this.velocity = new THREE.Vector3();
 
   /**
    * Position of object. Unit is m.
-   * [0] = x, [1] = y, [2] = z.
    *
    * @property position
-   * @type {NP.Vec3}
+   * @type {THREE.Vector3}
    */
-  this.position = new NP.Vec3();
+  this.position = new THREE.Vector3();
 };
 
 NP.Object.prototype.constructor = NP.Object;
 
+NP.Object.Type = {
+  LINE: 'line',
+  CIRCLE: 'circle',
+  SPHERE: 'sphere'
+};
 
 /**
  * Add force, etc.
@@ -77,6 +87,9 @@ NP.Object.prototype.add = (function() {
         this.forces['gravity'] = new NP.GravityForce(forces[forcesArr[i]]);
         this.forces['gravity'].position = this.position;
       }
+      else if ('tension' === forcesArr[i]) {
+        this.forces['tension'] = new NP.TensionForce(forces[forcesArr[i]]['pivot'], forces[forcesArr[i]]['object']);
+      }
     }
   };
 
@@ -92,8 +105,18 @@ NP.Object.prototype.add = (function() {
   };
 })();
 
-NP.Object.Type = {
-  LINE: 'line',
-  CIRCLE: 'circle',
-  SPHERE: 'sphere'
+/**
+ * Update objects
+ *
+ * @method update
+ * @param deltaT {Number} delta time
+ */
+NP.Object.prototype.update = function(deltaT) {
+  this.velocity.x += this.force.x * deltaT;
+  this.velocity.y += this.force.y * deltaT;
+  this.velocity.z += this.force.z * deltaT;
+
+  this.position.x += this.velocity.x * deltaT;
+  this.position.y += this.velocity.y * deltaT;
+  this.position.z += this.velocity.z * deltaT;
 };

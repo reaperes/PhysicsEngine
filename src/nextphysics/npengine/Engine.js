@@ -19,10 +19,24 @@ NP.Engine = function() {
    * Add object
    *
    * @method add
-   * @param npobject {NP.Object}
+   * @param npobject
    */
   this.add = function(npobject) {
     objects.push(npobject)
+  };
+
+  /**
+   * Add objectContainer to engine
+   *
+   * @method addContainer
+   * @param objectContainer
+   */
+  this.addContainer = function(objectContainer) {
+    var i, len;
+    var objects = objectContainer.childs;
+    for (i=0, len=objects.length; i<len; i++) {
+      this.add(objects[i]);
+    }
   };
 
   /**
@@ -32,21 +46,14 @@ NP.Engine = function() {
    * @param deltaT {Number} delta time
    */
   this.update = function(deltaT) {
-    var i, j, lenI, lenJ;
+    var i, lenI;
 
     for (i=0, lenI=objects.length; i<lenI; i++) {
       var object = objects[i];
-      var force = object.force = solveNetForce(object.forces);
-
-      var velocity = object.velocity;
-      velocity.x += force.x * deltaT;
-      velocity.y += force.y * deltaT;
-      velocity.z += force.z * deltaT;
-
-      var position = object.position;
-      position.x += velocity.x * deltaT;
-      position.y += velocity.y * deltaT;
-      position.z += velocity.z * deltaT;
+      if (object.forceFlag) {
+        solveNetForce(object);
+        object.update(deltaT);
+      }
     }
   };
 
@@ -54,26 +61,31 @@ NP.Engine = function() {
    * Solve the net force of npobject.
    *
    * @method solveNetForce
-   * @param forces {Object} object of forces
-   * @return {NP.Vec3} net force vector.
+   * @param object {NP.Object} object of forces
    */
-  var solveNetForce = function(forces) {
+  var solveNetForce = function(object) {
+    var forces = object.forces;
     var keys = Object.keys(forces);
     var len = keys.length;
     if (len == 0) {
-      return new NP.Vec3();
+      return new THREE.Vector3();
     }
-
-    var i;
-    var vector = new NP.Vec3();
-    for (i=0; i<len; i++) {
-      var force = forces[NP.Force.Type.GRAVITY];
-      force.update();
-      vector.add(force.vector);
+debugger;
+    // calculate source forces
+    var vector = new THREE.Vector3();
+    if (forces[NP.Force.Type.GRAVITY] != undefined) {
+      forces[NP.Force.Type.GRAVITY].update();
+      vector.add(forces[NP.Force.Type.GRAVITY].vector);
     }
+    object.force = vector;
 
-    return vector;
-  }
+    // calculate reaction forces
+    if (forces[NP.Force.Type.TENSION] != undefined) {
+      forces[NP.Force.Type.TENSION].update();
+      vector.add(forces[NP.Force.Type.TENSION].vector);
+    }
+    object.force = vector;
+  };
 };
 
 NP.Engine.prototype.constructor = NP.Engine;
