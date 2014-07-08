@@ -13,20 +13,24 @@
 <div id="canvas" style="width:1200px;height:600px;">
 </div>
 <script type="text/javascript">
-//  window.onload = function() {
-    var physics = new NextPhysics(document.getElementById('canvas'));
 
-    var pendulum = new NP.Pendulum(new NP.Circle(2, 1, 0, 1), new NP.Vec3(-1, 5, 0));
-    pendulum.add({
-      force: {
-        gravity: 1.225
-      }
-    });
-    physics.add(pendulum);
 
-    physics.start();
-//  };?
 
+  var physics = new NextPhysics(document.getElementById('canvas'));
+
+  var circle = new NP.Circle();
+  circle.addForce(new NP.GravityForce());
+  physics.add(circle);
+
+//  var sphere = new NP.Sphere();
+//  sphere.addForce(new NP.GravityForce());
+//  physics.add(sphere);
+
+//  var pendulum = new NP.Pendulum();
+//  pendulum.addForce(new NP.GravityForce());
+//  physics.add(pendulum);
+
+  physics.start();
 
 
 

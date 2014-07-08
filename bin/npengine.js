@@ -24,8 +24,7 @@ NP.Util = function() {
 }, NextPhysics = function(a) {
     var b = new NP.Engine(), c = new NP.Renderer(a), d = .01;
     this.add = function(a) {
-        a instanceof NP.ObjectContainer ? (b.addContainer(a), c.addContainer(a)) : (b.add(a), 
-        c.add(a));
+        b.add(a), c.add(a);
     }, this.update = function() {
         b.update(d);
     }, this.render = function() {
@@ -51,20 +50,12 @@ NP.Util = function() {
     }, this.addContainer = function(a) {
         var b, c, d = a.childs;
         for (b = 0, c = d.length; c > b; b++) this.add(d[b]);
-    }, this.update = function(c) {
-        var d, e;
-        for (d = 0, e = a.length; e > d; d++) {
-            var f = a[d];
-            f.forceFlag && (b(f), f.update(c));
+    }, this.update = function(b) {
+        var c, d;
+        for (c = 0, d = a.length; d > c; c++) {
+            var e = a[c];
+            e.forceFlag && (e.solveNetForce(), e.update(b));
         }
-    };
-    var b = function(a) {
-        var b = a.forces, c = Object.keys(b), d = c.length;
-        if (0 == d) return new THREE.Vector3();
-        var e = new THREE.Vector3();
-        void 0 != b[NP.Force.Type.GRAVITY] && (b[NP.Force.Type.GRAVITY].update(), e.add(b[NP.Force.Type.GRAVITY].vector)), 
-        a.force = e, void 0 != b[NP.Force.Type.TENSION] && (b[NP.Force.Type.TENSION].update(), 
-        e.add(b[NP.Force.Type.TENSION].vector)), a.force = e;
     };
 }, NP.Engine.prototype.constructor = NP.Engine, NP.Force = function() {
     this.position = new THREE.Vector3(), this.vector = new THREE.Vector3();
@@ -82,9 +73,7 @@ NP.Util = function() {
         a = b, this.vector.y = -b;
     }), this.vector.x = 0, this.vector.y = -a, this.vector.z = 0;
 }, NP.GravityForce.prototype = Object.create(NP.Force.prototype), NP.GravityForce.prototype.constructor = NP.GravityForce, 
-NP.GravityForce.prototype.update = function() {
-    return this.vector;
-}, NP.TensionForce = function(a, b) {
+NP.GravityForce.prototype.update = function() {}, NP.TensionForce = function(a, b) {
     NP.Force.call(this), this.pivot = void 0 !== a ? a : new THREE.Vector3(), this.object = void 0 !== b ? b : new NP.Object();
 }, NP.TensionForce.prototype = Object.create(NP.Force.prototype), NP.TensionForce.prototype.constructor = NP.TensionForce, 
 NP.TensionForce.prototype.update = function() {
@@ -97,60 +86,67 @@ NP.TensionForce.prototype.update = function() {
     LINE: "line",
     CIRCLE: "circle",
     SPHERE: "sphere"
-}, NP.Object.prototype.add = function() {
-    var a = function(a) {
-        var b, c, d = Object.keys(a);
-        for (b = 0, c = d.length; c > b; b++) "gravity" === d[b] ? (this.forces.gravity = new NP.GravityForce(a[d[b]]), 
-        this.forces.gravity.position = this.position) : "tension" === d[b] && (this.forces.tension = new NP.TensionForce(a[d[b]].pivot, a[d[b]].object));
-    };
-    return function() {
-        var b, c, d;
-        for (b = 0, c = arguments.length; c > b; b++) for (d in arguments[b]) "force" === d && a.call(this, arguments[b].force);
-    };
-}(), NP.Object.prototype.update = function(a) {
+}, NP.Object.prototype.addForce = function(a) {
+    a instanceof NP.GravityForce && (this.forces[NP.Force.Type.GRAVITY] = a);
+}, NP.Object.prototype.solveNetForce = function() {
+    var a, b = new THREE.Vector3();
+    void 0 !== this.forces[NP.Force.Type.GRAVITY] && (a = this.forces[NP.Force.Type.GRAVITY], 
+    a.update(), b.add(a.vector)), this.force = b;
+}, NP.Object.prototype.update = function(a) {
     this.velocity.x += this.force.x * a, this.velocity.y += this.force.y * a, this.velocity.z += this.force.z * a, 
     this.position.x += this.velocity.x * a, this.position.y += this.velocity.y * a, 
     this.position.z += this.velocity.z * a;
-}, NP.ObjectContainer = function() {
+}, NP.Object.prototype.renderScript = function() {}, NP.ObjectContainer = function() {
     NP.Object.call(this), this.childs = [];
 }, NP.ObjectContainer.prototype = Object.create(NP.Object.prototype), NP.ObjectContainer.prototype.constructor = NP.ObjectContainer, 
 NP.Circle = function(a, b, c, d) {
-    NP.Object.call(this), this.type = NP.Object.Type.CIRCLE, this.position.x = void 0 !== a ? a : this.position.x, 
-    this.position.y = void 0 !== b ? b : this.position.y, this.position.z = void 0 !== c ? c : this.position.z, 
+    NP.Object.call(this), this.type = NP.Object.Type.CIRCLE, this.position.x = void 0 !== a ? a : 0, 
+    this.position.y = void 0 !== b ? b : 0, this.position.z = void 0 !== c ? c : 0, 
     this.radius = void 0 !== d ? d : 1;
 }, NP.Circle.prototype = Object.create(NP.Object.prototype), NP.Circle.prototype.constructor = NP.Circle, 
-NP.Line = function(a, b) {
-    NP.Object.call(this), this.type = NP.Object.Type.LINE, this.forceFlag = !1, this.position = void 0 !== a ? a : new THREE.Vector3(), 
-    this.v2 = void 0 !== b ? b : new THREE.Vector3();
-}, NP.Line.prototype = Object.create(NP.Object.prototype), NP.Line.prototype.constructor = NP.Line, 
-NP.Line.prototype.update = function() {}, NP.Sphere = function(a, b, c, d) {
-    NP.Object.call(this), this.type = NP.Object.Type.SPHERE, this.position.x = void 0 !== a ? a : this.position.x, 
-    this.position.y = void 0 !== b ? b : this.position.y, this.position.z = void 0 !== c ? c : this.position.z, 
-    this.radius = void 0 !== d ? d : this.radius;
+NP.Circle.prototype.renderScript = function(a, b) {
+    var c = void 0 !== b.segments ? b.segments : 32, d = new THREE.CircleGeometry(this.radius, c), e = new THREE.MeshBasicMaterial({
+        color: void 0 !== b.color1 ? b.color1 : NP.ColorSets[0].color1
+    }), f = new THREE.Mesh(d, e);
+    f.position = this.position, a.add(f);
+}, NP.Sphere = function(a, b, c, d) {
+    NP.Object.call(this), this.type = NP.Object.Type.SPHERE, this.position.x = void 0 !== a ? a : 0, 
+    this.position.y = void 0 !== b ? b : 0, this.position.z = void 0 !== c ? c : 0, 
+    this.radius = void 0 !== d ? d : 1;
 }, NP.Sphere.prototype = Object.create(NP.Object.prototype), NP.Sphere.prototype.constructor = NP.Sphere, 
-NP.Pendulum = function(a, b) {
-    NP.ObjectContainer.call(this), this.superObject = NP.Object.prototype, this.circle = void 0 !== a ? a : new NP.Circle(), 
-    this.pivot = void 0 !== b ? b : new THREE.Vector3(), this.line = new NP.Line(this.circle.position, this.pivot), 
-    this.position = this.circle.position, this.childs.push(this.line), this.childs.push(this.circle), 
-    this.add({
-        force: {
-            tension: {
-                pivot: this.pivot,
-                object: this.circle
-            }
-        }
-    }), this.set = function(a) {
-        a = a || {};
-    };
+NP.Sphere.prototype.renderScript = function(a, b) {
+    var c = void 0 !== b.segments ? b.segments : 32, d = new THREE.SphereGeometry(this.radius, c, c), e = new THREE.MeshBasicMaterial({
+        color: void 0 !== b.color1 ? b.color1 : NP.ColorSets[0].color1,
+        wireframe: !0
+    }), f = new THREE.Mesh(d, e);
+    f.position = this.position, a.add(f);
+}, NP.Pendulum = function(a, b) {
+    NP.Object.call(this), this.circle = void 0 !== a ? a : new NP.Circle(), this.pivot = void 0 !== b ? b : new THREE.Vector3(0, 4, 0), 
+    this.position = this.pivot;
 }, NP.Pendulum.prototype = Object.create(NP.ObjectContainer.prototype), NP.Pendulum.prototype.constructor = NP.Pendulum, 
-NP.Pendulum.prototype.update = function(a) {
-    this.velocity.x += this.force.x * a, this.velocity.y += this.force.y * a, this.velocity.z += this.force.z * a;
-    var b = this.velocity.clone().multiplyScalar(a);
-    this.circle.position.add(b);
-}, NP.Pendulum.prototype.add = function() {
-    this.superObject.add.call(this, arguments[0]);
-    var a, b = this.childs.length;
-    for (a = 0; b > a; a++) this.childs[a].add.call(this.childs[a], arguments[0]);
+NP.Pendulum.prototype.renderScript = function(a, b, c) {
+    var d = new THREE.LineBasicMaterial({
+        color: void 0 !== b.color1 ? b.color1 : NP.ColorSets[0].color1,
+        linewidth: 2
+    }), e = new THREE.Geometry();
+    e.vertices.push(this.pivot), e.vertices.push(this.circle.position);
+    var f = new THREE.Line(e, d);
+    a.add(f);
+    var g = void 0 !== b.segments ? b.segments : 32, h = new THREE.SphereGeometry(this.circle.radius, g, g), i = new THREE.MeshBasicMaterial({
+        color: void 0 !== b.color1 ? b.color1 : NP.ColorSets[0].color1,
+        wireframe: !0
+    }), j = new THREE.Mesh(h, i);
+    j.position = this.circle.position, a.add(j), c.push(function() {
+        e.verticesNeedUpdate = !0;
+    });
+}, NP.Pendulum.prototype.solveNetForce = function() {
+    var a, b = new THREE.Vector3();
+    void 0 !== this.forces[NP.Force.Type.GRAVITY] && (a = this.forces[NP.Force.Type.GRAVITY], 
+    a.update(), b.add(a.vector)), this.force = b;
+}, NP.Pendulum.prototype.update = function(a) {
+    this.velocity.x += this.force.x * a, this.velocity.y += this.force.y * a, this.velocity.z += this.force.z * a, 
+    this.circle.position.x += this.velocity.x * a, this.circle.position.y += this.velocity.y * a, 
+    this.circle.position.z += this.velocity.z * a;
 }, NP.ColorSets = function() {
     var a = {
         background: 16777215,
@@ -172,38 +168,10 @@ NP.Pendulum.prototype.update = function(a) {
         for (a = 0, e = f.length; e > a; a++) f[a].call(this);
         b.render(c, d);
     }, this.add = function(a) {
-        var b, d = 16;
-        switch (a.type) {
-          case NP.Object.Type.LINE:
-            b = new THREE.LineBasicMaterial({
-                color: e.color1
-            });
-            var g = new THREE.Geometry();
-            g.vertices.push(a.position), g.vertices.push(a.v2);
-            var h = new THREE.Line(g, b);
-            c.add(h), f.push(function() {
-                g.verticesNeedUpdate = !0;
-            });
-            break;
-
-          case NP.Object.Type.CIRCLE:
-            g = new THREE.CircleGeometry(a.radius, d), b = new THREE.MeshBasicMaterial({
-                color: e.color1
-            });
-            var i = new THREE.Mesh(g, b);
-            i.position = a.position, c.add(i);
-            break;
-
-          case NP.Object.Type.SPHERE:
-            g = new THREE.SphereGeometry(a.radius, d, d), b = new THREE.MeshBasicMaterial({
-                color: e.color1,
-                wireframe: !0
-            });
-            var j = new THREE.Mesh(g, b);
-            j.position = a.position, c.add(j);
-        }
-    }, this.addContainer = function(a) {
-        var b, c, d = a.childs;
-        for (b = 0, c = d.length; c > b; b++) this.add(d[b]);
+        var b = {
+            segments: 16,
+            color1: e.color1
+        };
+        a.renderScript(c, b, f);
     };
 }, NP.Renderer.prototype.constructor = NP.Renderer;

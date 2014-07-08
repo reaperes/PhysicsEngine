@@ -63,60 +63,59 @@ NP.Renderer = function(canvasContainer) {
    * @param object {NP.Object}
    */
   this.add = function(object) {
-    var segments = 16;
-    var material;
+    var renderOptions = {
+      segments: 16,
+      color1: colorSet['color1']
+    };
 
-    switch (object.type) {
-      case NP.Object.Type.LINE:
-        material = new THREE.LineBasicMaterial({
-          color: colorSet['color1']
-        });
-
-        var geometry = new THREE.Geometry();
-        geometry.vertices.push(object.position);
-        geometry.vertices.push(object.v2);
-
-        var line = new THREE.Line(geometry, material);
-        scene.add(line);
-
-        updateFunctions.push(function() {
-          geometry.verticesNeedUpdate = true;
-        });
-        break;
-
-      case NP.Object.Type.CIRCLE:
-        geometry = new THREE.CircleGeometry( object.radius, segments );
-        material = new THREE.MeshBasicMaterial({color: colorSet['color1']});
-        var circle = new THREE.Mesh( geometry, material );
-
-        circle.position = object.position;
-        scene.add( circle );
-        break;
-
-      case NP.Object.Type.SPHERE:
-        geometry = new THREE.SphereGeometry(object.radius, segments, segments);
-        material = new THREE.MeshBasicMaterial({color: colorSet['color1'], wireframe: true});
-        var sphere = new THREE.Mesh(geometry, material);
-
-        sphere.position = object.position;
-        scene.add(sphere);
-        break;
-    }
+    object.renderScript(scene, renderOptions, updateFunctions);
   };
 
-  /**
-   * Add objectContainer to renderer scene
-   *
-   * @method addContainer
-   * @param objectContainer
-   */
-  this.addContainer = function(objectContainer) {
-    var i, len;
-    var objects = objectContainer.childs;
-    for (i=0, len=objects.length; i<len; i++) {
-      this.add(objects[i]);
-    }
-  };
+//    var segments = 16;
+//    var material;
+//
+//    switch (object.type) {
+//      case NP.Object.Type.LINE:
+//        material = new THREE.LineBasicMaterial({
+//          color: colorSet['color1']
+//        });
+//
+//        var geometry = new THREE.Geometry();
+//        geometry.vertices.push(object.position);
+//        geometry.vertices.push(object.v2);
+//
+//        var line = new THREE.Line(geometry, material);
+//        scene.add(line);
+//
+//        updateFunctions.push(function() {
+//          geometry.verticesNeedUpdate = true;
+//        });
+//        break;
+//
+//      case NP.Object.Type.SPHERE:
+//        geometry = new THREE.SphereGeometry(object.radius, segments, segments);
+//        material = new THREE.MeshBasicMaterial({color: colorSet['color1'], wireframe: true});
+//        var sphere = new THREE.Mesh(geometry, material);
+//
+//        sphere.position = object.position;
+//        scene.add(sphere);
+//        break;
+//    }
+//  };
+//
+//  /**
+//   * Add objectContainer to renderer scene
+//   *
+//   * @method addContainer
+//   * @param objectContainer
+//   */
+//  this.addContainer = function(objectContainer) {
+//    var i, len;
+//    var objects = objectContainer.childs;
+//    for (i=0, len=objects.length; i<len; i++) {
+//      this.add(objects[i]);
+//    }
+//  };
 };
 
 NP.Renderer.prototype.constructor = NP.Renderer;

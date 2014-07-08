@@ -26,14 +26,8 @@ NextPhysics = function (canvasContainer) {
    * @param npobject {NP.Object}
    */
   this.add = function (npobject) {
-    if (npobject instanceof NP.ObjectContainer) {
-      engine.addContainer(npobject);
-      renderer.addContainer(npobject);
-    }
-    else {
-      engine.add(npobject);
-      renderer.add(npobject);
-    }
+    engine.add(npobject);
+    renderer.add(npobject);
   };
 
   /**

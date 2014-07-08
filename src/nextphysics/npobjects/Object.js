@@ -66,44 +66,22 @@ NP.Object.Type = {
   SPHERE: 'sphere'
 };
 
-/**
- * Add force, etc.
- *
- * @method add
- */
-NP.Object.prototype.add = (function() {
-  /**
-   * After parsing force object, add force to object.
-   *
-   * @method addForce
-   * @param forces {Object} object of forces
-   */
-  var addForce = function(forces) {
-    var i, len;
-    var forcesArr = Object.keys(forces);
+NP.Object.prototype.addForce = function(force) {
+  if (force instanceof NP.GravityForce) {
+    this.forces[NP.Force.Type.GRAVITY] = force;
+  }
+};
 
-    for (i=0, len=forcesArr.length; i<len; i++) {
-      if ('gravity' === forcesArr[i]) {
-        this.forces['gravity'] = new NP.GravityForce(forces[forcesArr[i]]);
-        this.forces['gravity'].position = this.position;
-      }
-      else if ('tension' === forcesArr[i]) {
-        this.forces['tension'] = new NP.TensionForce(forces[forcesArr[i]]['pivot'], forces[forcesArr[i]]['object']);
-      }
-    }
-  };
+NP.Object.prototype.solveNetForce = function() {
+  var force, netForce = new THREE.Vector3();
 
-  return function() {
-    var i, len, key;
-    for (i=0, len=arguments.length; i<len; i++) {
-      for (key in arguments[i]) {
-        if (key === 'force') {
-          addForce.call(this, arguments[i]['force']);
-        }
-      }
-    }
-  };
-})();
+  if (this.forces[NP.Force.Type.GRAVITY] !== undefined) {
+    force = this.forces[NP.Force.Type.GRAVITY];
+    force.update();
+    netForce.add(force.vector);
+  }
+  this.force = netForce;
+};
 
 /**
  * Update objects
@@ -119,4 +97,7 @@ NP.Object.prototype.update = function(deltaT) {
   this.position.x += this.velocity.x * deltaT;
   this.position.y += this.velocity.y * deltaT;
   this.position.z += this.velocity.z * deltaT;
+};
+
+NP.Object.prototype.renderScript = function(renderOptions) {
 };
