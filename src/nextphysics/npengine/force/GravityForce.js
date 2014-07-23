@@ -28,5 +28,4 @@ NP.GravityForce.prototype.constructor = NP.GravityForce;
 
 NP.GravityForce.prototype.update = function() {
   // gravitational force is constant.
-  return this.vector;
 };

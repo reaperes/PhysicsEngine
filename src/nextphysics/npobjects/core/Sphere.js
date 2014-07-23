@@ -14,6 +14,8 @@ NP.Sphere = function(x, y, z, radius) {
   this.position.y = y !== undefined ? y : 0;
   this.position.z = z !== undefined ? z : 0;
   this.radius = radius !== undefined ? radius : 1;
+
+  this.k = 20000;   // 20000 N/m
 };
 
 NP.Sphere.prototype = Object.create(NP.Object.prototype);
@@ -30,4 +32,17 @@ NP.Sphere.prototype.renderScript = function(scene, renderOptions) {
   var sphere = new THREE.Mesh(geometry, material);
   sphere.position = this.position;
   scene.add(sphere);
+};
+
+NP.Sphere.prototype.onCollision = function(v) {
+  var dist = this.position.distanceTo(v);
+  var fx = this.k * (this.radius - dist) * (this.position.x-v.x) / dist;
+  var fy = this.k * (this.radius - dist) * (this.position.y-v.y) / dist;
+  var fz = this.k * (this.radius - dist) * (this.position.z-v.z) / dist;
+  var f = new NP.Force();
+  f.position = this.position;
+  f.vector.x = fx;
+  f.vector.y = fy;
+  f.vector.z = fz;
+  this.addForce(f);
 };

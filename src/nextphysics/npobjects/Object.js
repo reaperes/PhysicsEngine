@@ -101,3 +101,6 @@ NP.Object.prototype.update = function(deltaT) {
 
 NP.Object.prototype.renderScript = function(renderOptions) {
 };
+
+NP.Object.prototype.onCollision = function(v) {
+};
