@@ -8,6 +8,10 @@
  * @constructor
  */
 NextPhysics = function (canvasContainer) {
+  var defaults = {
+    
+  };
+
   var engine = new NP.Engine();
   var renderer = new NP.Renderer(canvasContainer);
 

@@ -18,19 +18,15 @@
 
   var physics = new NextPhysics(document.getElementById('canvas'));
 
-  var circle = new NP.Circle();
-  circle.addForce(new NP.GravityForce());
-  physics.add(circle);
+  var sphere = new NP.Sphere(0, 0, 0, 1);
+  physics.add(sphere);
 
-//  var sphere = new NP.Sphere();
-//  sphere.addForce(new NP.GravityForce());
-//  physics.add(sphere);
-
-//  var pendulum = new NP.Pendulum();
-//  pendulum.addForce(new NP.GravityForce());
-//  physics.add(pendulum);
+  var sphere2 = new NP.Sphere(2, 2, 0, 1);
+  physics.add(sphere2);
 
   physics.start();
+
+
 
 
 
