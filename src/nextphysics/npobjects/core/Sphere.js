@@ -33,16 +33,16 @@ NP.Sphere.prototype.renderScript = function(scene, renderOptions) {
   sphere.position = this.position;
   scene.add(sphere);
 };
-
-NP.Sphere.prototype.onCollision = function(v) {
-  var dist = this.position.distanceTo(v);
-  var fx = this.k * (this.radius - dist) * (this.position.x-v.x) / dist;
-  var fy = this.k * (this.radius - dist) * (this.position.y-v.y) / dist;
-  var fz = this.k * (this.radius - dist) * (this.position.z-v.z) / dist;
-  var f = new NP.Force();
-  f.position = this.position;
-  f.vector.x = fx;
-  f.vector.y = fy;
-  f.vector.z = fz;
-  this.addForce(f);
-};
+//
+//NP.Sphere.prototype.onCollision = function(v) {
+//  var dist = this.position.distanceTo(v);
+//  var fx = this.k * (this.radius - dist) * (this.position.x-v.x) / dist;
+//  var fy = this.k * (this.radius - dist) * (this.position.y-v.y) / dist;
+//  var fz = this.k * (this.radius - dist) * (this.position.z-v.z) / dist;
+//  var f = new NP.Force();
+//  f.position = this.position;
+//  f.vector.x = fx;
+//  f.vector.y = fy;
+//  f.vector.z = fz;
+//  this.addForce(f);
+//};

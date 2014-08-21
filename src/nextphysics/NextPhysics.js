@@ -9,54 +9,27 @@
  */
 NextPhysics = function (canvasContainer) {
   var defaults = {
-    
   };
 
-  var engine = new NP.Engine();
+  var engine = new NP.Engine(this);
   var renderer = new NP.Renderer(canvasContainer);
 
-  /**
-   * delta time
-   *
-   * @property deltaT
-   * @type {Number}
-   */
   var deltaT = 0.01;
+  this.gravity = new THREE.Vec3(0, 9.8, 0);
 
-  /**
-   * Add object
-   *
-   * @method add
-   * @param npobject {NP.Object}
-   */
   this.add = function (npobject) {
     engine.add(npobject);
     renderer.add(npobject);
   };
 
-  /**
-   * Updates objects
-   *
-   * @method update
-   */
   this.update = function () {
     engine.update(deltaT);
   };
 
-  /**
-   * Display objects
-   *
-   * @method render
-   */
   this.render = function () {
     renderer.render();
   };
 
-  /**
-   * Start engine
-   *
-   * @method start
-   */
   this.start = function() {
     var loop = function() {
       this.update();

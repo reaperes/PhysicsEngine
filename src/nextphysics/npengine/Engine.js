@@ -6,81 +6,70 @@
  * @class NP.Engine
  * @constructor
  */
-NP.Engine = function() {
-  /**
-   * objects variable contains npobjects which affected by engine.
-   *
-   * @property objects
-   * @type Array[NP.Object]
-   */
+NP.Engine = function(physics) {
   var objects = [];
+  var pairs = [];
 
-  /**
-   * Add object
-   *
-   * @method add
-   * @param npobject
-   */
   this.add = function(npobject) {
     objects.push(npobject)
   };
 
-  /**
-   * Add objectContainer to engine
-   *
-   * @method addContainer
-   * @param objectContainer
-   */
-  this.addContainer = function(objectContainer) {
-    var i, len;
-    var objects = objectContainer.childs;
-    for (i=0, len=objects.length; i<len; i++) {
-      this.add(objects[i]);
-    }
-  };
-
-  /**
-   * Update objects
-   *
-   * @method update
-   * @param deltaT {Number} delta time
-   */
   this.update = function(deltaT) {
-    var i, lenI;
+    resetForce(objects);
+    solveExternalForce(objects);
 
-    for (i=0, lenI=objects.length; i<lenI; i++) {
-      var object = objects[i];
-      if (object.forceFlag) {
-        object.solveNetForce();
-        object.update(deltaT);
+    resetPairs(pairs);
+    pairs = detectCollision(objects);
+    solveInternalForce(pairs);
+
+    function resetForce(objects) {
+      _.each(objects, function(object) {
+        object.resetForce();
+      });
+    }
+
+    function solveExternalForce(objects) {
+      _.each(objects, function(object) {
+        if (object.enableGravity) object.force.add(physics.gravity);
+      });
+    }
+
+    function resetPairs(pairs) {
+      pairs = [];
+    }
+
+    function detectCollision(objects) {
+      var i, j, length;
+      var pair;
+      for (i=0, length=objects.length; i<length; i++) {
+        var objA = objects[i];
+        for (j=i; j<length; j++) {
+          var objB = objects[j];
+          var distance = objA.distanceTo(objB);
+          if (objA.radius+objB.radius > distance) {
+            pair = new NP.Pairs(objA, objB);
+            pair.distance = distance;
+            pairs.append(pair);
+          }
+        }
       }
     }
+
+    function solveInternalForce(pairs) {
+      _.each(pairs, function(pair) {
+        var objA = pair[0];
+        var objB = pair[1];
+        objA.
+      });
+    }
   };
-
-
-
-//    var forces = object.forces;
-//    var keys = Object.keys(forces);
-//    var len = keys.length;
-//    if (len == 0) {
-//      return new THREE.Vector3();
-//    }
-//
-//    // calculate source forces
-//    var vector = new THREE.Vector3();
-//    if (forces[NP.Force.Type.GRAVITY] != undefined) {
-//      forces[NP.Force.Type.GRAVITY].update();
-//      vector.add(forces[NP.Force.Type.GRAVITY].vector);
-//    }
-//    object.force = vector;
-//
-//    // calculate reaction forces
-//    if (forces[NP.Force.Type.TENSION] != undefined) {
-//      forces[NP.Force.Type.TENSION].update();
-//      vector.add(forces[NP.Force.Type.TENSION].vector);
-//    }
-//    object.force = vector;
-//  };
 };
 
 NP.Engine.prototype.constructor = NP.Engine;
+
+
+
+NP.Pairs = function(objectA, objectB) {
+  this.objectA = objectA;
+  this.objectB = objectB;
+};

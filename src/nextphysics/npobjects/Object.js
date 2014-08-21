@@ -9,53 +9,16 @@
  * @constructor
  */
 NP.Object = function() {
-  /**
-   * Type of object
-   *
-   * @property type
-   * @type NP.Object.Type
-   */
   this.type = undefined;
-
-  /**
-   * If object can be forced.
-   *
-   * @type {boolean}
-   */
   this.forceFlag = true;
-
-  /**
-   * Forces of object
-   *
-   * @property forces
-   * @type Object
-   */
-  this.forces = {};
-
-  /**
-   * Net force of object. Unit is Newton.
-   *
-   * @property force
-   * @type {THREE.Vector3}
-   */
+  this.forces = [];
   this.force = new THREE.Vector3();
-
-  /**
-   * The velocity of object. Unit is m/s.
-   * [0] = x, [1] = y, [2] = z.
-   *
-   * @property velocity
-   * @type {THREE.Vector3}
-   */
   this.velocity = new THREE.Vector3();
-
-  /**
-   * Position of object. Unit is m.
-   *
-   * @property position
-   * @type {THREE.Vector3}
-   */
   this.position = new THREE.Vector3();
+
+  this.k = 20000; // N/m
+
+  this.enableGravity = true;
 };
 
 NP.Object.prototype.constructor = NP.Object;
@@ -66,29 +29,15 @@ NP.Object.Type = {
   SPHERE: 'sphere'
 };
 
+NP.Object.prototype.resetForce = function() {
+  this.forces = [];
+};
+
 NP.Object.prototype.addForce = function(force) {
-  if (force instanceof NP.GravityForce) {
-    this.forces[NP.Force.Type.GRAVITY] = force;
-  }
+  if (!force instanceof NP.Force) return;
+  this.forces.append(force);
 };
 
-NP.Object.prototype.solveNetForce = function() {
-  var force, netForce = new THREE.Vector3();
-
-  if (this.forces[NP.Force.Type.GRAVITY] !== undefined) {
-    force = this.forces[NP.Force.Type.GRAVITY];
-    force.update();
-    netForce.add(force.vector);
-  }
-  this.force = netForce;
-};
-
-/**
- * Update objects
- *
- * @method update
- * @param deltaT {Number} delta time
- */
 NP.Object.prototype.update = function(deltaT) {
   this.velocity.x += this.force.x * deltaT;
   this.velocity.y += this.force.y * deltaT;
