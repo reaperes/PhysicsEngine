@@ -4,20 +4,32 @@
   <meta charset="utf-8">
   <title>Next PhysicsEngine (mini) - Pendulum</title>
   <script type="text/javascript" src="bin/nextphysics.dev.js"></script>
+  <script type="text/javascript" src="lib/jquery-2.1.1.js"></script>
   <script type="text/javascript" src="lib/three.js"></script>
+  <script type="text/javascript" src="lib/PointerLockControls.js"></script>
   <script type="text/javascript" src="lib/stats.min.js"></script>
   <script type="text/javascript" src="lib/dat.gui.min.js"></script>
   <script type="text/javascript" src="lib/underscore.js"></script>
   <script type="text/css" src="test.css"></script>
 </head>
 <body>
-<div id="canvas" style="width:1200px;height:600px;">
+  <div id="canvas-container" style="position:fixed;top:100px;left:100px;width:1200px;height:600px;">
+  <div id="debugTool" style="position:fixed;top:100px;left:20px">
+    <span id="debug" style="font-size:22px">hello</span>
+  </div>
 </div>
 <script type="text/javascript">
+  var $body = $('body');
+//  var count = 0;
+//  $body.keypress(function (event) {
+//    $('#debug').html(event.keyCode + ' ' + ++count);
+//  });
+//  $body.keyup(function () {
+//    count = 0;
+//  });
 
 
-
-  var physics = new NextPhysics(document.getElementById('canvas'));
+  var physics = new NextPhysics(document.getElementById('canvas-container'));
 
   var sphere = new NP.Sphere(0, 0, 0, 1);
   physics.add(sphere);
@@ -25,6 +37,7 @@
   var sphere2 = new NP.Sphere(2, 2, 0, 1);
   physics.add(sphere2);
 
+  physics.border(-10, -10, -10, 10, 10, 10);
   physics.start();
 
 

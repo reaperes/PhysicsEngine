@@ -86,68 +86,42 @@ NP.Util = function() {
  */
 
 /**
- * @class NP.Vec3
- * @constructor
- */
-NP.Vec3 = function(x, y, z) {
-  return new THREE.Vector3(x, y, z);
-};
-
-/**
- * @author namhoon <emerald105@hanmail.net>
- */
-
-/**
  * @class NextPhysics
  * @param canvasContainer {HTMLElement}
  * @constructor
  */
 NextPhysics = function (canvasContainer) {
-  var engine = new NP.Engine();
+  var defaults = {
+  };
+
+  var engine = new NP.Engine(this);
   var renderer = new NP.Renderer(canvasContainer);
 
-  /**
-   * delta time
-   *
-   * @property deltaT
-   * @type {Number}
-   */
   var deltaT = 0.01;
+  this.gravity = new THREE.Vector3(0, 9.8, 0);
 
-  /**
-   * Add object
-   *
-   * @method add
-   * @param npobject {NP.Object}
-   */
   this.add = function (npobject) {
     engine.add(npobject);
     renderer.add(npobject);
   };
 
-  /**
-   * Updates objects
-   *
-   * @method update
-   */
+  this.border = function (x1, y1, z1, x2, y2, z2) {
+
+  };
+
+  /****************************************************
+   * Physics loop
+   ****************************************************/
+
   this.update = function () {
+    moveCamera();
     engine.update(deltaT);
   };
 
-  /**
-   * Display objects
-   *
-   * @method render
-   */
   this.render = function () {
     renderer.render();
   };
 
-  /**
-   * Start engine
-   *
-   * @method start
-   */
   this.start = function() {
     var loop = function() {
       this.update();
@@ -178,8 +152,108 @@ NextPhysics = function (canvasContainer) {
   };
 
   /****************************************************
-   * Mouse event handling
+   * Moving camera
    ****************************************************/
+  var cameraMaxVel = 0.5;
+  var cameraVertVel = 0;
+  var cameraHoriVel = 0;
+  function moveCamera() {
+    if (pressedKeys[KEY_UP] != pressedKeys[KEY_DOWN])
+      renderer.camera.position.y += pressedKeys[KEY_UP]
+        ? (cameraVertVel = cameraVertVel > cameraMaxVel ? cameraMaxVel : cameraVertVel + 0.01)
+        : (cameraVertVel = cameraVertVel < -cameraMaxVel ? -cameraMaxVel : cameraVertVel - 0.01);
+    if (pressedKeys[KEY_LEFT] != pressedKeys[KEY_RIGHT])
+      renderer.camera.position.x += pressedKeys[KEY_LEFT]
+        ? (cameraHoriVel = cameraHoriVel < -cameraMaxVel ? -cameraMaxVel : cameraHoriVel - 0.01)
+        : (cameraHoriVel = cameraHoriVel > cameraMaxVel ? cameraMaxVel : cameraHoriVel + 0.01);
+  }
+
+  /****************************************************
+   * Keyboard handling
+   ****************************************************/
+  var KEY_UP = 0;
+  var KEY_DOWN = 2;
+  var KEY_LEFT = 1;
+  var KEY_RIGHT = 5;
+  var pressedKeys = {
+    0: false,
+    2: false,
+    1: false,
+    5: false
+  };
+  //          w 87 119
+  // a 65 97  s 83 115  d 68 100
+  window.addEventListener('keydown', function (e) {
+    switch (e.keyCode) {
+      case 87: case 38: pressedKeys[KEY_UP]    = true; break;
+      case 83: case 40: pressedKeys[KEY_DOWN]  = true; break;
+      case 65: case 37: pressedKeys[KEY_LEFT]  = true; break;
+      case 68: case 39: pressedKeys[KEY_RIGHT] = true; break;
+    }
+  }, false);
+
+  window.addEventListener('keyup', function (e) {
+    switch (e.keyCode) {
+      case 87: case 38: pressedKeys[KEY_UP]    = false; cameraVertVel = 0; break;
+      case 83: case 40: pressedKeys[KEY_DOWN]  = false; cameraVertVel = 0; break;
+      case 65: case 37: pressedKeys[KEY_LEFT]  = false; cameraHoriVel = 0; break;
+      case 68: case 39: pressedKeys[KEY_RIGHT] = false; cameraHoriVel = 0; break;
+    }
+  }, false);
+
+  /****************************************************
+   * Rotation camera
+   ****************************************************/
+  var camera = renderer.camera;
+  var theta = 0;
+  var phi = 0;
+  var radious = 15;
+
+
+  /****************************************************
+   * Mouse handling
+   ****************************************************/
+  var projector = new THREE.Projector();
+  var mouse3D;
+  var isMouseDown = false;
+  var onMouseDownTheta;
+  var onMouseDownPhi;
+  var onMouseDownPosition = new THREE.Vector2();
+  canvasContainer.addEventListener('mousedown', function (event) {
+    event.preventDefault();
+    isMouseDown = true;
+
+    onMouseDownTheta = theta;
+    onMouseDownPhi = phi;
+    onMouseDownPosition.x = event.pageX;
+    onMouseDownPosition.y = event.pageY;
+  }, false);
+  canvasContainer.addEventListener('mousemove', function (event) {
+    event.preventDefault();
+    if (isMouseDown) {
+      theta = -((event.pageX - onMouseDownPosition.x) * 0.5) + onMouseDownTheta;
+      phi = ((event.clientY - onMouseDownPosition.y) * 0.5) + onMouseDownPhi;
+
+      camera.position.x = radious * Math.sin( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
+      camera.position.y = radious * Math.sin( phi * Math.PI / 360 );
+      camera.position.z = radious * Math.cos( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
+      camera.updateMatrix();
+    }
+  }, false);
+  canvasContainer.addEventListener('mouseup', function (event) {
+    event.preventDefault();
+    isMouseDown = false;
+    onMouseDownPosition.x = event.pageX - onMouseDownPosition.x;
+    onMouseDownPosition.y = event.pageY - onMouseDownPosition.y;
+
+    if ( onMouseDownPosition.length() > 5 ) {
+      return;
+    }
+  }, false);
+
+
+
+
   canvasContainer.addEventListener('mouseover', function(e) {}.bind(this), false);
   canvasContainer.addEventListener('mousewheel', function(e) {
     if (e.wheelDelta > 0) {
@@ -201,105 +275,80 @@ NextPhysics.prototype.constructor = NextPhysics;
  * @class NP.Engine
  * @constructor
  */
-NP.Engine = function() {
-  /**
-   * objects variable contains npobjects which affected by engine.
-   *
-   * @property objects
-   * @type Array[NP.Object]
-   */
+NP.Engine = function(physics) {
   var objects = [];
+  var pairs = [];
 
-  /**
-   * Add object
-   *
-   * @method add
-   * @param npobject
-   */
   this.add = function(npobject) {
     objects.push(npobject)
   };
 
-  /**
-   * Add objectContainer to engine
-   *
-   * @method addContainer
-   * @param objectContainer
-   */
-  this.addContainer = function(objectContainer) {
-    var i, len;
-    var objects = objectContainer.childs;
-    for (i=0, len=objects.length; i<len; i++) {
-      this.add(objects[i]);
-    }
-  };
-
-  /**
-   * Update objects
-   *
-   * @method update
-   * @param deltaT {Number} delta time
-   */
   this.update = function(deltaT) {
-    var i, lenI;
 
-    for (i=0, lenI=objects.length; i<lenI; i++) {
-      var object = objects[i];
-      if (object.forceFlag) {
-        object.solveNetForce();
-        object.update(deltaT);
-      }
-    }
   };
 
 
 
-//    var forces = object.forces;
-//    var keys = Object.keys(forces);
-//    var len = keys.length;
-//    if (len == 0) {
-//      return new THREE.Vector3();
+
+
+//    resetForce(objects);
+//    solveExternalForce(objects);
+//
+//    resetPairs(pairs);
+//    pairs = detectCollision(objects);
+//    solveInternalForce(pairs);
+//
+//    function resetForce(objects) {
+//      _.each(objects, function(object) {
+//        object.resetForce();
+//      });
 //    }
 //
-//    // calculate source forces
-//    var vector = new THREE.Vector3();
-//    if (forces[NP.Force.Type.GRAVITY] != undefined) {
-//      forces[NP.Force.Type.GRAVITY].update();
-//      vector.add(forces[NP.Force.Type.GRAVITY].vector);
+//    function solveExternalForce(objects) {
+//      _.each(objects, function(object) {
+//        if (object.enableGravity) object.force.add(physics.gravity);
+//      });
 //    }
-//    object.force = vector;
 //
-//    // calculate reaction forces
-//    if (forces[NP.Force.Type.TENSION] != undefined) {
-//      forces[NP.Force.Type.TENSION].update();
-//      vector.add(forces[NP.Force.Type.TENSION].vector);
+//    function resetPairs(pairs) {
+//      pairs = [];
 //    }
-//    object.force = vector;
+//
+//    function detectCollision(objects) {
+//      var i, j, length;
+//      var pair;
+//      for (i=0, length=objects.length; i<length; i++) {
+//        var objA = objects[i];
+//        for (j=i; j<length; j++) {
+//          var objB = objects[j];
+//          var distance = objA.distanceTo(objB);
+//          if (objA.radius+objB.radius > distance) {
+//            pair = new NP.Pairs(objA, objB);
+//            pair.distance = distance;
+//            pairs.append(pair);
+//          }
+//        }
+//      }
+//    }
+//
+//    function solveInternalForce(pairs) {
+//      _.each(pairs, function(pair) {
+//        var objA = pair[0];
+//        var objB = pair[1];
+//        objA.
+//      });
+//    }
 //  };
 };
 
 NP.Engine.prototype.constructor = NP.Engine;
 
-/**
- * @author namhoon <emerald105@hanmail.net>
- */
 
-/**
- * @class NP.ElasticForce
- * @constructor
- */
-//NP.ElasticForce = function(gravity) {
-//  NP.Force.call(this);
-//
-//};
-//
-//NP.ElasticForce.prototype = Object.create(NP.Force.prototype);
-//NP.ElasticForce.prototype.constructor = NP.ElasticForce;
-//
-//NP.ElasticForce.prototype.update = function() {
-//  return this.vector;
-//};
 
+NP.Pairs = function(objectA, objectB) {
+  this.objectA = objectA;
+  this.objectB = objectB;
+};
 /**
  * @author namhoon <emerald105@hanmail.net>
  */
@@ -308,93 +357,13 @@ NP.Engine.prototype.constructor = NP.Engine;
  * @class NP.Force
  * @constructor
  */
-NP.Force = function() {
-  this.position = new THREE.Vector3();
-  this.vector = new THREE.Vector3();
+NP.Force = function(x, y, z) {
+  this.x = x !== undefined ? x : 0;
+  this.y = y !== undefined ? y : 0;
+  this.z = z !== undefined ? z : 0;
 };
 
 NP.Force.prototype.constructor = NP.Force;
-
-NP.Force.Type = {
-  GRAVITY: 'gravity',
-  TENSION: 'tension'
-};
-
-/**
- * Convert to Array list
- *
- * @method list
- */
-NP.Force.prototype.list = function() {
-  return this.vector.list();
-};
-
-/**
- * Update force
- *
- * @method update
- */
-NP.Force.prototype.update = function() {
-  throw new Error('Update function must be override.');
-};
-
-/**
- * @author namhoon <emerald105@hanmail.net>
- */
-
-/**
- * @class NP.GravityForce
- * @constructor
- */
-NP.GravityForce = function(gravity) {
-  NP.Force.call(this);
-
-  gravity = gravity || 9.8;
-  this.__defineGetter__('gravity', function() {
-    return gravity;
-  });
-  this.__defineSetter__('gravity', function(value) {
-    gravity = value;
-    this.vector.y = -value;
-  });
-
-  this.vector.x = 0;
-  this.vector.y = -gravity;
-  this.vector.z = 0;
-};
-
-NP.GravityForce.prototype = Object.create(NP.Force.prototype);
-NP.GravityForce.prototype.constructor = NP.GravityForce;
-
-NP.GravityForce.prototype.update = function() {
-  // gravitational force is constant.
-};
-
-/**
- * @author namhoon <emerald105@hanmail.net>
- */
-
-/**
- * @class NP.TensionForce
- * @constructor
- * @param pivot {THREE.Vector3} the point of pivot
- * @param object {NP.Object}
- */
-NP.TensionForce = function(pivot, object) {
-  NP.Force.call(this);
-
-  this.pivot = pivot !== undefined ? pivot : new THREE.Vector3();
-  this.object = object !== undefined ? object : new NP.Object();
-};
-
-NP.TensionForce.prototype = Object.create(NP.Force.prototype);
-NP.TensionForce.prototype.constructor = NP.TensionForce;
-
-NP.TensionForce.prototype.update = function() {
-  var distanceToObject = this.pivot.distanceTo(this.object.position);
-  var cosTheta = Math.abs(this.object.position.y - this.pivot.y) / distanceToObject;
-  this.vector = this.object.force.clone().multiplyScalar(-cosTheta);
-};
 
 /**
  * @author namhoon <emerald105@hanmail.net>
@@ -407,53 +376,16 @@ NP.TensionForce.prototype.update = function() {
  * @constructor
  */
 NP.Object = function() {
-  /**
-   * Type of object
-   *
-   * @property type
-   * @type NP.Object.Type
-   */
   this.type = undefined;
-
-  /**
-   * If object can be forced.
-   *
-   * @type {boolean}
-   */
   this.forceFlag = true;
-
-  /**
-   * Forces of object
-   *
-   * @property forces
-   * @type Object
-   */
-  this.forces = {};
-
-  /**
-   * Net force of object. Unit is Newton.
-   *
-   * @property force
-   * @type {THREE.Vector3}
-   */
+  this.forces = [];
   this.force = new THREE.Vector3();
-
-  /**
-   * The velocity of object. Unit is m/s.
-   * [0] = x, [1] = y, [2] = z.
-   *
-   * @property velocity
-   * @type {THREE.Vector3}
-   */
   this.velocity = new THREE.Vector3();
-
-  /**
-   * Position of object. Unit is m.
-   *
-   * @property position
-   * @type {THREE.Vector3}
-   */
   this.position = new THREE.Vector3();
+
+  this.k = 20000; // N/m
+
+  this.enableGravity = true;
 };
 
 NP.Object.prototype.constructor = NP.Object;
@@ -464,29 +396,15 @@ NP.Object.Type = {
   SPHERE: 'sphere'
 };
 
+NP.Object.prototype.resetForce = function() {
+  this.forces = [];
+};
+
 NP.Object.prototype.addForce = function(force) {
-  if (force instanceof NP.GravityForce) {
-    this.forces[NP.Force.Type.GRAVITY] = force;
-  }
+  if (!force instanceof NP.Force) return;
+  this.forces.append(force);
 };
 
-NP.Object.prototype.solveNetForce = function() {
-  var force, netForce = new THREE.Vector3();
-
-  if (this.forces[NP.Force.Type.GRAVITY] !== undefined) {
-    force = this.forces[NP.Force.Type.GRAVITY];
-    force.update();
-    netForce.add(force.vector);
-  }
-  this.force = netForce;
-};
-
-/**
- * Update objects
- *
- * @method update
- * @param deltaT {Number} delta time
- */
 NP.Object.prototype.update = function(deltaT) {
   this.velocity.x += this.force.x * deltaT;
   this.velocity.y += this.force.y * deltaT;
@@ -500,6 +418,16 @@ NP.Object.prototype.update = function(deltaT) {
 NP.Object.prototype.renderScript = function(renderOptions) {
 };
 
+NP.Object.prototype.renderScript = function(renderOptions) {
+
+};
+
+NP.Object.prototype.onCollision = function(v) {
+};
+
+NP.Object.prototype.onMouseOver = function(e) {
+
+};
 /**
  * @author namhoon <emerald105@hanmail.net>
  */
@@ -529,39 +457,6 @@ NP.ObjectContainer.prototype.constructor = NP.ObjectContainer;
  */
 
 /**
- * @class NP.Circle
- * @constructor
- */
-NP.Circle = function(x, y, z, radius) {
-  NP.Object.call(this);
-  this.type = NP.Object.Type.CIRCLE;
-
-  this.position.x = x !== undefined ? x : 0;
-  this.position.y = y !== undefined ? y : 0;
-  this.position.z = z !== undefined ? z : 0;
-  this.radius = radius !== undefined ? radius : 1;
-};
-
-NP.Circle.prototype = Object.create(NP.Object.prototype);
-NP.Circle.prototype.constructor = NP.Circle;
-
-NP.Circle.prototype.renderScript = function(scene, renderOptions) {
-  var segments = renderOptions['segments'] !== undefined ? renderOptions['segments'] : 32;
-  var geometry = new THREE.CircleGeometry( this.radius, segments );
-  var material = new THREE.MeshBasicMaterial({
-    color: renderOptions['color1'] !== undefined ? renderOptions['color1'] : NP.ColorSets[0]['color1']
-  });
-
-  var circle = new THREE.Mesh(geometry, material);
-  circle.position = this.position;
-  scene.add(circle);
-};
-
-/**
- * @author namhoon <emerald105@hanmail.net>
- */
-
-/**
  * @class NP.Sphere
  * @constructor
  */
@@ -573,6 +468,8 @@ NP.Sphere = function(x, y, z, radius) {
   this.position.y = y !== undefined ? y : 0;
   this.position.z = z !== undefined ? z : 0;
   this.radius = radius !== undefined ? radius : 1;
+
+  this.k = 20000;   // 20000 N/m
 };
 
 NP.Sphere.prototype = Object.create(NP.Object.prototype);
@@ -590,76 +487,19 @@ NP.Sphere.prototype.renderScript = function(scene, renderOptions) {
   sphere.position = this.position;
   scene.add(sphere);
 };
-
-/**
- * @author namhoon <emerald105@hanmail.net>
- */
-
-/**
- * @class NP.Pendulum
- * @constructor
- */
-NP.Pendulum = function(circle, pivot) {
-  NP.Object.call(this);
-
-  this.circle = circle !== undefined ? circle : new NP.Circle();
-  this.pivot = pivot !== undefined ? pivot : new THREE.Vector3(0, 4, 0);
-
-  this.position = this.pivot;
-};
-
-NP.Pendulum.prototype = Object.create(NP.ObjectContainer.prototype);
-NP.Pendulum.prototype.constructor = NP.Pendulum;
-
-
-NP.Pendulum.prototype.renderScript = function(scene, renderOptions, updateFunctions) {
-  var lineMaterial = new THREE.LineBasicMaterial({
-    color: renderOptions['color1'] !== undefined ? renderOptions['color1'] : NP.ColorSets[0]['color1'],
-    linewidth: 2
-  });
-
-  var lineGeometry = new THREE.Geometry();
-  lineGeometry.vertices.push(this.pivot);
-  lineGeometry.vertices.push(this.circle.position);
-
-  var line = new THREE.Line(lineGeometry, lineMaterial);
-  scene.add(line);
-
-  var segments = renderOptions['segments'] !== undefined ? renderOptions['segments'] : 32;
-  var sphereGeometry = new THREE.SphereGeometry(this.circle.radius, segments, segments);
-  var sphereMaterial = new THREE.MeshBasicMaterial({
-    color: renderOptions['color1'] !== undefined ? renderOptions['color1'] : NP.ColorSets[0]['color1'],
-    wireframe: true
-  });
-  var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-  sphere.position = this.circle.position;
-  scene.add(sphere);
-
-  updateFunctions.push(function() {
-    lineGeometry.verticesNeedUpdate = true;
-  });
-};
-
-NP.Pendulum.prototype.solveNetForce = function() {
-  var force, netForce = new THREE.Vector3();
-
-  if (this.forces[NP.Force.Type.GRAVITY] !== undefined) {
-    force = this.forces[NP.Force.Type.GRAVITY];
-    force.update();
-    netForce.add(force.vector);
-  }
-  this.force = netForce;
-};
-
-NP.Pendulum.prototype.update = function(deltaT) {debugger;
-  this.velocity.x += this.force.x * deltaT;
-  this.velocity.y += this.force.y * deltaT;
-  this.velocity.z += this.force.z * deltaT;
-
-  this.circle.position.x += this.velocity.x * deltaT;
-  this.circle.position.y += this.velocity.y * deltaT;
-  this.circle.position.z += this.velocity.z * deltaT;
-};
+//
+//NP.Sphere.prototype.onCollision = function(v) {
+//  var dist = this.position.distanceTo(v);
+//  var fx = this.k * (this.radius - dist) * (this.position.x-v.x) / dist;
+//  var fy = this.k * (this.radius - dist) * (this.position.y-v.y) / dist;
+//  var fz = this.k * (this.radius - dist) * (this.position.z-v.z) / dist;
+//  var f = new NP.Force();
+//  f.position = this.position;
+//  f.vector.x = fx;
+//  f.vector.y = fy;
+//  f.vector.z = fz;
+//  this.addForce(f);
+//};
 
 /**
  * @author namhoon <emerald105@hanmail.net>
@@ -738,25 +578,9 @@ NP.Renderer = function(canvasContainer) {
   var axes = new THREE.AxisHelper( 100 );
   scene.add(axes);
 
-  /**
-   * Renderer camera
-   *
-   * @property camera
-   */
   this.camera = camera;
-
-  /**
-   * Renderer canvas
-   *
-   * @property canvas
-   */
   this.canvas = renderer.domElement;
 
-  /**
-   * Render objects
-   *
-   * @method render
-   */
   this.render = function() {
     var i, len;
     for (i=0, len=updateFunctions.length; i<len; i++) {
@@ -765,12 +589,6 @@ NP.Renderer = function(canvasContainer) {
     renderer.render(scene, camera);
   };
 
-  /**
-   * Add object to renderer scene
-   *
-   * @method add
-   * @param object {NP.Object}
-   */
   this.add = function(object) {
     var renderOptions = {
       segments: 16,
@@ -779,52 +597,6 @@ NP.Renderer = function(canvasContainer) {
 
     object.renderScript(scene, renderOptions, updateFunctions);
   };
-
-//    var segments = 16;
-//    var material;
-//
-//    switch (object.type) {
-//      case NP.Object.Type.LINE:
-//        material = new THREE.LineBasicMaterial({
-//          color: colorSet['color1']
-//        });
-//
-//        var geometry = new THREE.Geometry();
-//        geometry.vertices.push(object.position);
-//        geometry.vertices.push(object.v2);
-//
-//        var line = new THREE.Line(geometry, material);
-//        scene.add(line);
-//
-//        updateFunctions.push(function() {
-//          geometry.verticesNeedUpdate = true;
-//        });
-//        break;
-//
-//      case NP.Object.Type.SPHERE:
-//        geometry = new THREE.SphereGeometry(object.radius, segments, segments);
-//        material = new THREE.MeshBasicMaterial({color: colorSet['color1'], wireframe: true});
-//        var sphere = new THREE.Mesh(geometry, material);
-//
-//        sphere.position = object.position;
-//        scene.add(sphere);
-//        break;
-//    }
-//  };
-//
-//  /**
-//   * Add objectContainer to renderer scene
-//   *
-//   * @method addContainer
-//   * @param objectContainer
-//   */
-//  this.addContainer = function(objectContainer) {
-//    var i, len;
-//    var objects = objectContainer.childs;
-//    for (i=0, len=objects.length; i<len; i++) {
-//      this.add(objects[i]);
-//    }
-//  };
 };
 
 NP.Renderer.prototype.constructor = NP.Renderer;
