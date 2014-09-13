@@ -21,9 +21,12 @@ NP.Util = function() {
     };
 }, NextPhysics = function(a) {
     function b() {
-        m[i] != m[j] && (d.camera.position.y += g = m[i] ? g > f ? f : g + .01 : -f > g ? -f : g - .01), 
-        m[k] != m[l] && (d.camera.position.x += h = m[k] ? -f > h ? -f : h - .01 : h > f ? f : h + .01);
+        u[q] != u[r] && (d.camera.position.y += o = u[q] ? o > n ? n : o + .01 : -n > o ? -n : o - .01), 
+        u[s] != u[t] && (d.camera.position.x += p = u[s] ? -n > p ? -n : p - .01 : p > n ? n : p + .01);
     }
+    document.oncontextmenu = document.body.oncontextmenu = function() {
+        return !1;
+    };
     var c = new NP.Engine(this), d = new NP.Renderer(a), e = .01;
     this.gravity = new THREE.Vector3(0, 9.8, 0), this.add = function(a) {
         c.add(a), d.add(a);
@@ -43,7 +46,29 @@ NP.Util = function() {
             c.domElement.style.top = "0px", document.body.appendChild(c.domElement), requestAnimationFrame(b, d.canvas);
         } else requestAnimationFrame(a, d.canvas);
     };
-    var f = .5, g = 0, h = 0, i = 0, j = 2, k = 1, l = 5, m = {
+    var f = d.camera, g = 30, h = 90, i = 90;
+    f.position.x = g * Math.sin(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), f.position.y = g * Math.sin(i * Math.PI / 360), 
+    f.position.z = g * Math.cos(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), f.lookAt(new THREE.Vector3(0, 0, 0));
+    var j, k, l, m = new THREE.Vector2();
+    a.addEventListener("mousedown", function(a) {
+        a.preventDefault(), j = !0, k = h, l = i, m.x = a.pageX, m.y = a.pageY;
+    }, !1), a.addEventListener("mousemove", function(a) {
+        a.preventDefault(), j && (h = -(.5 * (a.pageX - m.x)) + k, i = .5 * (a.clientY - m.y) + l, 
+        f.position.x = g * Math.sin(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), f.position.y = g * Math.sin(i * Math.PI / 360), 
+        f.position.z = g * Math.cos(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), f.updateProjectionMatrix(), 
+        f.lookAt(d.scene.position));
+    }, !1), a.addEventListener("mouseup", function(a) {
+        a.preventDefault(), j = !1, m.x = a.pageX - m.x, m.y = a.pageY - m.y;
+    }, !1), a.addEventListener("mouseover", function() {}.bind(this), !1), a.addEventListener("mousewheel", function(a) {
+        a.preventDefault();
+        var b = .1 * f.position.length();
+        a.wheelDelta > 0 ? (f.position.x -= b * Math.sin(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), 
+        f.position.y -= b * Math.sin(i * Math.PI / 360), f.position.z -= b * Math.cos(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), 
+        g -= b) : (f.position.x += b * Math.sin(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), 
+        f.position.y += b * Math.sin(i * Math.PI / 360), f.position.z += b * Math.cos(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), 
+        g += b);
+    }, !1);
+    var n = .5, o = 0, p = 0, q = 0, r = 2, s = 1, t = 5, u = {
         0: !1,
         2: !1,
         1: !1,
@@ -53,57 +78,45 @@ NP.Util = function() {
         switch (a.keyCode) {
           case 87:
           case 38:
-            m[i] = !0;
+            u[q] = !0;
             break;
 
           case 83:
           case 40:
-            m[j] = !0;
+            u[r] = !0;
             break;
 
           case 65:
           case 37:
-            m[k] = !0;
+            u[s] = !0;
             break;
 
           case 68:
           case 39:
-            m[l] = !0;
+            u[t] = !0;
         }
     }, !1), window.addEventListener("keyup", function(a) {
         switch (a.keyCode) {
           case 87:
           case 38:
-            m[i] = !1, g = 0;
+            u[q] = !1, o = 0;
             break;
 
           case 83:
           case 40:
-            m[j] = !1, g = 0;
+            u[r] = !1, o = 0;
             break;
 
           case 65:
           case 37:
-            m[k] = !1, h = 0;
+            u[s] = !1, p = 0;
             break;
 
           case 68:
           case 39:
-            m[l] = !1, h = 0;
+            u[t] = !1, p = 0;
         }
     }, !1);
-    var n, o, p = d.camera, q = 0, r = 0, s = 15, t = (new THREE.Projector(), !1), u = new THREE.Vector2();
-    a.addEventListener("mousedown", function(a) {
-        a.preventDefault(), t = !0, n = q, o = r, u.x = a.pageX, u.y = a.pageY;
-    }, !1), a.addEventListener("mousemove", function(a) {
-        a.preventDefault(), t && (q = -(.5 * (a.pageX - u.x)) + n, r = .5 * (a.clientY - u.y) + o, 
-        p.position.x = s * Math.sin(q * Math.PI / 360) * Math.cos(r * Math.PI / 360), p.position.y = s * Math.sin(r * Math.PI / 360), 
-        p.position.z = s * Math.cos(q * Math.PI / 360) * Math.cos(r * Math.PI / 360), p.updateMatrix());
-    }, !1), a.addEventListener("mouseup", function(a) {
-        a.preventDefault(), t = !1, u.x = a.pageX - u.x, u.y = a.pageY - u.y, u.length() > 5;
-    }, !1), a.addEventListener("mouseover", function() {}.bind(this), !1), a.addEventListener("mousewheel", function(a) {
-        a.wheelDelta > 0 ? d.camera.position.z -= d.camera.position.z / 10 : d.camera.position.z += d.camera.position.z / 10;
-    }.bind(this), !1);
 }, NextPhysics.prototype.constructor = NextPhysics, NP.Engine = function() {
     var a = [];
     this.add = function(b) {
@@ -156,7 +169,9 @@ NP.Sphere.prototype.renderScript = function(a, b) {
     };
     return [ a ];
 }(), NP.Renderer = function(a) {
-    var b = new THREE.WebGLRenderer(), c = new THREE.Scene(), d = new THREE.PerspectiveCamera(45, a.offsetWidth / a.offsetHeight, 1e-4, 1e5), e = NP.ColorSets[0], f = [];
+    var b = new THREE.WebGLRenderer(), c = new THREE.Scene();
+    this.scene = c;
+    var d = new THREE.PerspectiveCamera(45, a.offsetWidth / a.offsetHeight, 1e-4, 1e5), e = NP.ColorSets[0], f = [];
     b.setClearColor(new THREE.Color(15658734)), b.setSize(a.offsetWidth, a.offsetHeight), 
     a.appendChild(b.domElement), c.add(d), d.position.x = 0, d.position.y = 0, d.position.z = 15, 
     d.lookAt(c.position);

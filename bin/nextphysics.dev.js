@@ -91,6 +91,9 @@ NP.Util = function() {
  * @constructor
  */
 NextPhysics = function (canvasContainer) {
+  // prevent right mouse click
+  document.oncontextmenu = document.body.oncontextmenu = function() {return false;}
+
   var defaults = {
   };
 
@@ -152,6 +155,68 @@ NextPhysics = function (canvasContainer) {
   };
 
   /****************************************************
+   * Controlling camera
+   ****************************************************/
+  var camera = renderer.camera;
+  var radius = 30;
+  var theta = 90;
+  var phi = 90;
+  camera.position.x = radius * Math.sin( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
+  camera.position.y = radius * Math.sin( phi * Math.PI / 360 );
+  camera.position.z = radius * Math.cos( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
+  camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+  var isMouseDown, onMouseDownTheta, onMouseDownPhi;
+  var onMouseDownPosition = new THREE.Vector2();
+  canvasContainer.addEventListener('mousedown', function (event) {
+    event.preventDefault();
+    isMouseDown = true;
+    onMouseDownTheta = theta;
+    onMouseDownPhi = phi;
+    onMouseDownPosition.x = event.pageX;
+    onMouseDownPosition.y = event.pageY;
+  }, false);
+
+  canvasContainer.addEventListener('mousemove', function (event) {
+    event.preventDefault();
+    if (!isMouseDown) return;
+
+    theta = -((event.pageX - onMouseDownPosition.x) * 0.5) + onMouseDownTheta;
+    phi = ((event.clientY - onMouseDownPosition.y) * 0.5) + onMouseDownPhi;
+    camera.position.x = radius * Math.sin( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
+    camera.position.y = radius * Math.sin( phi * Math.PI / 360 );
+    camera.position.z = radius * Math.cos( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
+    camera.updateProjectionMatrix();
+    camera.lookAt( renderer.scene.position );
+  }, false);
+
+  canvasContainer.addEventListener('mouseup', function (event) {
+    event.preventDefault();
+    isMouseDown = false;
+    onMouseDownPosition.x = event.pageX - onMouseDownPosition.x;
+    onMouseDownPosition.y = event.pageY - onMouseDownPosition.y;
+  }, false);
+
+  canvasContainer.addEventListener('mouseover', function(e) {}.bind(this), false);
+  canvasContainer.addEventListener('mousewheel', function(event) {
+    event.preventDefault();
+
+    var wheelDistance = camera.position.length() * 0.1;
+    if (event.wheelDelta > 0) {
+      camera.position.x -= wheelDistance * Math.sin(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+      camera.position.y -= wheelDistance * Math.sin(phi * Math.PI / 360);
+      camera.position.z -= wheelDistance * Math.cos(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+      radius -= wheelDistance;
+    }
+    else {
+      camera.position.x += wheelDistance * Math.sin(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+      camera.position.y += wheelDistance * Math.sin(phi * Math.PI / 360);
+      camera.position.z += wheelDistance * Math.cos(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+      radius += wheelDistance;
+    }
+  }, false);
+
+  /****************************************************
    * Moving camera
    ****************************************************/
   var cameraMaxVel = 0.5;
@@ -200,69 +265,6 @@ NextPhysics = function (canvasContainer) {
       case 68: case 39: pressedKeys[KEY_RIGHT] = false; cameraHoriVel = 0; break;
     }
   }, false);
-
-  /****************************************************
-   * Rotation camera
-   ****************************************************/
-  var camera = renderer.camera;
-  var theta = 0;
-  var phi = 0;
-  var radious = 15;
-
-
-  /****************************************************
-   * Mouse handling
-   ****************************************************/
-  var projector = new THREE.Projector();
-  var mouse3D;
-  var isMouseDown = false;
-  var onMouseDownTheta;
-  var onMouseDownPhi;
-  var onMouseDownPosition = new THREE.Vector2();
-  canvasContainer.addEventListener('mousedown', function (event) {
-    event.preventDefault();
-    isMouseDown = true;
-
-    onMouseDownTheta = theta;
-    onMouseDownPhi = phi;
-    onMouseDownPosition.x = event.pageX;
-    onMouseDownPosition.y = event.pageY;
-  }, false);
-  canvasContainer.addEventListener('mousemove', function (event) {
-    event.preventDefault();
-    if (isMouseDown) {
-      theta = -((event.pageX - onMouseDownPosition.x) * 0.5) + onMouseDownTheta;
-      phi = ((event.clientY - onMouseDownPosition.y) * 0.5) + onMouseDownPhi;
-
-      camera.position.x = radious * Math.sin( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
-      camera.position.y = radious * Math.sin( phi * Math.PI / 360 );
-      camera.position.z = radious * Math.cos( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
-      camera.updateMatrix();
-    }
-  }, false);
-  canvasContainer.addEventListener('mouseup', function (event) {
-    event.preventDefault();
-    isMouseDown = false;
-    onMouseDownPosition.x = event.pageX - onMouseDownPosition.x;
-    onMouseDownPosition.y = event.pageY - onMouseDownPosition.y;
-
-    if ( onMouseDownPosition.length() > 5 ) {
-      return;
-    }
-  }, false);
-
-
-
-
-  canvasContainer.addEventListener('mouseover', function(e) {}.bind(this), false);
-  canvasContainer.addEventListener('mousewheel', function(e) {
-    if (e.wheelDelta > 0) {
-      renderer.camera.position.z -= renderer.camera.position.z / 10;
-    }
-    else {
-      renderer.camera.position.z += renderer.camera.position.z / 10;
-    }
-  }.bind(this), false);
 };
 
 NextPhysics.prototype.constructor = NextPhysics;
@@ -561,6 +563,7 @@ NP.ColorSets = (function() {
 NP.Renderer = function(canvasContainer) {
   var renderer = new THREE.WebGLRenderer();
   var scene = new THREE.Scene();
+  this.scene = scene;
   var camera = new THREE.PerspectiveCamera(45, canvasContainer.offsetWidth / canvasContainer.offsetHeight, 0.0001, 100000);
   var colorSet = NP.ColorSets[0];
   var updateFunctions = [];

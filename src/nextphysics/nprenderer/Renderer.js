@@ -12,6 +12,7 @@
 NP.Renderer = function(canvasContainer) {
   var renderer = new THREE.WebGLRenderer();
   var scene = new THREE.Scene();
+  this.scene = scene;
   var camera = new THREE.PerspectiveCamera(45, canvasContainer.offsetWidth / canvasContainer.offsetHeight, 0.0001, 100000);
   var colorSet = NP.ColorSets[0];
   var updateFunctions = [];
