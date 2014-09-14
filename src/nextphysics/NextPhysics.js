@@ -26,7 +26,6 @@ NextPhysics = function (canvasContainer) {
   };
 
   this.border = function (x1, y1, z1, x2, y2, z2) {
-
   };
 
   /****************************************************
@@ -34,7 +33,7 @@ NextPhysics = function (canvasContainer) {
    ****************************************************/
 
   this.update = function () {
-    moveCamera();
+    handleKey();
     engine.update(deltaT);
   };
 
@@ -75,113 +74,171 @@ NextPhysics = function (canvasContainer) {
    * Control camera
    ****************************************************/
   var camera = renderer.camera;
+  var cameraLookPosition = renderer.scene.position;
   var radius = 30;
   var theta = 90;
   var phi = 90;
-  camera.position.x = radius * Math.sin( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
-  camera.position.y = radius * Math.sin( phi * Math.PI / 360 );
-  camera.position.z = radius * Math.cos( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
-  camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-  var isMouseDown, onMouseDownTheta, onMouseDownPhi;
-  var onMouseDownPosition = new THREE.Vector2();
-  canvasContainer.addEventListener('mousedown', function (event) {
-    event.preventDefault();
-    isMouseDown = true;
-    onMouseDownTheta = theta;
-    onMouseDownPhi = phi;
-    onMouseDownPosition.x = event.pageX;
-    onMouseDownPosition.y = event.pageY;
-  }, false);
+  //          w 87 119
+  // a 65 97  s 83 115  d 68 100
+  var KEY_UP = 0;
+  var KEY_DOWN = 2;
+  var KEY_LEFT = 1;
+  var KEY_RIGHT = 5;
+  var pressedKeys = {
+    0: false,
+    2: false,
+    1: false,
+    5: false
+  };
 
-  canvasContainer.addEventListener('mousemove', function (event) {
-    event.preventDefault();
-    if (!isMouseDown) return;
+  var geometry = new THREE.SphereGeometry(0.5);
+  var material = new THREE.MeshBasicMaterial();
+  var sphere = new THREE.Mesh(geometry, material);
+  sphere.position.set(cameraLookPosition.x, cameraLookPosition.y, cameraLookPosition.z);
+  renderer.scene.add(sphere);
 
-    theta = -((event.pageX - onMouseDownPosition.x) * 0.5) + onMouseDownTheta;
-    phi = ((event.clientY - onMouseDownPosition.y) * 0.5) + onMouseDownPhi;
-    camera.position.x = radius * Math.sin( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
-    camera.position.y = radius * Math.sin( phi * Math.PI / 360 );
-    camera.position.z = radius * Math.cos( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
-    camera.updateProjectionMatrix();
-    camera.lookAt( renderer.scene.position );
-  }, false);
+  var cameraVel = .5;
+  function handleKey() {
+    if (pressedKeys[KEY_UP] != pressedKeys[KEY_DOWN]) {
+      var dy = cameraVel;
 
-  canvasContainer.addEventListener('mouseup', function (event) {
-    event.preventDefault();
-    isMouseDown = false;
-    onMouseDownPosition.x = event.pageX - onMouseDownPosition.x;
-    onMouseDownPosition.y = event.pageY - onMouseDownPosition.y;
-  }, false);
-
-  canvasContainer.addEventListener('mouseover', function(e) {}.bind(this), false);
-  canvasContainer.addEventListener('mousewheel', function(event) {
-    event.preventDefault();
-
-    var wheelDistance = camera.position.length() * 0.1;
-    if (event.wheelDelta > 0) {
-      camera.position.x -= wheelDistance * Math.sin(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
-      camera.position.y -= wheelDistance * Math.sin(phi * Math.PI / 360);
-      camera.position.z -= wheelDistance * Math.cos(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
-      radius -= wheelDistance;
+      if (pressedKeys[KEY_UP]) {
+        camera.position.y += dy;
+        cameraLookPosition.y += dy;
+      }
+      else {
+        camera.position.y -= dy;
+        cameraLookPosition.y -= dy;
+      }
+      sphere.position.set(cameraLookPosition.x, cameraLookPosition.y, cameraLookPosition.z);
     }
-    else {
-      camera.position.x += wheelDistance * Math.sin(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
-      camera.position.y += wheelDistance * Math.sin(phi * Math.PI / 360);
-      camera.position.z += wheelDistance * Math.cos(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
-      radius += wheelDistance;
-    }
-  }, false);
+    if (pressedKeys[KEY_LEFT] != pressedKeys[KEY_RIGHT]) {
+      var dx = -cameraVel * Math.cos(theta * Math.PI / 360);
+      var dz = cameraVel * Math.sin(theta * Math.PI / 360);
 
-//  /****************************************************
-//   * Moving camera using keyboard
-//   ****************************************************/
-//  var cameraMaxVel = 0.5;
-//  var cameraVertVel = 0;
-//  var cameraHoriVel = 0;
-//  function moveCamera() {
-//    if (pressedKeys[KEY_UP] != pressedKeys[KEY_DOWN])
-//      renderer.camera.position.y += pressedKeys[KEY_UP]
-//        ? (cameraVertVel = cameraVertVel > cameraMaxVel ? cameraMaxVel : cameraVertVel + 0.01)
-//        : (cameraVertVel = cameraVertVel < -cameraMaxVel ? -cameraMaxVel : cameraVertVel - 0.01);
-//    if (pressedKeys[KEY_LEFT] != pressedKeys[KEY_RIGHT])
-//      renderer.camera.position.x += pressedKeys[KEY_LEFT]
-//        ? (cameraHoriVel = cameraHoriVel < -cameraMaxVel ? -cameraMaxVel : cameraHoriVel - 0.01)
-//        : (cameraHoriVel = cameraHoriVel > cameraMaxVel ? cameraMaxVel : cameraHoriVel + 0.01);
-//  }
-//
-//  /****************************************************
-//   * Keyboard handling
-//   ****************************************************/
-//  var KEY_UP = 0;
-//  var KEY_DOWN = 2;
-//  var KEY_LEFT = 1;
-//  var KEY_RIGHT = 5;
-//  var pressedKeys = {
-//    0: false,
-//    2: false,
-//    1: false,
-//    5: false
-//  };
-//  //          w 87 119
-//  // a 65 97  s 83 115  d 68 100
-//  window.addEventListener('keydown', function (e) {
-//    switch (e.keyCode) {
-//      case 87: case 38: pressedKeys[KEY_UP]    = true; break;
-//      case 83: case 40: pressedKeys[KEY_DOWN]  = true; break;
-//      case 65: case 37: pressedKeys[KEY_LEFT]  = true; break;
-//      case 68: case 39: pressedKeys[KEY_RIGHT] = true; break;
-//    }
-//  }, false);
-//
-//  window.addEventListener('keyup', function (e) {
-//    switch (e.keyCode) {
-//      case 87: case 38: pressedKeys[KEY_UP]    = false; cameraVertVel = 0; break;
-//      case 83: case 40: pressedKeys[KEY_DOWN]  = false; cameraVertVel = 0; break;
-//      case 65: case 37: pressedKeys[KEY_LEFT]  = false; cameraHoriVel = 0; break;
-//      case 68: case 39: pressedKeys[KEY_RIGHT] = false; cameraHoriVel = 0; break;
-//    }
-//  }, false);
+      if (pressedKeys[KEY_LEFT]) {
+        camera.position.x += dx;
+        cameraLookPosition.x += dx;
+        camera.position.z += dz;
+        cameraLookPosition.z += dz;
+      }
+      else {
+        camera.position.x -= dx;
+        cameraLookPosition.x -= dx;
+        camera.position.z -= dz;
+        cameraLookPosition.z -= dz;
+      }
+      sphere.position.set(cameraLookPosition.x, cameraLookPosition.y, cameraLookPosition.z);
+    }
+  }
+
+  (function() {
+    camera.position.x = radius * Math.sin(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+    camera.position.y = radius * Math.sin(phi * Math.PI / 360);
+    camera.position.z = radius * Math.cos(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+    camera.lookAt(cameraLookPosition);
+
+    var isMouseDown, onMouseDownTheta, onMouseDownPhi;
+    var onMouseDownPosition = new THREE.Vector2();
+    canvasContainer.addEventListener('mousedown', function (event) {
+      event.preventDefault();
+      isMouseDown = true;
+      onMouseDownTheta = theta;
+      onMouseDownPhi = phi;
+      onMouseDownPosition.x = event.pageX;
+      onMouseDownPosition.y = event.pageY;
+    }, false);
+
+    canvasContainer.addEventListener('mousemove', function (event) {
+      event.preventDefault();
+      if (!isMouseDown) return;
+
+      theta = -(event.pageX - onMouseDownPosition.x) * 1.5 + onMouseDownTheta;
+      phi = (event.clientY - onMouseDownPosition.y) * 1.5 + onMouseDownPhi;
+      camera.position.x = cameraLookPosition.x + radius * Math.sin(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+      camera.position.y = cameraLookPosition.y +radius * Math.sin(phi * Math.PI / 360);
+      camera.position.z = cameraLookPosition.z +radius * Math.cos(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+      //    camera.updateProjectionMatrix();
+      camera.lookAt(cameraLookPosition);
+    }, false);
+
+    canvasContainer.addEventListener('mouseup', function (event) {
+      event.preventDefault();
+      isMouseDown = false;
+      onMouseDownPosition.x = event.pageX - onMouseDownPosition.x;
+      onMouseDownPosition.y = event.pageY - onMouseDownPosition.y;
+    }, false);
+
+    canvasContainer.addEventListener('mouseover', function (e) {
+    }.bind(this), false);
+    canvasContainer.addEventListener('mousewheel', function (event) {
+      event.preventDefault();
+
+      var wheelDistance = camera.position.distanceTo(cameraLookPosition) * 0.1;
+      if (event.wheelDelta > 0) {
+        camera.position.x -= wheelDistance * Math.sin(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+        camera.position.y -= wheelDistance * Math.sin(phi * Math.PI / 360);
+        camera.position.z -= wheelDistance * Math.cos(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+        radius -= wheelDistance;
+      }
+      else {
+        camera.position.x += wheelDistance * Math.sin(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+        camera.position.y += wheelDistance * Math.sin(phi * Math.PI / 360);
+        camera.position.z += wheelDistance * Math.cos(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+        radius += wheelDistance;
+      }
+    }, false);
+
+    /****************************************************
+     * Keyboard handling
+     ****************************************************/
+    window.addEventListener('keydown', function (e) {
+      switch (e.keyCode) {
+        case 87:
+        case 38:
+          pressedKeys[KEY_UP] = true;
+          break;
+        case 83:
+        case 40:
+          pressedKeys[KEY_DOWN] = true;
+          break;
+        case 65:
+        case 37:
+          pressedKeys[KEY_LEFT] = true;
+          break;
+        case 68:
+        case 39:
+          pressedKeys[KEY_RIGHT] = true;
+          break;
+      }
+    }, false);
+
+    window.addEventListener('keyup', function (e) {
+      switch (e.keyCode) {
+        case 87:
+        case 38:
+          pressedKeys[KEY_UP] = false;
+//          cameraVertVel = 0;
+          break;
+        case 83:
+        case 40:
+          pressedKeys[KEY_DOWN] = false;
+//          cameraVertVel = 0;
+          break;
+        case 65:
+        case 37:
+          pressedKeys[KEY_LEFT] = false;
+//          cameraHoriVel = 0;
+          break;
+        case 68:
+        case 39:
+          pressedKeys[KEY_RIGHT] = false;
+//          cameraHoriVel = 0;
+          break;
+      }
+    }, false);
+  })();
 };
 
 NextPhysics.prototype.constructor = NextPhysics;

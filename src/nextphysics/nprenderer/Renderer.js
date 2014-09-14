@@ -22,10 +22,9 @@ NP.Renderer = function(canvasContainer) {
   canvasContainer.appendChild(renderer.domElement);
   scene.add(camera);
 
-  camera.position.x = 0;
-  camera.position.y = 0;
-  camera.position.z = 15;
-  camera.lookAt(scene.position);
+//  var plane = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), new THREE.MeshNormalMaterial());
+//  plane.overdraw = true;
+//  scene.add(plane);
 
   var axes = new THREE.AxisHelper( 100 );
   scene.add(axes);

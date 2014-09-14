@@ -21,8 +21,15 @@ NP.Util = function() {
     };
 }, NextPhysics = function(a) {
     function b() {
-        u[q] != u[r] && (d.camera.position.y += o = u[q] ? o > n ? n : o + .01 : -n > o ? -n : o - .01), 
-        u[s] != u[t] && (d.camera.position.x += p = u[s] ? -n > p ? -n : p - .01 : p > n ? n : p + .01);
+        if (o[k] != o[l]) {
+            var a = s;
+            o[k] ? (f.position.y += a, g.y += a) : (f.position.y -= a, g.y -= a), r.position.set(g.x, g.y, g.z);
+        }
+        if (o[m] != o[n]) {
+            var b = -s * Math.cos(i * Math.PI / 360), c = s * Math.sin(i * Math.PI / 360);
+            o[m] ? (f.position.x += b, g.x += b, f.position.z += c, g.z += c) : (f.position.x -= b, 
+            g.x -= b, f.position.z -= c, g.z -= c), r.position.set(g.x, g.y, g.z);
+        }
     }
     document.oncontextmenu = document.body.oncontextmenu = function() {
         return !1;
@@ -46,77 +53,79 @@ NP.Util = function() {
             c.domElement.style.top = "0px", document.body.appendChild(c.domElement), requestAnimationFrame(b, d.canvas);
         } else requestAnimationFrame(a, d.canvas);
     };
-    var f = d.camera, g = 30, h = 90, i = 90;
-    f.position.x = g * Math.sin(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), f.position.y = g * Math.sin(i * Math.PI / 360), 
-    f.position.z = g * Math.cos(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), f.lookAt(new THREE.Vector3(0, 0, 0));
-    var j, k, l, m = new THREE.Vector2();
-    a.addEventListener("mousedown", function(a) {
-        a.preventDefault(), j = !0, k = h, l = i, m.x = a.pageX, m.y = a.pageY;
-    }, !1), a.addEventListener("mousemove", function(a) {
-        a.preventDefault(), j && (h = -(.5 * (a.pageX - m.x)) + k, i = .5 * (a.clientY - m.y) + l, 
-        f.position.x = g * Math.sin(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), f.position.y = g * Math.sin(i * Math.PI / 360), 
-        f.position.z = g * Math.cos(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), f.updateProjectionMatrix(), 
-        f.lookAt(d.scene.position));
-    }, !1), a.addEventListener("mouseup", function(a) {
-        a.preventDefault(), j = !1, m.x = a.pageX - m.x, m.y = a.pageY - m.y;
-    }, !1), a.addEventListener("mouseover", function() {}.bind(this), !1), a.addEventListener("mousewheel", function(a) {
-        a.preventDefault();
-        var b = .1 * f.position.length();
-        a.wheelDelta > 0 ? (f.position.x -= b * Math.sin(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), 
-        f.position.y -= b * Math.sin(i * Math.PI / 360), f.position.z -= b * Math.cos(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), 
-        g -= b) : (f.position.x += b * Math.sin(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), 
-        f.position.y += b * Math.sin(i * Math.PI / 360), f.position.z += b * Math.cos(h * Math.PI / 360) * Math.cos(i * Math.PI / 360), 
-        g += b);
-    }, !1);
-    var n = .5, o = 0, p = 0, q = 0, r = 2, s = 1, t = 5, u = {
+    var f = d.camera, g = d.scene.position, h = 30, i = 90, j = 90, k = 0, l = 2, m = 1, n = 5, o = {
         0: !1,
         2: !1,
         1: !1,
         5: !1
-    };
-    window.addEventListener("keydown", function(a) {
-        switch (a.keyCode) {
-          case 87:
-          case 38:
-            u[q] = !0;
-            break;
+    }, p = new THREE.SphereGeometry(.5), q = new THREE.MeshBasicMaterial(), r = new THREE.Mesh(p, q);
+    r.position.set(g.x, g.y, g.z), d.scene.add(r);
+    var s = .5;
+    !function() {
+        f.position.x = h * Math.sin(i * Math.PI / 360) * Math.cos(j * Math.PI / 360), f.position.y = h * Math.sin(j * Math.PI / 360), 
+        f.position.z = h * Math.cos(i * Math.PI / 360) * Math.cos(j * Math.PI / 360), f.lookAt(g);
+        var b, c, d, e = new THREE.Vector2();
+        a.addEventListener("mousedown", function(a) {
+            a.preventDefault(), b = !0, c = i, d = j, e.x = a.pageX, e.y = a.pageY;
+        }, !1), a.addEventListener("mousemove", function(a) {
+            a.preventDefault(), b && (i = 1.5 * -(a.pageX - e.x) + c, j = 1.5 * (a.clientY - e.y) + d, 
+            f.position.x = g.x + h * Math.sin(i * Math.PI / 360) * Math.cos(j * Math.PI / 360), 
+            f.position.y = g.y + h * Math.sin(j * Math.PI / 360), f.position.z = g.z + h * Math.cos(i * Math.PI / 360) * Math.cos(j * Math.PI / 360), 
+            f.lookAt(g));
+        }, !1), a.addEventListener("mouseup", function(a) {
+            a.preventDefault(), b = !1, e.x = a.pageX - e.x, e.y = a.pageY - e.y;
+        }, !1), a.addEventListener("mouseover", function() {}.bind(this), !1), a.addEventListener("mousewheel", function(a) {
+            a.preventDefault();
+            var b = .1 * f.position.distanceTo(g);
+            a.wheelDelta > 0 ? (f.position.x -= b * Math.sin(i * Math.PI / 360) * Math.cos(j * Math.PI / 360), 
+            f.position.y -= b * Math.sin(j * Math.PI / 360), f.position.z -= b * Math.cos(i * Math.PI / 360) * Math.cos(j * Math.PI / 360), 
+            h -= b) : (f.position.x += b * Math.sin(i * Math.PI / 360) * Math.cos(j * Math.PI / 360), 
+            f.position.y += b * Math.sin(j * Math.PI / 360), f.position.z += b * Math.cos(i * Math.PI / 360) * Math.cos(j * Math.PI / 360), 
+            h += b);
+        }, !1), window.addEventListener("keydown", function(a) {
+            switch (a.keyCode) {
+              case 87:
+              case 38:
+                o[k] = !0;
+                break;
 
-          case 83:
-          case 40:
-            u[r] = !0;
-            break;
+              case 83:
+              case 40:
+                o[l] = !0;
+                break;
 
-          case 65:
-          case 37:
-            u[s] = !0;
-            break;
+              case 65:
+              case 37:
+                o[m] = !0;
+                break;
 
-          case 68:
-          case 39:
-            u[t] = !0;
-        }
-    }, !1), window.addEventListener("keyup", function(a) {
-        switch (a.keyCode) {
-          case 87:
-          case 38:
-            u[q] = !1, o = 0;
-            break;
+              case 68:
+              case 39:
+                o[n] = !0;
+            }
+        }, !1), window.addEventListener("keyup", function(a) {
+            switch (a.keyCode) {
+              case 87:
+              case 38:
+                o[k] = !1;
+                break;
 
-          case 83:
-          case 40:
-            u[r] = !1, o = 0;
-            break;
+              case 83:
+              case 40:
+                o[l] = !1;
+                break;
 
-          case 65:
-          case 37:
-            u[s] = !1, p = 0;
-            break;
+              case 65:
+              case 37:
+                o[m] = !1;
+                break;
 
-          case 68:
-          case 39:
-            u[t] = !1, p = 0;
-        }
-    }, !1);
+              case 68:
+              case 39:
+                o[n] = !1;
+            }
+        }, !1);
+    }();
 }, NextPhysics.prototype.constructor = NextPhysics, NP.Engine = function() {
     var a = [];
     this.add = function(b) {
@@ -148,16 +157,17 @@ NP.ObjectContainer = function() {
     NP.Object.call(this), this.childs = [];
 }, NP.ObjectContainer.prototype = Object.create(NP.Object.prototype), NP.ObjectContainer.prototype.constructor = NP.ObjectContainer, 
 NP.Sphere = function(a, b, c, d) {
-    NP.Object.call(this), this.type = NP.Object.Type.SPHERE, this.position.x = void 0 !== a ? a : 0, 
-    this.position.y = void 0 !== b ? b : 0, this.position.z = void 0 !== c ? c : 0, 
-    this.radius = void 0 !== d ? d : 1, this.k = 2e4;
+    NP.Object.call(this), this.type = NP.Object.Type.SPHERE, this.position = new THREE.Vector3(), 
+    this.position.x = void 0 !== a ? a : 0, this.position.y = void 0 !== b ? b : 0, 
+    this.position.z = void 0 !== c ? c : 0, this.radius = void 0 !== d ? d : 1, this.k = 2e4;
 }, NP.Sphere.prototype = Object.create(NP.Object.prototype), NP.Sphere.prototype.constructor = NP.Sphere, 
 NP.Sphere.prototype.renderScript = function(a, b) {
     var c = void 0 !== b.segments ? b.segments : 32, d = new THREE.SphereGeometry(this.radius, c, c), e = new THREE.MeshBasicMaterial({
         color: void 0 !== b.color1 ? b.color1 : NP.ColorSets[0].color1,
         wireframe: !0
     }), f = new THREE.Mesh(d, e);
-    f.position = this.position, a.add(f);
+    f.position.set(this.position.x, this.position.y, this.position.z), this.position = f.position, 
+    a.add(f);
 }, NP.ColorSets = function() {
     var a = {
         background: 16777215,
@@ -173,8 +183,7 @@ NP.Sphere.prototype.renderScript = function(a, b) {
     this.scene = c;
     var d = new THREE.PerspectiveCamera(45, a.offsetWidth / a.offsetHeight, 1e-4, 1e5), e = NP.ColorSets[0], f = [];
     b.setClearColor(new THREE.Color(15658734)), b.setSize(a.offsetWidth, a.offsetHeight), 
-    a.appendChild(b.domElement), c.add(d), d.position.x = 0, d.position.y = 0, d.position.z = 15, 
-    d.lookAt(c.position);
+    a.appendChild(b.domElement), c.add(d);
     var g = new THREE.AxisHelper(100);
     c.add(g), this.camera = d, this.canvas = b.domElement, this.render = function() {
         var a, e;

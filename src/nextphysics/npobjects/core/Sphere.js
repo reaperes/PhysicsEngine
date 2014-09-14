@@ -10,6 +10,7 @@ NP.Sphere = function(x, y, z, radius) {
   NP.Object.call(this);
   this.type = NP.Object.Type.SPHERE;
 
+  this.position = new THREE.Vector3();
   this.position.x = x !== undefined ? x : 0;
   this.position.y = y !== undefined ? y : 0;
   this.position.z = z !== undefined ? z : 0;
@@ -30,7 +31,8 @@ NP.Sphere.prototype.renderScript = function(scene, renderOptions) {
     wireframe: true
   });
   var sphere = new THREE.Mesh(geometry, material);
-  sphere.position = this.position;
+  sphere.position.set(this.position.x, this.position.y, this.position.z);
+  this.position = sphere.position;
   scene.add(sphere);
 };
 //
