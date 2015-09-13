@@ -19,5 +19,8 @@
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-contrib-concat": "~0.3.0"
+  },
+  "dependencies": {
+    "express": "^4.13.3"
   }
 }
